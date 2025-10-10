@@ -3,7 +3,7 @@
 // point d'entrée de l'application
 
 #include "ofMain.h"
-#include "application.h"
+#include "app/application.h"
 
 int main()
 {

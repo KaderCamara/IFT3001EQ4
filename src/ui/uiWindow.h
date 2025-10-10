@@ -5,7 +5,7 @@
 
 #include "ofMain.h"
 #include "ofxGui.h"
-#include "imageManager.h"
+#include "../image/imageManager.h"
 
 class UIWindow  {
 public:

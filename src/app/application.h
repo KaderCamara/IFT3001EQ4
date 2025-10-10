@@ -5,8 +5,8 @@
 #pragma once
 
 #include "ofMain.h"
-#include "renderer.h"
-#include "../uiWindow.h"
+#include "../rendering/renderer.h"
+#include "../ui/uiWindow.h"
 
 class Application : public ofBaseApp
 {

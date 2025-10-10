@@ -46,20 +46,20 @@
     <ClCompile Include="..\..\..\addons\ofxGui\src\ofxToggle.cpp">
       <Filter>addons\ofxGui\src</Filter>
     </ClCompile>
-    <ClCompile Include="src\application.cpp">
+    <ClCompile Include="src\app\application.cpp">
       <Filter>src\app</Filter>
     </ClCompile>
-    <ClCompile Include="src\renderer.cpp">
-      <Filter>src\rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="uiWindow.cpp">
-      <Filter>src\ui</Filter>
-    </ClCompile>
-    <ClCompile Include="shaderManager.cpp">
-      <Filter>src\rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="imageManager.cpp">
+    <ClCompile Include="src\image\imageManager.cpp">
       <Filter>src\image</Filter>
+    </ClCompile>
+    <ClCompile Include="src\rendering\renderer.cpp">
+      <Filter>src\rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="src\rendering\shaderManager.cpp">
+      <Filter>src\rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui\uiWindow.cpp">
+      <Filter>src\ui</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -422,23 +422,26 @@
     <ClInclude Include="..\..\..\addons\ofxGui\src\ofxToggle.h">
       <Filter>addons\ofxGui\src</Filter>
     </ClInclude>
-    <ClInclude Include="src\application.h">
+    <ClInclude Include="src\image\imageManager.h">
+      <Filter>src\image</Filter>
+    </ClInclude>
+    <ClInclude Include="src\app\application.h">
       <Filter>src\app</Filter>
     </ClInclude>
-    <ClInclude Include="src\renderer.h">
+    <ClInclude Include="src\rendering\renderer.h">
       <Filter>src\rendering</Filter>
     </ClInclude>
-    <ClInclude Include="uiWindow.h">
+    <ClInclude Include="src\rendering\shaderManager.h">
+      <Filter>src\rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ui\uiWindow.h">
       <Filter>src\ui</Filter>
-    </ClInclude>
-    <ClInclude Include="shaderManager.h">
-      <Filter>src\rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="imageManager.h">
-      <Filter>src\image</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="icon.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include=".gitignore" />
   </ItemGroup>
 </Project>

@@ -1,5 +1,5 @@
 // Classe s'occupant de la gestion des images, import export etc de l'application.
-#include "ImageManager.h"
+#include "imageManager.h"
 
 void ImageManager::import() {
     ofFileDialogResult result = ofSystemLoadDialog("Select an image to import");

@@ -1,9 +1,6 @@
-// IFT3100A25_BonjourMonde/main.cpp
-// Exemple d'un programme minimaliste.
-// Les événements du clavier et de la souris changent les 3 composantes d'une couleur RGB aléatoire.
-// La couleur aléatoire est appliquée comme couleur d'arrière-plan.
-// L'inverse de la couleur aléatoire est utilisé comme teinte.
-// La teinte est appliquée sur différentes primitives vectorielles avec un shader.
+// IFT3100A25_3DApp/main.cpp
+// Basé sur un exemple d'un programme minimaliste.
+// point d'entrée de l'application
 
 #include "ofMain.h"
 #include "application.h"

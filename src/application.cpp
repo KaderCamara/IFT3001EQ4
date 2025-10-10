@@ -1,43 +1,30 @@
 // IFT3100A25_BonjourMonde/application.cpp
 // Classe principale de l'application.
+//notre controller basically
 
 #include "application.h"
 
 // fonction appelée à l'initialisation de l'application
 void Application::setup()
 {
-  ofSetWindowTitle("Bonjour Monde");
+  ofSetWindowTitle("3D app");
 
   ofLog() << "<app::setup>";
 
   renderer.setup();
+  uiWindow.setup();
 }
 
-// fonction appelée à chaque mise à jour du rendu graphique de l'application
+void Application::update() {
+	uiWindow.update();
+}
+
 void Application::draw()
 {
   renderer.draw();
+  uiWindow.draw();
 }
 
-// fonction appelée quand une touche du clavier est relachée
-void Application::keyReleased(int key)
-{
-  ofLog() << "<app::keyReleased: " << key << ">";
-
-  // sélectionner une nouvelle couleur au hasard
-  renderer.select_random_colors();
-}
-
-// fonction appelée quand un bouton d'un périphérique de pointage est relâché
-void Application::mouseReleased(int x, int y, int button)
-{
-  ofLog() << "<app::mouse released at: (" << x << ", " << y << ")>";
-
-  // sélectionner une nouvelle couleur au hasard
-  renderer.select_random_colors();
-}
-
-// fonction appelée juste avant de quitter l'application
 void Application::exit()
 {
   ofLog() << "<app::exit>";

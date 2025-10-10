@@ -1,5 +1,5 @@
 // IFT3100A25_BonjourMonde/renderer.h
-// Classe responsable du rendu de l'application.
+// Classe responsable du rendu de l'application.  dessins etc
 
 #pragma once
 
@@ -19,4 +19,7 @@ public:
   void draw();
 
   void select_random_colors();
+
+private:
+  ofTrueTypeFont font;
 };

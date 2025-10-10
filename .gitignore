@@ -1,0 +1,35 @@
+# Visual Studio cache
+.vs/
+*.VC.db
+*.VC.opendb
+
+# Build folders
+bin/
+obj/
+Debug/
+Release/
+x64/
+x86/
+
+# openFrameworks local build data
+*.log
+*.pdb
+*.ilk
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.user
+*.suo
+
+# Backup files
+*.bak
+*.tmp
+
+# Visual Studio project settings (optional to ignore if you use team project settings)
+*.vcxproj.user
+
+# Ignore compiled shaders
+*.spv

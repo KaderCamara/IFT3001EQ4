@@ -1,11 +1,11 @@
 // IFT3100A25_BonjourMonde/renderer.cpp
-// Classe responsable du rendu de l'application.
+// Classe responsable du rendu de l'application.  dessins etc
 
 #include "renderer.h"
 
 void Renderer::setup()
 {
-  // fréquence de rafraîchissement du rendu de la fenêtre d'affichage par seconde
+  /*// fréquence de rafraîchissement du rendu de la fenêtre d'affichage par seconde
   ofSetFrameRate(60);
 
   // résolution de la fenêtre d'affichage en fonction de l'image
@@ -20,12 +20,12 @@ void Renderer::setup()
     "flat_tint_330_fs.glsl");
 
   // sélectionner une nouvelle couleur au hasard
-  select_random_colors();
+  select_random_colors();*/
 }
 
 void Renderer::draw()
 {
-  // effacer la fenêtre d'affichage et remplir avec la couleur d'arrière-plan
+  /*// effacer la fenêtre d'affichage et remplir avec la couleur d'arrière-plan
   ofClear(color_background.r, color_background.g, color_background.b);
 
   // activer le shader
@@ -51,13 +51,13 @@ void Renderer::draw()
   ofDrawRectangle(ofGetWidth() / 4.0f, ofGetHeight() / 4.0f, ofGetWidth() / 2.0f, ofGetHeight() / 2.0f);
 
   // désactiver le shader
-  shader.end();
+  shader.end();*/
 }
 
 // fonction qui permet de sélectionner une nouvelle couleur aléatoire
 void Renderer::select_random_colors()
 {
-  // choisir une nouvelle valeur aléatoire par chaque composante de la couleur
+  /*// choisir une nouvelle valeur aléatoire par chaque composante de la couleur
   color_random.set(ofRandom(255), ofRandom(255), ofRandom(255));
 
   // utiliser la couleur aléatoire comme couleur d'arrière-plan
@@ -66,5 +66,5 @@ void Renderer::select_random_colors()
   // utiliser l'inverse de couleur aléatoire comme couleur de tinte
   color_tint.set(255 - color_random.r, 255 - color_random.g, 255 - color_random.b);
 
-  ofLog() << "<renderer::select random colors (" << color_random << ")>";
+  ofLog() << "<renderer::select random colors (" << color_random << ")>";*/
 }

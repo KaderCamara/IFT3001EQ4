@@ -3,24 +3,26 @@
 #include "uiWindow.h"
 
 void UIWindow::setup() {
-	//menu
-	imageTabButton.setup("Image");
-	imageTabButton.setSize(buttonsWidth, menuBarHeight);
-	imageTabButton.setPosition(buttonsWidthMargin, 0);
-	imageTabButton.addListener(this, &UIWindow::onImageTabPressed);
+    //menu
+    imageTabButton.setup("Image");
+    imageTabButton.setSize(buttonsWidth, menuBarHeight);
+    imageTabButton.setPosition(buttonsWidthMargin, 0);
+    imageTabButton.addListener(this, &UIWindow::onImageTabPressed);
 
-	editTabButton.setup("Edit");
-	editTabButton.setSize(buttonsWidth, menuBarHeight);
-	editTabButton.setPosition(buttonsWidth + buttonsWidthMargin, 0);
-	editTabButton.addListener(this, &UIWindow::onEditTabPressed);
+    editTabButton.setup("Edit");
+    editTabButton.setSize(buttonsWidth, menuBarHeight);
+    editTabButton.setPosition(buttonsWidth + buttonsWidthMargin, 0);
+    editTabButton.addListener(this, &UIWindow::onEditTabPressed);
 
-	//image menu
-	imageMenuPanel.setup("Image Menu");
-	imageMenuPanel.add(importImageButton.setup("Import Image"));
-	imageMenuPanel.add(clearButton.setup("Clear Image"));
+    //image menu
+    imageMenuPanel.setup("Image Menu");
+    imageMenuPanel.add(importImageButton.setup("Import Image"));
+    imageMenuPanel.add(clearButton.setup("Clear Image"));
+    imageMenuPanel.add(exportImageButton.setup("Export Image"));
 
-	importImageButton.addListener(this, &UIWindow::onImportImagePressed);
-	clearButton.addListener(this, &UIWindow::onClearImagePressed);
+    importImageButton.addListener(this, &UIWindow::onImportImagePressed);
+    clearButton.addListener(this, &UIWindow::onClearImagePressed);
+    exportImageButton.addListener(this, &UIWindow::onExportImagePressed);
 }
 
 void UIWindow::update() {
@@ -60,6 +62,14 @@ void UIWindow::mouseReleased(int x, int y, int button) {
 void UIWindow::onClearImagePressed() {
 	imageManager.clear();
 }
+
+void UIWindow::onExportImagePressed() {
+    ofFileDialogResult saveFileResult = ofSystemSaveDialog("exported_image.png", "Exporter l'image");
+    if (saveFileResult.bSuccess) {
+        imageManager.exportImage(saveFileResult.getPath());
+    }
+}
+
 //exemple pour futurs éléments du menu
 void UIWindow::onEditTabPressed() {
 }

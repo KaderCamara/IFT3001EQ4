@@ -5,7 +5,7 @@ void ImageManager::import() {
     ofFileDialogResult result = ofSystemLoadDialog("Select an image to import");
     if (result.bSuccess) {
         importedImage.load(result.getPath());
-        imageLoaded = true;
+            imageLoaded = true;
     }
 }
 
@@ -20,6 +20,23 @@ void ImageManager::draw() {
 }
 
 void ImageManager::clear() {
-	imageLoaded = false;
-	importedImage.clear();
+    imageLoaded = false;
+    importedImage.clear();
 }
+
+void ImageManager::exportImage(const std::string& path) {
+    if (imageLoaded) {
+        bool success = importedImage.save(path);
+        if (success) {
+            ofLogNotice() << "Image exported successfully to: " << path;
+        }
+        else {
+            ofLogError() << "Failed to export image to: " << path;
+        }
+    }
+    else {
+        ofSystemAlertDialog("No image loaded to export!");
+        ofLogWarning() << "Tried to export but no image loaded.";
+    }
+}
+

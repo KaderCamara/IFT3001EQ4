@@ -4,16 +4,17 @@
 #include "ofMain.h"
 
 class ImageManager {
-	public:
+public:
 
-		void import();
-		void update();
-		void draw();
-		void clear();
+    void import();
+    void update();
+    void draw();
+    void clear();
+    void exportImage(const std::string& path);
 
-	private:
-		ofImage importedImage;
-		bool imageLoaded = false;
+private:
+    ofImage importedImage;
+    bool imageLoaded = false;
 };
 
 

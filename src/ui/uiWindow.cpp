@@ -53,6 +53,13 @@ void UIWindow::onImportImagePressed() {
 	imageManager.import();
 }
 
+void UIWindow::onExportImagePressed() {
+    ofFileDialogResult saveFileResult = ofSystemSaveDialog("exported_image.png", "Exporter l'image");
+    if (saveFileResult.bSuccess) {
+        imageManager.exportImage(saveFileResult.getPath());
+    }
+}
+
 void UIWindow::mousePressed(int x, int y, int button) {
 }
 
@@ -63,12 +70,7 @@ void UIWindow::onClearImagePressed() {
 	imageManager.clear();
 }
 
-void UIWindow::onExportImagePressed() {
-    ofFileDialogResult saveFileResult = ofSystemSaveDialog("exported_image.png", "Exporter l'image");
-    if (saveFileResult.bSuccess) {
-        imageManager.exportImage(saveFileResult.getPath());
-    }
-}
+
 
 //exemple pour futurs éléments du menu
 void UIWindow::onEditTabPressed() {

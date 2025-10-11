@@ -42,3 +42,10 @@ private:
 	void onImageTabPressed();
 	void onEditTabPressed();
 };
+
+struct TabButton {
+	string label;
+	ofRectangle bounds;
+	bool hovered = false;
+	bool active = false;
+};

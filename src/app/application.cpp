@@ -25,6 +25,10 @@ void Application::draw()
   uiWindow.draw();
 }
 
+void Application::mousePressed(int x, int y, int button) {
+	uiWindow.mousePressed(x, y, button);
+}
+
 void Application::exit()
 {
   ofLog() << "<app::exit>";

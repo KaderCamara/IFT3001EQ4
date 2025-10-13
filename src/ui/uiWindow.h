@@ -13,39 +13,65 @@ public:
 	void setup();
 	void draw();
 	void update();
+	void handleFileDragAndDrop(ofDragInfo dragInfo);
 	void mousePressed(int x, int y, int button);
 	void mouseReleased(int x, int y, int button);
-
+	ofRectangle getDrawingArea() const { return drawingArea; }
+	std::string getCurrentShape() const { return currentShape; }
 
 private:
 
-	// menu elements
-	ofxButton imageTabButton;
-	ofxButton editTabButton;
+	struct TabButton {
+		string label;
+		ofRectangle bounds;
+		bool hovered = false;
+		bool active = false;
+	};
+
+	//drawing area
+	ofRectangle drawingArea;
+
+	//panels of the menu choices
+	ofxPanel imageMenuPanel;
+	ofxPanel drawMenuPanel;
 
 	//image tab elements
-	ofxPanel imageMenuPanel;
 	ofxButton importImageButton;
 	ofxButton clearButton;
 	bool showImageMenu = false;
+	void onImportImagePressed();
+	void onClearImagePressed();
+	void onImageTabPressed();
+	
+
+	//draw tab elements
+	ofxButton drawPointButton;
+	ofxButton drawLineButton;
+	ofxButton drawTriangleButton;
+	ofxButton drawSquareButton;
+	ofxButton drawRectangleButton;
+	ofxButton drawCircleButton;
+	std::string currentShape = "none";
+	bool showDrawMenu = false;
+	void onDrawAPointPressed();
+	void onDrawALinePressed();
+	void onDrawATrianglePressed();
+	void onDrawASquarePressed();
+	void onDrawARectanglePressed();
+	void onDrawACirclePressed();
+	void onDrawTabPressed();
 
 	//general
 	ofTrueTypeFont font;
 	ImageManager imageManager;
-	float ImageMenuwidth = 200;
+	float SideMenuwidth = 200;
 	float menuBarHeight = 50;
 	float buttonsWidth = 100;
 	float buttonsWidthMargin = 10;
 
-	void onImportImagePressed();
-	void onClearImagePressed();
-	void onImageTabPressed();
-	void onEditTabPressed();
-};
+	//tabs
+	TabButton imageTab = { "Image", ofRectangle(0, 0, 100, 50) };
+	TabButton drawTab = { "Draw", ofRectangle(100, 0, 100, 50) };
 
-struct TabButton {
-	string label;
-	ofRectangle bounds;
-	bool hovered = false;
-	bool active = false;
+	
 };

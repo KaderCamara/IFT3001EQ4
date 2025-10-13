@@ -24,5 +24,9 @@ public:
 
   void mousePressed(int x, int y, int button);
 
+  void mouseReleased(int x, int y, int button);
+
+  void dragEvent(ofDragInfo dragInfo);
+
   void exit();
 };

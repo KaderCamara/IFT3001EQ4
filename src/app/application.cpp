@@ -21,12 +21,32 @@ void Application::update() {
 
 void Application::draw()
 {
+  renderer.setDrawingArea(uiWindow.getDrawingArea());
   renderer.draw();
   uiWindow.draw();
 }
 
 void Application::mousePressed(int x, int y, int button) {
-	uiWindow.mousePressed(x, y, button);
+	if (uiWindow.getDrawingArea().inside(x, y)) {
+		renderer.setCurrentShape(uiWindow.getCurrentShape());
+		renderer.mousePressed(x, y, button);
+	} else {
+		uiWindow.mousePressed(x, y, button);
+	}
+}
+
+void Application::mouseReleased(int x, int y, int button) {
+	if (uiWindow.getDrawingArea().inside(x, y)) {
+		renderer.mouseReleased(x, y, button);
+	} else {
+		uiWindow.mouseReleased(x, y, button);
+	}
+}
+
+
+
+void Application::dragEvent(ofDragInfo dragInfo) {
+	uiWindow.handleFileDragAndDrop(dragInfo);
 }
 
 void Application::exit()

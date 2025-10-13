@@ -10,6 +10,7 @@ class ImageManager {
 		void update();
 		void draw();
 		void clear();
+		void loadFromDrag(ofDragInfo dragInfo);
 
 	private:
 		ofImage importedImage;

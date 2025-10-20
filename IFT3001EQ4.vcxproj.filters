@@ -64,6 +64,9 @@
     <ClCompile Include="src\objects\shapeManager.cpp">
       <Filter>src\objects</Filter>
     </ClCompile>
+    <ClCompile Include="src\rendering\sceneGraph.cpp">
+      <Filter>src\rendering</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -442,6 +445,9 @@
     </ClInclude>
     <ClInclude Include="src\objects\shapeManager.h">
       <Filter>src\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="src\rendering\sceneGraph.h">
+      <Filter>src\rendering</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

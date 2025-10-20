@@ -10,13 +10,46 @@ void Renderer::setup()
 }
 
 void Renderer::draw(){
-	shapeManager.draw();
+	sceneGraph.draw();
+	if (currentShape != "none") {
+		shapeManager.draw();
+	}
+}
+
+void Renderer::save() {
+	sceneGraph.addShape(shapeManager.getCurrentShape());
+}
+
+void Renderer::deleteShape() {
+	if (shapeSelected) {
+		sceneGraph.removeShape(shapeSelectedIndex);
+		shapeSelectedIndex = -1;
+		shapeSelected = false;
+	} else {
+		cout << "no shape was selected" << endl;
+		;
+	}
+}
+
+void Renderer::selectingModeOn() {
+	selecting = true;
+	shapeManager.deleteCurrentShapeToDraw();
+}
+
+void Renderer::selectingModeOff() {
+	selecting = false;
 }
 
 void Renderer::mousePressed(int x, int y, int button) {
 	if (currentShape != "none") {
 		startPoint.set(x, y);
 		drawing = true;
+	}
+	if (selecting) {
+		shapeSelectedIndex = sceneGraph.selectShapeAt(x, y);
+		if (shapeSelectedIndex != -1) {
+			shapeSelected = true;
+		}
 	}
 }
 

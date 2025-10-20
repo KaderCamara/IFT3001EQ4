@@ -2,7 +2,6 @@
 
 void ShapeManager::draw() {
 	const auto & s = currentShapeToDraw;
-
 	if (s.type == "point") {
 		ofDrawCircle(s.start, 2);
 	} else if (s.type == "line") {
@@ -25,4 +24,10 @@ void ShapeManager::drawShape(const std::string & type, const ofPoint & start, co
 	currentShapeToDraw.type = type;
 	currentShapeToDraw.start = start;
 	currentShapeToDraw.end = end;
+}
+
+void ShapeManager::deleteCurrentShapeToDraw() {
+	currentShapeToDraw = {
+		"x", { 0, 0 }, { 0, 0 }
+	};
 }

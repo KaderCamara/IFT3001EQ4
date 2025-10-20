@@ -6,6 +6,7 @@
 #include "ofMain.h"
 #include "ofxGui.h"
 #include "../image/imageManager.h"
+#include "rendering/sceneGraph.h"
 
 class UIWindow  {
 public:
@@ -18,6 +19,10 @@ public:
 	void mouseReleased(int x, int y, int button);
 	ofRectangle getDrawingArea() const { return drawingArea; }
 	std::string getCurrentShape() const { return currentShape; }
+	bool isSelectShapeRequested() const { return selectShape; }
+	bool isSaveShapeRequested() const { return saveShape; }
+	bool isDeleteShapeRequested() const { return deleteShape; }
+	void clearRequests();
 
 private:
 
@@ -51,8 +56,14 @@ private:
 	ofxButton drawSquareButton;
 	ofxButton drawRectangleButton;
 	ofxButton drawCircleButton;
+	ofxButton saveShapeButton;
+	ofxButton deleteShapeButton;
+	ofxButton selectionButton;
 	std::string currentShape = "none";
 	bool showDrawMenu = false;
+	bool saveShape = false;
+	bool deleteShape = false;
+	bool selectShape = false;
 	void onDrawAPointPressed();
 	void onDrawALinePressed();
 	void onDrawATrianglePressed();
@@ -60,11 +71,14 @@ private:
 	void onDrawARectanglePressed();
 	void onDrawACirclePressed();
 	void onDrawTabPressed();
+	void onDeleteShapePressed();
+	void onSaveShapePressed();
+	void onSelectionPressed();
 
 	//general
 	ofTrueTypeFont font;
 	ImageManager imageManager;
-	float SideMenuwidth = 200;
+	//float SideMenuwidth = 200;
 	float menuBarHeight = 50;
 	float buttonsWidth = 100;
 	float buttonsWidthMargin = 10;

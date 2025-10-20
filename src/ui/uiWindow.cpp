@@ -3,9 +3,6 @@
 #include "uiWindow.h"
 
 void UIWindow::setup() {
-	//drawing area
-	drawingArea.set(0, menuBarHeight, ofGetWidth(), ofGetHeight() - menuBarHeight);
-
 	//image menu
 	imageMenuPanel.setup("Image Menu");
 	imageMenuPanel.add(importImageButton.setup("Import Image"));
@@ -21,6 +18,9 @@ void UIWindow::setup() {
 	drawMenuPanel.add(drawSquareButton.setup("Draw a square"));
 	drawMenuPanel.add(drawRectangleButton.setup("Draw a rectangle"));
 	drawMenuPanel.add(drawCircleButton.setup("Draw a circle"));
+	drawMenuPanel.add(saveShapeButton.setup("save the shape"));
+	drawMenuPanel.add(deleteShapeButton.setup("delete the shape"));
+	drawMenuPanel.add(selectionButton.setup("select or interact"));
 
 	drawPointButton.addListener(this, &UIWindow::onDrawAPointPressed);
 	drawLineButton.addListener(this, &UIWindow::onDrawALinePressed);
@@ -28,7 +28,9 @@ void UIWindow::setup() {
 	drawSquareButton.addListener(this, &UIWindow::onDrawASquarePressed);
 	drawRectangleButton.addListener(this, &UIWindow::onDrawARectanglePressed);
 	drawCircleButton.addListener(this, &UIWindow::onDrawACirclePressed);
-	
+	saveShapeButton.addListener(this, &UIWindow::onSaveShapePressed);
+	deleteShapeButton.addListener(this, &UIWindow::onDeleteShapePressed);
+	selectionButton.addListener(this, &UIWindow::onSelectionPressed);
 }
 
 void UIWindow::update() {
@@ -44,12 +46,13 @@ void UIWindow::draw() {
 	ofDrawRectangle(0, 0, ofGetWidth(), menuBarHeight);
 
 	//image panel here so it is responsive with the height and width
-	imageMenuPanel.setPosition(ofGetWidth() - SideMenuwidth, menuBarHeight);
-	imageMenuPanel.setSize(SideMenuwidth, ofGetHeight());
+	float sideMenuWidth = ofGetWidth() / 6;
+	imageMenuPanel.setPosition(ofGetWidth() - sideMenuWidth, menuBarHeight);
+	imageMenuPanel.setSize(sideMenuWidth, ofGetHeight()-menuBarHeight);
 
-	//image panel here so it is responsive with the height and width
-	drawMenuPanel.setPosition(ofGetWidth() - SideMenuwidth, menuBarHeight);
-	drawMenuPanel.setSize(SideMenuwidth, ofGetHeight());
+	//draw panel here so it is responsive with the height and width
+	drawMenuPanel.setPosition(ofGetWidth() - sideMenuWidth, menuBarHeight);
+	drawMenuPanel.setSize(sideMenuWidth, ofGetHeight() - menuBarHeight);
 
 	for (auto & tab : { imageTab, drawTab }) {
 		ofSetColor(tab.active ? 100 : 150); 
@@ -97,6 +100,7 @@ void UIWindow::mousePressed(int x, int y, int button) {
 		imageTab.active = true;
 		drawTab.active = false;
 		currentShape = "none";
+		
 	} else if (drawTab.bounds.inside(x, y)) {
 		showDrawMenu = !showDrawMenu;
 		showImageMenu = false;
@@ -106,12 +110,47 @@ void UIWindow::mousePressed(int x, int y, int button) {
 }
 
 //draw
-void UIWindow::onDrawAPointPressed() {currentShape = "point";}
-void UIWindow::onDrawALinePressed() { currentShape = "line"; }
-void UIWindow::onDrawATrianglePressed() { currentShape = "triangle"; }
-void UIWindow::onDrawASquarePressed() { currentShape = "square"; }
-void UIWindow::onDrawARectanglePressed() { currentShape = "rectangle"; }
-void UIWindow::onDrawACirclePressed() { currentShape = "circle"; }
+void UIWindow::onDrawAPointPressed() {
+	currentShape = "point";
+	selectShape = false;
+}
+void UIWindow::onDrawALinePressed() {
+	currentShape = "line";
+	selectShape = false;
+}
+void UIWindow::onDrawATrianglePressed() {
+	currentShape = "triangle";
+	selectShape = false;
+}
+void UIWindow::onDrawASquarePressed() {
+	currentShape = "square";
+	selectShape = false;
+}
+void UIWindow::onDrawARectanglePressed() {
+	currentShape = "rectangle";
+	selectShape = false;
+}
+void UIWindow::onDrawACirclePressed() {
+	currentShape = "circle";
+	selectShape = false;
+}
+void UIWindow::onSaveShapePressed() {
+	saveShape = true;
+}
+void UIWindow::onDeleteShapePressed() {
+	deleteShape = true;
+}
+
+void UIWindow::clearRequests() {
+	saveShape = false;
+	deleteShape = false;
+}
+
+void UIWindow::onSelectionPressed() {
+	selectShape = true;
+	currentShape = "none";
+}
+
 
 //general
 void UIWindow::onClearImagePressed() {

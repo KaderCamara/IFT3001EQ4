@@ -1,6 +1,7 @@
 // IFT3100A25_BonjourMonde/application.cpp
 // Classe principale de l'application.
-//notre controller basically
+//notre controller basically il va uniquement se charger de la communication entre renderer et uiWindow
+//de ce fait ces instances sont créés une seule fois ( un seul cycle de vie )
 
 #include "application.h"
 
@@ -17,6 +18,20 @@ void Application::setup()
 
 void Application::update() {
 	uiWindow.update();
+	if (uiWindow.isSaveShapeRequested()) {
+		renderer.setCurrentShape(uiWindow.getCurrentShape());
+		renderer.save();
+	}
+	if (uiWindow.isDeleteShapeRequested()) {
+		renderer.deleteShape();
+	}
+	if (uiWindow.isSelectShapeRequested()) {
+		renderer.selectingModeOn();
+	} else if (!uiWindow.isSelectShapeRequested()) {
+		renderer.selectingModeOff();
+	}
+
+	uiWindow.clearRequests();
 }
 
 void Application::draw()

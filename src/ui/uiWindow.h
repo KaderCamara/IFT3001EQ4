@@ -22,6 +22,7 @@ public:
 	bool isSelectShapeRequested() const { return selectShape; }
 	bool isSaveShapeRequested() const { return saveShape; }
 	bool isDeleteShapeRequested() const { return deleteShape; }
+	bool is3DviewRequested() const { return showView3D; }
 	void clearRequests();
 
 private:
@@ -47,7 +48,6 @@ private:
 	void onImportImagePressed();
 	void onClearImagePressed();
 	void onImageTabPressed();
-	
 
 	//draw tab elements
 	ofxButton drawPointButton;
@@ -75,6 +75,10 @@ private:
 	void onSaveShapePressed();
 	void onSelectionPressed();
 
+	//view3D
+	void onView3DTabPressed();
+	bool showView3D = false;
+
 	//general
 	ofTrueTypeFont font;
 	ImageManager imageManager;
@@ -86,6 +90,8 @@ private:
 	//tabs
 	TabButton imageTab = { "Image", ofRectangle(0, 0, 100, 50) };
 	TabButton drawTab = { "Draw", ofRectangle(100, 0, 100, 50) };
+	TabButton view3DTab = { "3D view", ofRectangle(200, 0, 100, 50) };
+
 
 	
 };

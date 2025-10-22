@@ -2,7 +2,6 @@
 // Classe responsable du rendu de l'application.  dessins etc
 #pragma once
 #include "ofMain.h"
-#include "../ui/uiWindow.h"
 #include "../objects/shapeManager.h"
 #include "sceneGraph.h"
 
@@ -16,12 +15,14 @@ public:
   void setCurrentShape(const std::string & shape) { currentShape = shape; }
   void mousePressed(int x, int y, int button);
   void mouseReleased(int x, int y, int button);
+  void draw3D();
 
   //mini-controller
   void save();
   void deleteShape();
   void selectingModeOn();
   void selectingModeOff();
+  void view3DMode();
 
 private:
   ofTrueTypeFont font;
@@ -34,4 +35,5 @@ private:
   ofPoint startPoint, endPoint;
   bool shapeSelected = false;
   int shapeSelectedIndex = -1;
+  bool view3D = false;
 };

@@ -1,16 +1,16 @@
 #pragma once
 #include "ofMain.h"
-#include "../objects/shapeManager.h"
+#include "../objects/shape.h"
 
 class SceneGraph {
 public:
-	using Shape = ShapeManager::Shape;
 	std::vector<Shape> shapes; 
 
 	void addShape(const Shape& shape);
 	void removeShape(int index);
 	Shape * getShape(int index);
 	void clear();
+	std::vector<Shape> getAllShapes(); 
 
 	int selectShapeAt(float x, float y);
 	void updateSelectedAttributes(const ofColor & color, float size);

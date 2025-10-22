@@ -67,6 +67,9 @@
     <ClCompile Include="src\rendering\sceneGraph.cpp">
       <Filter>src\rendering</Filter>
     </ClCompile>
+    <ClCompile Include="src\objects\shapeManager3D.cpp">
+      <Filter>src\objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -448,6 +451,12 @@
     </ClInclude>
     <ClInclude Include="src\rendering\sceneGraph.h">
       <Filter>src\rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\objects\shapeManager3D.h">
+      <Filter>src\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="src\objects\shape.h">
+      <Filter>src\objects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

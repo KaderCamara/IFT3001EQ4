@@ -10,9 +10,13 @@ void Renderer::setup()
 }
 
 void Renderer::draw(){
-	sceneGraph.draw();
-	if (currentShape != "none") {
-		shapeManager.draw();
+	if (view3D) {
+		draw3D();
+	} else {
+		sceneGraph.draw();
+		if (currentShape != "none") {
+			shapeManager.draw();
+		}
 	}
 }
 
@@ -38,6 +42,19 @@ void Renderer::selectingModeOn() {
 
 void Renderer::selectingModeOff() {
 	selecting = false;
+}
+
+void Renderer::view3DMode() {
+	view3D = true;
+}
+
+void Renderer::draw3D() {
+	for (auto & s : sceneGraph.getAllShapes()) {
+		if (s.is3D = false) {
+			shapeManager.convertTo3d(s, 2.0);
+		}
+		s.mesh3D.draw();
+	}
 }
 
 void Renderer::mousePressed(int x, int y, int button) {

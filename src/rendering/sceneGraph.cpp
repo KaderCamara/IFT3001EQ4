@@ -12,7 +12,7 @@ void SceneGraph::removeShape(int index) {
 	}
 }
 
-ShapeManager::Shape * SceneGraph::getShape(int index) {
+Shape * SceneGraph::getShape(int index) {
 	if (index >= 0 && index < shapes.size()) {
 		return &shapes[index];
 	}
@@ -69,6 +69,10 @@ bool SceneGraph::insideBounds(const Shape& s, float x, float y) {
 		return (x >= s.start.x && x <= s.end.x && y >= s.start.y && y <= s.end.y);
 	}
 	return false;
+}
+
+std::vector<Shape> SceneGraph::getAllShapes() {
+	return shapes;
 }
 void SceneGraph::draw() {
 	for (const auto & s : shapes) {

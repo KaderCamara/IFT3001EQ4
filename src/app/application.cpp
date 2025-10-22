@@ -27,8 +27,12 @@ void Application::update() {
 	}
 	if (uiWindow.isSelectShapeRequested()) {
 		renderer.selectingModeOn();
-	} else if (!uiWindow.isSelectShapeRequested()) {
+	}
+	if (!uiWindow.isSelectShapeRequested()) {
 		renderer.selectingModeOff();
+	}
+	if (uiWindow.is3DviewRequested()) {
+		renderer.view3DMode();
 	}
 
 	uiWindow.clearRequests();

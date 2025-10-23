@@ -26,8 +26,7 @@ void Renderer::save() {
 
 void Renderer::deleteShape() {
 	if (shapeSelected) {
-		sceneGraph.removeShape(shapeSelectedIndex);
-		shapeSelectedIndex = -1;
+		sceneGraph.removeSelectedShapes();
 		shapeSelected = false;
 	} else {
 		cout << "no shape was selected" << endl;
@@ -50,7 +49,7 @@ void Renderer::view3DMode() {
 
 void Renderer::draw3D() {
 	for (auto & s : sceneGraph.getAllShapes()) {
-		if (s.is3D = false) {
+		if (!s.is3D) {
 			shapeManager.convertTo3d(s, 2.0);
 		}
 		s.mesh3D.draw();
@@ -63,10 +62,8 @@ void Renderer::mousePressed(int x, int y, int button) {
 		drawing = true;
 	}
 	if (selecting) {
-		shapeSelectedIndex = sceneGraph.selectShapeAt(x, y);
-		if (shapeSelectedIndex != -1) {
-			shapeSelected = true;
-		}
+		sceneGraph.selectShapeAt(x, y, ofGetKeyPressed(OF_KEY_CONTROL) || ofGetKeyPressed(OF_KEY_COMMAND));
+		shapeSelected = !sceneGraph.selectedIndices.empty();
 	}
 }
 

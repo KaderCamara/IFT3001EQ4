@@ -4,6 +4,30 @@
     <ClCompile Include="src\main.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\app\application.cpp">
+      <Filter>src\app</Filter>
+    </ClCompile>
+    <ClCompile Include="src\image\imageManager.cpp">
+      <Filter>src\image</Filter>
+    </ClCompile>
+    <ClCompile Include="src\objects\shapeManager.cpp">
+      <Filter>src\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="src\objects\shapeManager3D.cpp">
+      <Filter>src\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="src\rendering\renderer.cpp">
+      <Filter>src\rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="src\rendering\sceneGraph.cpp">
+      <Filter>src\rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="src\rendering\shaderManager.cpp">
+      <Filter>src\rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui\uiWindow.cpp">
+      <Filter>src\ui</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\..\addons\ofxAssimpModelLoader\src\ofxAssimpAnimation.cpp">
       <Filter>addons\ofxAssimpModelLoader\src</Filter>
     </ClCompile>
@@ -46,88 +70,91 @@
     <ClCompile Include="..\..\..\addons\ofxGui\src\ofxToggle.cpp">
       <Filter>addons\ofxGui\src</Filter>
     </ClCompile>
-    <ClCompile Include="src\app\application.cpp">
-      <Filter>src\app</Filter>
-    </ClCompile>
-    <ClCompile Include="src\image\imageManager.cpp">
-      <Filter>src\image</Filter>
-    </ClCompile>
-    <ClCompile Include="src\rendering\renderer.cpp">
-      <Filter>src\rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="src\rendering\shaderManager.cpp">
-      <Filter>src\rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ui\uiWindow.cpp">
-      <Filter>src\ui</Filter>
-    </ClCompile>
-    <ClCompile Include="src\objects\shapeManager.cpp">
-      <Filter>src\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="src\rendering\sceneGraph.cpp">
-      <Filter>src\rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="src\objects\shapeManager3D.cpp">
-      <Filter>src\objects</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
       <UniqueIdentifier>{d8376475-7454-4a24-b08a-aac121d3ad6f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="addons">
-      <UniqueIdentifier>{A4A688F9--FBA-B-43-21-A-E5B-7389BFFEEF67}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxAssimpModelLoader">
-      <UniqueIdentifier>{D87C3EB5--190-E-4B-43-A-291-E6F658A53D9E}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxAssimpModelLoader\src">
-      <UniqueIdentifier>{F2048927--CB3-5-4A-EA-9-C9E-C84FFECB6548}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxAssimpModelLoader\libs">
-      <UniqueIdentifier>{A0CA4544--CFC-E-43-FD-B-A7D-38FC061063C5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxAssimpModelLoader\libs\assimp">
-      <UniqueIdentifier>{56EE27BB--EF5-9-43-A6-9-27A-E5BA34545B7D}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxAssimpModelLoader\libs\assimp\include">
-      <UniqueIdentifier>{35B15FBC--F2B-2-4C-15-B-C5E-4937C7CD4552}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxAssimpModelLoader\libs\assimp\include\assimp">
-      <UniqueIdentifier>{360C409A--CA9-2-4E-05-9-765-6398228D2B7E}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxAssimpModelLoader\libs\assimp\include\assimp\Compiler">
-      <UniqueIdentifier>{A658125B--BE2-D-4B-5B-8-8E6-36C8F58ADA13}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxAssimpModelLoader\libs\assimp\include\assimp\port">
-      <UniqueIdentifier>{15998BE2--C50-B-4C-08-A-BC4-942B07FB9EB7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxAssimpModelLoader\libs\assimp\include\assimp\port\AndroidJNI">
-      <UniqueIdentifier>{1E364CBD--B5C-7-41-0D-8-8DB-70CB73DF03DD}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxGui">
-      <UniqueIdentifier>{13A8F6F5--BE0-4-49-27-A-07C-2AD8C8AC46BD}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxGui\src">
-      <UniqueIdentifier>{6EC2C09B--B6B-F-45-9D-B-5A1-93BB371FD835}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\app">
-      <UniqueIdentifier>{7381fd34-f30a-433b-9739-246b50c40645}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\rendering">
-      <UniqueIdentifier>{2bb5bba0-a007-4fc9-aacd-9a0cbc88886a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\ui">
-      <UniqueIdentifier>{f2760205-589a-4a26-9160-7107738edfca}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\objects">
-      <UniqueIdentifier>{da96ce0f-9d12-429e-b6bc-ebd4474c3594}</UniqueIdentifier>
+      <UniqueIdentifier>{CF0762F6--73D-0-49-CB-8-812-6CD1FE59BF14}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\image">
-      <UniqueIdentifier>{2e66e3bb-5ea7-4f58-b9b0-828b438b4923}</UniqueIdentifier>
+      <UniqueIdentifier>{45DBAE26--ABB-C-47-F4-8-DBB-25B201AC4246}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\objects">
+      <UniqueIdentifier>{58356C33--80B-0-4D-4E-8-847-F4D346D9DA64}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\rendering">
+      <UniqueIdentifier>{2CB4F43A--D4D-6-4C-38-9-081-41EF349F4536}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ui">
+      <UniqueIdentifier>{1E22BCC2--BEE-1-46-C3-9-E3B-77B44BEE75A9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons">
+      <UniqueIdentifier>{0C293D92--F81-1-4D-37-8-80E-908E2CDF0474}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxAssimpModelLoader">
+      <UniqueIdentifier>{ECEDE4BF--FE6-6-4A-A8-9-0A0-54297CBD69C8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxAssimpModelLoader\src">
+      <UniqueIdentifier>{41EDEF72--F9E-2-47-AB-9-9E7-6EAA3DBEFA9B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxAssimpModelLoader\libs">
+      <UniqueIdentifier>{A551B740--20E-5-45-82-8-0D9-23E3A2FBFBF3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxAssimpModelLoader\libs\assimp">
+      <UniqueIdentifier>{647CAD09--5F9-D-4A-67-9-6FD-C0FAE43CA94C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxAssimpModelLoader\libs\assimp\include">
+      <UniqueIdentifier>{957BAEEE--2D5-3-42-AE-B-1EF-F813E42F6250}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxAssimpModelLoader\libs\assimp\include\assimp">
+      <UniqueIdentifier>{2241C596--5D6-A-49-8C-A-EB9-5ABACECE20AC}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxAssimpModelLoader\libs\assimp\include\assimp\Compiler">
+      <UniqueIdentifier>{07A596F0--3EB-4-4A-4C-B-B76-E0D0351DC92F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxAssimpModelLoader\libs\assimp\include\assimp\port">
+      <UniqueIdentifier>{D61D547F--CF7-D-4B-9E-A-BEB-07FA825EE0F3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxAssimpModelLoader\libs\assimp\include\assimp\port\AndroidJNI">
+      <UniqueIdentifier>{49E5D4CF--E7D-E-4B-21-8-81A-BDE6529FC62F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxGui">
+      <UniqueIdentifier>{C262E40A--F96-1-42-7E-8-55F-170AC18BAF47}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxGui\src">
+      <UniqueIdentifier>{6A854921--C89-A-45-7A-8-168-18690258E886}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\app\application.h">
+      <Filter>src\app</Filter>
+    </ClInclude>
+    <ClInclude Include="src\image\imageManager.h">
+      <Filter>src\image</Filter>
+    </ClInclude>
+    <ClInclude Include="src\objects\shape.h">
+      <Filter>src\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="src\objects\shapeManager.h">
+      <Filter>src\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="src\objects\shapeManager3D.h">
+      <Filter>src\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="src\rendering\renderer.h">
+      <Filter>src\rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\rendering\sceneGraph.h">
+      <Filter>src\rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\rendering\shaderManager.h">
+      <Filter>src\rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ui\uiWindow.h">
+      <Filter>src\ui</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\src\ofxAssimpAnimation.h">
       <Filter>addons\ofxAssimpModelLoader\src</Filter>
     </ClInclude>
@@ -431,38 +458,8 @@
     <ClInclude Include="..\..\..\addons\ofxGui\src\ofxToggle.h">
       <Filter>addons\ofxGui\src</Filter>
     </ClInclude>
-    <ClInclude Include="src\image\imageManager.h">
-      <Filter>src\image</Filter>
-    </ClInclude>
-    <ClInclude Include="src\app\application.h">
-      <Filter>src\app</Filter>
-    </ClInclude>
-    <ClInclude Include="src\rendering\renderer.h">
-      <Filter>src\rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="src\rendering\shaderManager.h">
-      <Filter>src\rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ui\uiWindow.h">
-      <Filter>src\ui</Filter>
-    </ClInclude>
-    <ClInclude Include="src\objects\shapeManager.h">
-      <Filter>src\objects</Filter>
-    </ClInclude>
-    <ClInclude Include="src\rendering\sceneGraph.h">
-      <Filter>src\rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="src\objects\shapeManager3D.h">
-      <Filter>src\objects</Filter>
-    </ClInclude>
-    <ClInclude Include="src\objects\shape.h">
-      <Filter>src\objects</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="icon.rc" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include=".gitignore" />
   </ItemGroup>
 </Project>

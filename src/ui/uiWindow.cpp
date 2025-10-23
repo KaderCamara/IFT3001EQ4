@@ -7,6 +7,7 @@ void UIWindow::setup() {
 	imageMenuPanel.setup("Image Menu");
 	imageMenuPanel.add(importImageButton.setup("Import Image"));
 	imageMenuPanel.add(clearButton.setup("Clear Image"));
+	imageMenuPanel.add(exportImageButton.setup("Export Image"));
 	importImageButton.addListener(this, &UIWindow::onImportImagePressed);
 	clearButton.addListener(this, &UIWindow::onClearImagePressed);
 
@@ -31,7 +32,10 @@ void UIWindow::setup() {
 	saveShapeButton.addListener(this, &UIWindow::onSaveShapePressed);
 	deleteShapeButton.addListener(this, &UIWindow::onDeleteShapePressed);
 	selectionButton.addListener(this, &UIWindow::onSelectionPressed);
+	exportImageButton.addListener(this, &UIWindow::onExportImagePressed);
+
 }
+
 
 void UIWindow::update() {
 	// No special logic yet
@@ -39,7 +43,8 @@ void UIWindow::update() {
 
 void UIWindow::draw() {
 	//drawing area auto update
-	drawingArea.set(0, menuBarHeight, ofGetWidth(), ofGetHeight() - menuBarHeight);
+	float sideMenuWidth = ofGetWidth() / 6;
+	drawingArea.set(0, menuBarHeight, ofGetWidth() - sideMenuWidth, ofGetHeight() - menuBarHeight);
 
 	//menus form or shape ( a rectangle )
 	ofSetColor(50, 50, 50);
@@ -47,7 +52,6 @@ void UIWindow::draw() {
 
 	//panels here so it is responsive with the height and width
 	//image panel 
-	float sideMenuWidth = ofGetWidth() / 6;
 	imageMenuPanel.setPosition(ofGetWidth() - sideMenuWidth, menuBarHeight);
 	imageMenuPanel.setSize(sideMenuWidth, ofGetHeight()-menuBarHeight);
 	//draw panel 
@@ -81,6 +85,14 @@ void UIWindow::onDrawTabPressed() {
 }
 void UIWindow::onView3DTabPressed() {
 	showView3D = !showView3D;
+}
+
+
+void UIWindow::onExportImagePressed() {
+	ofFileDialogResult saveFileResult = ofSystemSaveDialog("exported_image.png", "Exporter l'image");
+	if (saveFileResult.bSuccess) {
+		imageManager.exportImage(saveFileResult.getPath());
+	}
 }
 
 //menu actions

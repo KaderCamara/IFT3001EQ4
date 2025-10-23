@@ -11,6 +11,7 @@ class ImageManager {
 		void draw();
 		void clear();
 		void loadFromDrag(ofDragInfo dragInfo);
+		void exportImage(const std::string & path);
 
 	private:
 		ofImage importedImage;

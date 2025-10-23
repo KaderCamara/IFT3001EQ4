@@ -46,12 +46,14 @@ private:
 	ofxButton clearButton;
 	bool showImageMenu = false;
 	void onImportImagePressed();
+	void onExportImagePressed();
 	void onClearImagePressed();
 	void onImageTabPressed();
 
 	//draw tab elements
 	ofxButton drawPointButton;
 	ofxButton drawLineButton;
+	ofxButton exportImageButton;
 	ofxButton drawTriangleButton;
 	ofxButton drawSquareButton;
 	ofxButton drawRectangleButton;
@@ -93,5 +95,5 @@ private:
 	TabButton view3DTab = { "3D view", ofRectangle(200, 0, 100, 50) };
 
 
-	
+
 };

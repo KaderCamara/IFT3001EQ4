@@ -7,6 +7,7 @@
 #include "ofxGui.h"
 #include "../image/imageManager.h"
 #include "rendering/sceneGraph.h"
+#include <rendering/renderer.h>
 
 class UIWindow  {
 public:
@@ -24,6 +25,7 @@ public:
 	bool isDeleteShapeRequested() const { return deleteShape; }
 	bool is3DviewRequested() const { return showView3D; }
 	void clearRequests();
+	void setRenderer(Renderer * r) { renderer = r; }
 
 private:
 
@@ -59,6 +61,7 @@ private:
 	ofxButton saveShapeButton;
 	ofxButton deleteShapeButton;
 	ofxButton selectionButton;
+	ofxButton toggleBBoxButton;
 	std::string currentShape = "none";
 	bool showDrawMenu = false;
 	bool saveShape = false;
@@ -74,6 +77,7 @@ private:
 	void onDeleteShapePressed();
 	void onSaveShapePressed();
 	void onSelectionPressed();
+	void onToggleBoundingBoxesPressed();
 
 	//view3D
 	void onView3DTabPressed();
@@ -92,6 +96,6 @@ private:
 	TabButton drawTab = { "Draw", ofRectangle(100, 0, 100, 50) };
 	TabButton view3DTab = { "3D view", ofRectangle(200, 0, 100, 50) };
 
-
+	Renderer * renderer = nullptr; 
 	
 };

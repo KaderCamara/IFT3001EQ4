@@ -11,18 +11,20 @@ void UIWindow::setup() {
 	clearButton.addListener(this, &UIWindow::onClearImagePressed);
 
 	//draw menu
-	drawMenuPanel.setup("Draw Menu");
-	drawMenuPanel.add(drawPointButton.setup("Draw a point"));
-	drawMenuPanel.add(drawLineButton.setup("Draw a line"));
-	drawMenuPanel.add(drawTriangleButton.setup("Draw a triangle"));
-	drawMenuPanel.add(drawSquareButton.setup("Draw a square"));
-	drawMenuPanel.add(drawRectangleButton.setup("Draw a rectangle"));
-	drawMenuPanel.add(drawCircleButton.setup("Draw a circle"));
-	drawMenuPanel.add(saveShapeButton.setup("save the shape"));
-	drawMenuPanel.add(deleteShapeButton.setup("delete the shape"));
-	drawMenuPanel.add(selectionButton.setup("select or interact"));
+    drawMenuPanel.setup("Draw Menu");
+    drawMenuPanel.add(drawPointButton.setup("Draw a point"));
+    drawMenuPanel.add(drawLineButton.setup("Draw a line"));
+    drawMenuPanel.add(drawTriangleButton.setup("Draw a triangle"));
+    drawMenuPanel.add(drawSquareButton.setup("Draw a square"));
+    drawMenuPanel.add(drawRectangleButton.setup("Draw a rectangle"));
+    drawMenuPanel.add(drawCircleButton.setup("Draw a circle"));
+    drawMenuPanel.add(saveShapeButton.setup("save the shape"));
+    drawMenuPanel.add(deleteShapeButton.setup("delete the shape"));
+    drawMenuPanel.add(selectionButton.setup("select or interact"));
+    drawMenuPanel.add(toggleBBoxButton.setup("Toggle Bounding Boxes"));
+	toggleBBoxButton.addListener(this, &UIWindow::onToggleBoundingBoxesPressed);
 
-	drawPointButton.addListener(this, &UIWindow::onDrawAPointPressed);
+    drawPointButton.addListener(this, &UIWindow::onDrawAPointPressed);
 	drawLineButton.addListener(this, &UIWindow::onDrawALinePressed);
 	drawTriangleButton.addListener(this, &UIWindow::onDrawATrianglePressed);
 	drawSquareButton.addListener(this, &UIWindow::onDrawASquarePressed);
@@ -168,6 +170,13 @@ void UIWindow::onSelectionPressed() {
 	currentShape = "none";
 }
 
+void UIWindow::onToggleBoundingBoxesPressed() {
+	if (renderer) {
+		renderer->toggleBoundingBoxes();
+	} else {
+		ofLogWarning("UIWindow") << "Renderer not linked!";
+	}
+}
 
 //general
 void UIWindow::onClearImagePressed() {

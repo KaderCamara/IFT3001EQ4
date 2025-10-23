@@ -50,10 +50,21 @@ void Renderer::view3DMode() {
 
 void Renderer::draw3D() {
 	for (auto & s : sceneGraph.getAllShapes()) {
-		if (s.is3D = false) {
+		if (!s.is3D) {
 			shapeManager.convertTo3d(s, 2.0);
+			s.is3D = true;
 		}
-		s.mesh3D.draw();
+
+		s.mesh3D.drawWireframe();
+
+		if (showBoundingBoxes) {
+			ofPushStyle();
+			ofNoFill();
+			ofSetColor(255, 0, 0);
+			ofBoxPrimitive bbox = computeBoundingBox(s.mesh3D);
+			bbox.drawWireframe();
+			ofPopStyle();
+		}
 	}
 }
 
@@ -78,3 +89,29 @@ void Renderer::mouseReleased(int x, int y, int button) {
 	}
 }
 
+void Renderer::toggleBoundingBoxes() {
+	showBoundingBoxes = !showBoundingBoxes;
+}
+
+ofBoxPrimitive Renderer::computeBoundingBox(const ofMesh & mesh) {
+	ofVec3f minPt(FLT_MAX, FLT_MAX, FLT_MAX);
+	ofVec3f maxPt(-FLT_MAX, -FLT_MAX, -FLT_MAX);
+
+	for (auto & v : mesh.getVertices()) {
+		minPt.x = std::min(minPt.x, v.x);
+		minPt.y = std::min(minPt.y, v.y);
+		minPt.z = std::min(minPt.z, v.z);
+		maxPt.x = std::max(maxPt.x, v.x);
+		maxPt.y = std::max(maxPt.y, v.y);
+		maxPt.z = std::max(maxPt.z, v.z);
+	}
+
+	ofVec3f center = (minPt + maxPt) * 0.5f;
+	ofVec3f size = maxPt - minPt;
+
+	ofBoxPrimitive box;
+	box.set(size.x, size.y, size.z);
+	box.setPosition(center);
+
+	return box;
+}

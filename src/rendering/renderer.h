@@ -23,12 +23,14 @@ public:
   void selectingModeOn();
   void selectingModeOff();
   void view3DMode();
+  void toggleBoundingBoxes();
 
-private:
+  private:
   ofTrueTypeFont font;
   ofRectangle drawingArea;
   std::string currentShape = "none";
   bool drawing = false;
+  bool showBoundingBoxes = true;
   bool selecting = false;
   ShapeManager shapeManager;
   SceneGraph sceneGraph;
@@ -36,4 +38,6 @@ private:
   bool shapeSelected = false;
   int shapeSelectedIndex = -1;
   bool view3D = false;
+
+  ofBoxPrimitive computeBoundingBox(const ofMesh & mesh);
 };

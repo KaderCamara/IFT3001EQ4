@@ -115,27 +115,25 @@ void SceneGraph::draw() {
 			ofSetLineWidth(1);
 		}
 
-		if (!s.is3D) {
-			if (s.type == "point") {
-				ofDrawCircle(s.start, 3 * s.scale);
-			} else if (s.type == "line") {
-				ofDrawLine(s.start, s.end);
-			} else if (s.type == "triangle") {
-				ofPoint a = s.start;
-				ofPoint b(s.end.x, s.start.y);
-				ofPoint c = s.end;
-				ofDrawTriangle(a, b, c);
-			} else if (s.type == "square") {
-				float side = std::abs(s.end.x - s.start.x) * s.scale;
-				ofDrawRectangle(s.start.x, s.start.y, side, side);
-			} else if (s.type == "rectangle") {
-				float w = (s.end.x - s.start.x) * s.scale;
-				float h = (s.end.y - s.start.y) * s.scale;
-				ofDrawRectangle(s.start.x, s.start.y, w, h);
-			} else if (s.type == "circle") {
-				float radius = ofDist(s.start.x, s.start.y, s.end.x, s.end.y) * s.scale;
-				ofDrawCircle(s.start, radius);
-			}
+		if (s.type == "point") {
+			ofDrawCircle(s.start, 3 * s.scale);
+		} else if (s.type == "line") {
+			ofDrawLine(s.start, s.end);
+		} else if (s.type == "triangle") {
+			ofPoint a = s.start;
+			ofPoint b(s.end.x, s.start.y);
+			ofPoint c = s.end;
+			ofDrawTriangle(a, b, c);
+		} else if (s.type == "square") {
+			float side = std::abs(s.end.x - s.start.x) * s.scale;
+			ofDrawRectangle(s.start.x, s.start.y, side, side);
+		} else if (s.type == "rectangle") {
+			float w = (s.end.x - s.start.x) * s.scale;
+			float h = (s.end.y - s.start.y) * s.scale;
+			ofDrawRectangle(s.start.x, s.start.y, w, h);
+		} else if (s.type == "circle") {
+			float radius = ofDist(s.start.x, s.start.y, s.end.x, s.end.y) * s.scale;
+			ofDrawCircle(s.start, radius);
 		} else {
 			ofPushMatrix();
 			ofScale(s.scale, s.scale, s.scale);
@@ -146,16 +144,6 @@ void SceneGraph::draw() {
 		if (isSelected) {
 			ofNoFill();
 			ofSetColor(ofColor::yellow);
-			if (!s.is3D) {
-				if (s.type == "rectangle" || s.type == "square") {
-					float w = (s.end.x - s.start.x) * s.scale;
-					float h = (s.end.y - s.start.y) * s.scale;
-					ofDrawRectangle(s.start.x, s.start.y, w, h);
-				} else if (s.type == "circle") {
-					float radius = ofDist(s.start.x, s.start.y, s.end.x, s.end.y) * s.scale;
-					ofDrawCircle(s.start, radius);
-				}
-			}
 		}
 
 		ofPopStyle();

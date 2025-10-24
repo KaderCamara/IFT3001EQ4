@@ -16,6 +16,7 @@ public:
   void mousePressed(int x, int y, int button);
   void mouseReleased(int x, int y, int button);
   void draw3D();
+  void setShowBoundingBox(bool state) { showBoundingBox = state; }
 
   //mini-controller
   void save();
@@ -35,6 +36,8 @@ private:
   SceneGraph sceneGraph;
   ofPoint startPoint, endPoint;
   bool shapeSelected = false;
+  bool showBoundingBox = false;
   int shapeSelectedIndex = -1;
   bool view3D = false;
+  void drawBoundingBox(const ofMesh & mesh);
 };

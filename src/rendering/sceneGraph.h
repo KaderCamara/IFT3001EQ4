@@ -12,7 +12,7 @@ public:
 	Shape * getShape(int index);
 	void clear();
 	void removeSelectedShapes();
-	std::vector<Shape> getAllShapes(); 
+	std::vector<Shape> & getAllShapes();
 
 	void selectShapeAt(float x, float y, bool addToSelection = false);
 	void deselectAll();

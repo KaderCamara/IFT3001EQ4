@@ -2,6 +2,10 @@
 // Classe responsable du rendu de l'application.  dessins etc
 
 #include "renderer.h"
+#include <cfloat>
+
+bool g_showBoundingBox = false;
+bool g_showWireframe = false;
 
 void Renderer::setup()
 {
@@ -50,15 +54,36 @@ void Renderer::view3DMode() {
 void Renderer::draw3D() {
 	ofEnableDepthTest();
 	cam.begin();
+
 	for (auto & s : sceneGraph.getAllShapes()) {
-		if (s.is3D == false) {
+		ofPushStyle();
+
+		if (!s.is3D) {
 			shapeManager.convertTo3d(s);
 		}
-		s.mesh3D.draw();
+
+		if (g_showWireframe) {
+			ofNoFill();
+			s.mesh3D.drawWireframe();
+		} else {
+			ofFill();
+			ofSetColor(s.color);
+			s.mesh3D.draw();
+		}
+
+		if (g_showBoundingBox) {
+			ofNoFill();
+			ofSetColor(ofColor::red);
+			drawBoundingBox(s.mesh3D);
+		}
+
+		ofPopStyle();
 	}
+
 	cam.end();
 	ofDisableDepthTest();
 }
+
 
 void Renderer::mousePressed(int x, int y, int button) {
 	if (currentShape != "none") {
@@ -68,8 +93,8 @@ void Renderer::mousePressed(int x, int y, int button) {
 	if (selecting) {
 		sceneGraph.selectShapeAt(x, y, ofGetKeyPressed(OF_KEY_CONTROL) || ofGetKeyPressed(OF_KEY_COMMAND));
 		shapeSelected = !sceneGraph.selectedIndices.empty();
-		}
 	}
+}
 
 
 void Renderer::mouseReleased(int x, int y, int button) {
@@ -80,3 +105,22 @@ void Renderer::mouseReleased(int x, int y, int button) {
 	}
 }
 
+void Renderer::drawBoundingBox(const ofMesh & mesh) {
+	ofVec3f min(FLT_MAX, FLT_MAX, FLT_MAX);
+	ofVec3f max(-FLT_MAX, -FLT_MAX, -FLT_MAX);
+
+	for (auto & v : mesh.getVertices()) {
+		min.x = std::min(min.x, v.x);
+		min.y = std::min(min.y, v.y);
+		min.z = std::min(min.z, v.z);
+
+		max.x = std::max(max.x, v.x);
+		max.y = std::max(max.y, v.y);
+		max.z = std::max(max.z, v.z);
+	}
+
+	ofNoFill();
+	ofSetColor(ofColor::red);
+	ofDrawBox((min + max) / 2, max.x - min.x, max.y - min.y, max.z - min.z);
+	ofFill();
+}

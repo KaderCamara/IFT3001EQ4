@@ -2,6 +2,11 @@
 
 #include "uiWindow.h"
 
+extern bool g_showBoundingBox;
+extern bool g_showWireframe; 
+
+bool g_showWireframe = false;
+
 void UIWindow::setup() {
 	//image menu
 	imageMenuPanel.setup("Image Menu");
@@ -22,6 +27,14 @@ void UIWindow::setup() {
 	drawMenuPanel.add(selectionButton.setup("select or interact"));
 	drawMenuPanel.add(exportSequenceButton.setup("Export Sequence"));
 	drawMenuPanel.add(exportImageButton.setup("Export Image"));
+
+	// view3D menu
+	view3DPanel.setup("3D View Menu");
+	view3DPanel.add(showBoundingBoxButton.setup("Show Bounding Boxes"));
+	showBoundingBoxButton.addListener(this, &UIWindow::onShowBoundingBoxPressed);
+
+	view3DPanel.add(wireframeButton.setup("Wireframe Mode"));
+	wireframeButton.addListener(this, &UIWindow::onWireframePressed);
 
 	// delete panel
 	deletePanel.setup("Delete");
@@ -105,6 +118,13 @@ void UIWindow::draw() {
 
 		ofSetColor(255);
 		ofDrawBitmapString(statusMessage, statusBox.x + 10, statusBox.y + 25);
+	}
+
+	if (showView3D) {
+		float sideMenuWidth = ofGetWidth() / 6;
+		view3DPanel.setPosition(ofGetWidth() - sideMenuWidth, menuBarHeight);
+		view3DPanel.setSize(sideMenuWidth, ofGetHeight() - menuBarHeight);
+		view3DPanel.draw();
 	}
 }
 
@@ -317,4 +337,15 @@ void UIWindow::exportCurrentFrame() {
 
 	exportFrameCount++;
 	statusMessage = "Exporting frame " + ofToString(exportFrameCount);
+}
+
+void UIWindow::onShowBoundingBoxPressed() {
+	showBoundingBox = !showBoundingBox;
+	g_showBoundingBox = showBoundingBox;
+	statusMessage = showBoundingBox ? "Bounding boxes ON" : "Bounding boxes OFF";
+}
+
+void UIWindow::onWireframePressed() {
+	g_showWireframe = !g_showWireframe;
+	statusMessage = g_showWireframe ? "Wireframe ON" : "Wireframe OFF";
 }

@@ -97,56 +97,61 @@ bool SceneGraph::insideBounds(const Shape& s, float x, float y) {
 	return false;
 }
 
-std::vector<Shape> SceneGraph::getAllShapes() {
+std::vector<Shape> & SceneGraph::getAllShapes() {
 	return shapes;
 }
 
 void SceneGraph::draw() {
 	for (int i = 0; i < shapes.size(); ++i) {
-		const Shape & s = shapes[i];
+		Shape & s = shapes[i];
 		bool isSelected = std::find(selectedIndices.begin(), selectedIndices.end(), i) != selectedIndices.end();
 
-		ofPushStyle();
+		if (!s.is3D) {
+			ofPushStyle();
 
-		if (isSelected) {
-			ofSetColor(ofColor::yellow);
-			ofSetLineWidth(3);
-		} else {
-			ofSetColor(s.color);
-			ofSetLineWidth(1);
+			if (isSelected) {
+				ofNoFill();
+				ofSetColor(ofColor::red);
+				ofSetLineWidth(3);
+			} else {
+				ofFill();
+				ofSetColor(s.color);
+				ofSetLineWidth(1);
+			}
+
+			if (s.type == "point")
+				ofDrawCircle(s.start, 3 * s.scale);
+			else if (s.type == "line")
+				ofDrawLine(s.start, s.end);
+			else if (s.type == "triangle")
+				ofDrawTriangle(s.start, ofPoint(s.end.x, s.start.y), s.end);
+			else if (s.type == "square") {
+				float side = std::abs(s.end.x - s.start.x) * s.scale;
+				ofDrawRectangle(s.start.x, s.start.y, side, side);
+			} else if (s.type == "rectangle") {
+				float w = (s.end.x - s.start.x) * s.scale;
+				float h = (s.end.y - s.start.y) * s.scale;
+				ofDrawRectangle(s.start.x, s.start.y, w, h);
+			} else if (s.type == "circle") {
+				float radius = ofDist(s.start.x, s.start.y, s.end.x, s.end.y) * s.scale;
+				ofDrawCircle(s.start, radius);
+			}
+
+			if (isSelected) {
+				ofNoFill();
+				ofSetColor(ofColor::red);
+				ofSetLineWidth(2);
+				if (s.type == "square" || s.type == "rectangle") {
+					float w = (s.end.x - s.start.x) * s.scale;
+					float h = (s.end.y - s.start.y) * s.scale;
+					ofDrawRectangle(s.start.x, s.start.y, w, h);
+				} else if (s.type == "circle") {
+					float radius = ofDist(s.start.x, s.start.y, s.end.x, s.end.y) * s.scale;
+					ofDrawCircle(s.start, radius);
+				}
+			}
+
+			ofPopStyle();
 		}
-
-		if (s.type == "point") {
-			ofDrawCircle(s.start, 3 * s.scale);
-		} else if (s.type == "line") {
-			ofDrawLine(s.start, s.end);
-		} else if (s.type == "triangle") {
-			ofPoint a = s.start;
-			ofPoint b(s.end.x, s.start.y);
-			ofPoint c = s.end;
-			ofDrawTriangle(a, b, c);
-		} else if (s.type == "square") {
-			float side = std::abs(s.end.x - s.start.x) * s.scale;
-			ofDrawRectangle(s.start.x, s.start.y, side, side);
-		} else if (s.type == "rectangle") {
-			float w = (s.end.x - s.start.x) * s.scale;
-			float h = (s.end.y - s.start.y) * s.scale;
-			ofDrawRectangle(s.start.x, s.start.y, w, h);
-		} else if (s.type == "circle") {
-			float radius = ofDist(s.start.x, s.start.y, s.end.x, s.end.y) * s.scale;
-			ofDrawCircle(s.start, radius);
-		} else {
-			ofPushMatrix();
-			ofScale(s.scale, s.scale, s.scale);
-			s.mesh3D.drawWireframe();
-			ofPopMatrix();
-		}
-
-		if (isSelected) {
-			ofNoFill();
-			ofSetColor(ofColor::yellow);
-		}
-
-		ofPopStyle();
 	}
 }

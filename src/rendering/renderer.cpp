@@ -49,12 +49,16 @@ void Renderer::view3DMode() {
 }
 
 void Renderer::draw3D() {
+	ofEnableDepthTest();
+	cam.begin();
 	for (auto & s : sceneGraph.getAllShapes()) {
-		if (s.is3D = false) {
-			shapeManager.convertTo3d(s, 2.0);
+		if (s.is3D == false) {
+			shapeManager.convertTo3d(s);
 		}
 		s.mesh3D.draw();
 	}
+	cam.end();
+	ofDisableDepthTest();
 }
 
 void Renderer::mousePressed(int x, int y, int button) {

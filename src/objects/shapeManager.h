@@ -10,7 +10,7 @@ public:
 	void deleteCurrentShapeToDraw();
 
 	Shape getCurrentShape() const { return currentShapeToDraw; }
-	void convertTo3d(Shape & shape, float depth);
+	void convertTo3d(Shape & shape);
 
 private:
 	Shape currentShapeToDraw = {

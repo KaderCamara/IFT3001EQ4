@@ -32,9 +32,9 @@ void ShapeManager::deleteCurrentShapeToDraw() {
 	};
 }
 
-void ShapeManager::convertTo3d(Shape& shape, float depth) {
+void ShapeManager::convertTo3d(Shape& shape) {
 	shape.is3D = true;
-	shape.mesh3D = shapeManager3D.to3DDraw(shape, depth);
+	shape.mesh3D = shapeManager3D.to3DDraw(shape);
 }
 
 

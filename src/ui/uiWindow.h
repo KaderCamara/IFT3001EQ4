@@ -92,6 +92,9 @@ private:
 	TabButton drawTab = { "Draw", ofRectangle(100, 0, 100, 50) };
 	TabButton view3DTab = { "3D view", ofRectangle(200, 0, 100, 50) };
 
-
+	// status box
+	float statusTimer = 0.0f;
+	std::string statusMessage;
+	ofRectangle statusBox;
 	
 };

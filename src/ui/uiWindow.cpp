@@ -31,10 +31,18 @@ void UIWindow::setup() {
 	saveShapeButton.addListener(this, &UIWindow::onSaveShapePressed);
 	deleteShapeButton.addListener(this, &UIWindow::onDeleteShapePressed);
 	selectionButton.addListener(this, &UIWindow::onSelectionPressed);
+
+	//interface box
+	statusBox.set(10, menuBarHeight + 10, 250, 40);
 }
 
 void UIWindow::update() {
-	// No special logic yet
+	if (statusTimer > 0) {
+		statusTimer -= ofGetLastFrameTime();
+		if (statusTimer <= 0) {
+			statusMessage = "";
+		}
+	}
 }
 
 void UIWindow::draw() {
@@ -69,6 +77,13 @@ void UIWindow::draw() {
 		drawMenuPanel.draw();
 	}
 	imageManager.draw();
+	if (!statusMessage.empty()) {
+		ofSetColor(0, 0, 0, 180);
+		ofDrawRectangle(statusBox);
+
+		ofSetColor(255);
+		ofDrawBitmapString(statusMessage, statusBox.x + 10, statusBox.y + 25);
+	}
 }
 
 //Menu toggles
@@ -87,13 +102,15 @@ void UIWindow::onView3DTabPressed() {
 //image
 void UIWindow::onImportImagePressed() {
 	imageManager.import();
+	statusMessage = "Image imported successfully";
 }
 
 void UIWindow::handleFileDragAndDrop(ofDragInfo dragInfo) {
 	if (!dragInfo.files.empty()) {
 		imageManager.loadFromDrag(dragInfo);
+		statusMessage = "Image loaded from drag & drop";
 	} else {
-		std::cout << "Empty drag" << std::endl;
+		statusMessage = "No file detected in drag & drop";
 	}
 }
 
@@ -130,32 +147,40 @@ void UIWindow::mousePressed(int x, int y, int button) {
 void UIWindow::onDrawAPointPressed() {
 	currentShape = "point";
 	selectShape = false;
+	statusMessage = "Drawing mode: Point";
 }
 void UIWindow::onDrawALinePressed() {
 	currentShape = "line";
 	selectShape = false;
+	statusMessage = "Drawing mode: Line";
 }
 void UIWindow::onDrawATrianglePressed() {
 	currentShape = "triangle";
 	selectShape = false;
+	statusMessage = "Drawing mode: Triangle";
 }
 void UIWindow::onDrawASquarePressed() {
 	currentShape = "square";
 	selectShape = false;
+	statusMessage = "Drawing mode: Square";
 }
 void UIWindow::onDrawARectanglePressed() {
 	currentShape = "rectangle";
 	selectShape = false;
+	statusMessage = "Drawing mode: Rectangle";
 }
 void UIWindow::onDrawACirclePressed() {
 	currentShape = "circle";
 	selectShape = false;
+	statusMessage = "Drawing mode: Circle";
 }
 void UIWindow::onSaveShapePressed() {
 	saveShape = true;
+	statusMessage = "Shape saved";
 }
 void UIWindow::onDeleteShapePressed() {
 	deleteShape = true;
+	statusMessage = "Shape deleted";
 }
 
 void UIWindow::clearRequests() {
@@ -166,12 +191,14 @@ void UIWindow::clearRequests() {
 void UIWindow::onSelectionPressed() {
 	selectShape = true;
 	currentShape = "none";
+	statusMessage = "Selection mode activated";
 }
 
 
 //general
 void UIWindow::onClearImagePressed() {
 	imageManager.clear();
+	statusMessage = "Image cleared";
 }
 
 void UIWindow::mouseReleased(int x, int y, int button) {

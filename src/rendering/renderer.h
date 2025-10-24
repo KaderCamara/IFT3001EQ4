@@ -23,6 +23,7 @@ public:
   void selectingModeOn();
   void selectingModeOff();
   void view3DMode();
+  ofEasyCam cam;
 
 private:
   ofTrueTypeFont font;

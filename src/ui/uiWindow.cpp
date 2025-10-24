@@ -19,9 +19,13 @@ void UIWindow::setup() {
 	drawMenuPanel.add(drawRectangleButton.setup("Draw a rectangle"));
 	drawMenuPanel.add(drawCircleButton.setup("Draw a circle"));
 	drawMenuPanel.add(saveShapeButton.setup("save the shape"));
-	drawMenuPanel.add(deleteShapeButton.setup("delete the shape"));
 	drawMenuPanel.add(selectionButton.setup("select or interact"));
 
+	// delete panel
+	deletePanel.setup("Delete");
+	deletePanel.add(deleteShapeButton.setup("delete the shape"));
+
+	deleteShapeButton.addListener(this, &UIWindow::onDeleteShapePressed);
 	drawPointButton.addListener(this, &UIWindow::onDrawAPointPressed);
 	drawLineButton.addListener(this, &UIWindow::onDrawALinePressed);
 	drawTriangleButton.addListener(this, &UIWindow::onDrawATrianglePressed);
@@ -29,7 +33,6 @@ void UIWindow::setup() {
 	drawRectangleButton.addListener(this, &UIWindow::onDrawARectanglePressed);
 	drawCircleButton.addListener(this, &UIWindow::onDrawACirclePressed);
 	saveShapeButton.addListener(this, &UIWindow::onSaveShapePressed);
-	deleteShapeButton.addListener(this, &UIWindow::onDeleteShapePressed);
 	selectionButton.addListener(this, &UIWindow::onSelectionPressed);
 
 	//interface box
@@ -75,7 +78,14 @@ void UIWindow::draw() {
 	}
 	if (showDrawMenu) {
 		drawMenuPanel.draw();
+
+		if (selectShape) {
+			float sideMenuWidth = ofGetWidth() / 6;
+			deletePanel.setPosition(ofGetWidth() - sideMenuWidth, menuBarHeight + drawMenuPanel.getHeight());
+			deletePanel.draw();
+		}
 	}
+
 	imageManager.draw();
 	if (!statusMessage.empty()) {
 		ofSetColor(0, 0, 0, 180);
@@ -123,6 +133,7 @@ void UIWindow::mousePressed(int x, int y, int button) {
 		showView3D = false;
 		currentShape = "none";
 		imageTab.active = true;
+		selectShape = false;
 
 	} else if (drawTab.bounds.inside(x, y)) {
 		showDrawMenu = !showDrawMenu;
@@ -140,6 +151,7 @@ void UIWindow::mousePressed(int x, int y, int button) {
 		imageTab.active = false;
 		currentShape = "none";
 		view3DTab.active = true;
+		selectShape = false;
 	}
 }
 
@@ -179,6 +191,8 @@ void UIWindow::onSaveShapePressed() {
 	statusMessage = "Shape saved";
 }
 void UIWindow::onDeleteShapePressed() {
+	if (!selectShape) return;
+
 	deleteShape = true;
 	statusMessage = "Shape deleted";
 }

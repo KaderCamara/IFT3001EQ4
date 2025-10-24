@@ -40,6 +40,7 @@ private:
 	//panels of the menu choices
 	ofxPanel imageMenuPanel;
 	ofxPanel drawMenuPanel;
+	ofxPanel deletePanel;
 
 	//image tab elements
 	ofxButton importImageButton;

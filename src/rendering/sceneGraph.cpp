@@ -113,3 +113,8 @@ void SceneGraph::draw() {
 		}
 	}
 
+// 3D IMPORT FUNCTIONS
+	void SceneGraph::setShapes(const std::vector<Shape> & newShapes) {
+		shapes = newShapes;
+	}
+

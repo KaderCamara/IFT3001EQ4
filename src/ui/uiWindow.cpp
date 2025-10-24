@@ -10,6 +10,13 @@ void UIWindow::setup() {
 	importImageButton.addListener(this, &UIWindow::onImportImagePressed);
 	clearButton.addListener(this, &UIWindow::onClearImagePressed);
 
+	// Import 3D Model Button in Image Menu
+	imageMenuPanel.add(import3DModelButton.setup("Import 3D Model"));
+	imageMenuPanel.add(clear3DModelButton.setup("Clear 3D Models"));
+	import3DModelButton.addListener(this, &UIWindow::onImport3DModelPressed);
+	clear3DModelButton.addListener(this, &UIWindow::onClear3DModelPressed);
+
+
 	//draw menu
 	drawMenuPanel.setup("Draw Menu");
 	drawMenuPanel.add(drawPointButton.setup("Draw a point"));
@@ -225,5 +232,14 @@ void UIWindow::mouseReleased(int x, int y, int button) {
 	}
 }
 
+// 3D IMPORT 
+
+void UIWindow::onImport3DModelPressed() {
+	import3DModelRequested = true;
+}
+
+void UIWindow::onClear3DModelPressed() {
+	clear3DModelRequested = true;
+}
 
 

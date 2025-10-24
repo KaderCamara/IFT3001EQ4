@@ -40,6 +40,15 @@ public:
 	float getRotation() const { return rotation; }
 	float getScale() const { return scaleFactor; }
 
+	// 3D IMPORT
+
+	bool isImport3DModelRequested() const { return import3DModelRequested; }
+	void clearImport3DModelRequest() { import3DModelRequested = false; }
+	void onImport3DModelPressed();
+	bool isClear3DModelRequested() const { return clear3DModelRequested; }
+	void clearClear3DModelRequest() { clear3DModelRequested = false; }
+	void onClear3DModelPressed();
+
 private:
 
 	struct TabButton {
@@ -123,6 +132,13 @@ private:
 	ofParameter<float> translateX, translateY;
 	ofParameter<float> rotation;
 	ofParameter<float> scaleFactor;
+
+	// Bouton d'importation 3D
+	ofxButton import3DModelButton;
+	bool import3DModelRequested = false;
+	ofxButton clear3DModelButton;
+	bool clear3DModelRequested = false;
+	
 	
 
 

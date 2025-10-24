@@ -37,6 +37,16 @@ void Application::update() {
 				renderer.view3DMode();
 			}
 		}
+	if (uiWindow.isImport3DModelRequested()) { // 3D IMPORT
+		renderer.import3DModel();
+		renderer.view3DMode();
+		uiWindow.clearImport3DModelRequest();
+	}
+
+	if (uiWindow.isClear3DModelRequested()) {
+		renderer.clear3DModels();
+		uiWindow.clearClear3DModelRequest();
+	}
 
 	uiWindow.clearRequests();
 }

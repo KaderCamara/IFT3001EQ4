@@ -19,6 +19,8 @@ public:
 
 	//JORDAN: transformation functions
 	void updateSelectedTransform(float tx, float ty, float rot, float scale);
+	//3D IMPORT functions
+	void setShapes(const std::vector<Shape> & newShapes);
 
 	private:
 	int selectedIndex = -1;

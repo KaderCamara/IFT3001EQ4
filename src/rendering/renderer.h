@@ -4,6 +4,8 @@
 #include "ofMain.h"
 #include "../objects/shapeManager.h"
 #include "sceneGraph.h"
+#include "ofxAssimpModelLoader.h"
+#include <algorithm>
 
 class Renderer
 {
@@ -23,6 +25,8 @@ public:
   void applyDrawingParameters(float lineW, const ofColor & stroke, const ofColor & fill, const ofColor & bg, bool useHSB, float hue, float saturation, float brightness);
   void updateShapeManagerParams(float lineW, ofColor stroke, ofColor fill);
   void applyTransformationToSelectedShape(float tx, float ty, float rot, float scale);
+  void import3DModel();
+  void clear3DModels();
 
   //mini-controller
   void save();
@@ -50,4 +54,7 @@ private:
   ofColor currentFillColor = ofColor::white;
   ofColor currentBgColor = ofColor::white;
   bool useHSBmode = false;
+
+  // 3D IMPORT
+  bool modelImported = false;
 };

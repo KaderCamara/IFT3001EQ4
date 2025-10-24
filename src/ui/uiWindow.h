@@ -60,6 +60,8 @@ private:
 	ofxButton saveShapeButton;
 	ofxButton deleteShapeButton;
 	ofxButton selectionButton;
+	ofxButton exportSequenceButton;
+	ofxButton exportImageButton;
 	std::string currentShape = "none";
 	bool showDrawMenu = false;
 	bool saveShape = false;
@@ -83,6 +85,7 @@ private:
 	//general
 	ofTrueTypeFont font;
 	ImageManager imageManager;
+	SceneGraph sceneGraph;
 	//float SideMenuwidth = 200;
 	float menuBarHeight = 50;
 	float buttonsWidth = 100;
@@ -97,5 +100,19 @@ private:
 	float statusTimer = 0.0f;
 	std::string statusMessage;
 	ofRectangle statusBox;
+
+	// Export
+	ofFbo exportFbo;
+	std::string exportFolder = "export";
+	bool exportSequence = false;
+	int exportFrameCount = 0;
+	int maxFrames = 100;
+	float exportInterval = 0.5f;
+	float exportTimer = 0.0f;
+
+	void onExportSequencePressed();
+	void exportCurrentFrame();
+	void onExportImagePressed();
+	void exportScene();
 	
 };

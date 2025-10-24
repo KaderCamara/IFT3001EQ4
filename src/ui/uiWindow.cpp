@@ -20,6 +20,8 @@ void UIWindow::setup() {
 	drawMenuPanel.add(drawCircleButton.setup("Draw a circle"));
 	drawMenuPanel.add(saveShapeButton.setup("save the shape"));
 	drawMenuPanel.add(selectionButton.setup("select or interact"));
+	drawMenuPanel.add(exportSequenceButton.setup("Export Sequence"));
+	drawMenuPanel.add(exportImageButton.setup("Export Image"));
 
 	// delete panel
 	deletePanel.setup("Delete");
@@ -34,16 +36,26 @@ void UIWindow::setup() {
 	drawCircleButton.addListener(this, &UIWindow::onDrawACirclePressed);
 	saveShapeButton.addListener(this, &UIWindow::onSaveShapePressed);
 	selectionButton.addListener(this, &UIWindow::onSelectionPressed);
+	exportSequenceButton.addListener(this, &UIWindow::onExportSequencePressed);
+	exportImageButton.addListener(this, &UIWindow::onExportImagePressed);
 
 	//interface box
 	statusBox.set(10, menuBarHeight + 10, 250, 40);
+
+	//export
+	exportFbo.allocate(ofGetWidth(), ofGetHeight() - menuBarHeight, GL_RGBA);
 }
 
 void UIWindow::update() {
-	if (statusTimer > 0) {
-		statusTimer -= ofGetLastFrameTime();
-		if (statusTimer <= 0) {
-			statusMessage = "";
+	if (exportSequence) {
+		exportTimer += ofGetLastFrameTime();
+		if (exportTimer >= exportInterval) {
+			exportCurrentFrame();
+			exportTimer = 0;
+			if (exportFrameCount >= maxFrames) {
+				exportSequence = false;
+				statusMessage = "Export finished (" + ofToString(maxFrames) + " frames)";
+			}
 		}
 	}
 }
@@ -222,4 +234,87 @@ void UIWindow::mouseReleased(int x, int y, int button) {
 }
 
 
+void UIWindow::onExportSequencePressed() {
+	exportSequence = !exportSequence;
+	if (exportSequence) {
+		ofFileDialogResult result = ofSystemLoadDialog("Select folder to save frames", true);
+		if (result.bSuccess) {
+			exportFolder = result.getPath() + "/sequence_" + ofGetTimestampString("%Y%m%d_%H%M%S");
+			ofDirectory dir;
+			dir.createDirectory(exportFolder, false, true);
+			exportFrameCount = 0;
+			exportTimer = 0;
+			statusMessage = "Export sequence started in " + exportFolder;
+		} else {
+			exportSequence = false;
+			statusMessage = "Export cancelled";
+		}
+	} else {
+		statusMessage = "Export stopped";
+	}
+}
 
+
+void UIWindow::onExportImagePressed() {
+	exportScene();
+	statusMessage = "Scene exported";
+	statusTimer = 2.0f;
+}
+
+void UIWindow::exportScene() {
+	ofFileDialogResult result = ofSystemLoadDialog("Select folder to save image", true);
+	if (!result.bSuccess) return;
+	exportFolder = result.getPath();
+
+	ofDirectory dir;
+	dir.createDirectory(exportFolder, false, true);
+
+	std::string filename = exportFolder + "/frame_" + ofToString(exportFrameCount, 4, '0') + "_" + ofGetTimestampString("%Y%m%d_%H%M%S") + ".png";
+
+	if (exportFbo.getWidth() != drawingArea.getWidth() || exportFbo.getHeight() != drawingArea.getHeight()) {
+		exportFbo.allocate(drawingArea.getWidth(), drawingArea.getHeight(), GL_RGBA);
+	}
+
+	exportFbo.begin();
+	ofClear(255, 255, 255, 0);
+	ofPushMatrix();
+	ofTranslate(-drawingArea.x, -drawingArea.y);
+	imageManager.draw();
+	sceneGraph.draw();
+	ofPopMatrix();
+	exportFbo.end();
+
+	ofPixels pixels;
+	exportFbo.readToPixels(pixels);
+	ofImage img;
+	img.setFromPixels(pixels);
+	img.save(filename);
+
+	statusMessage = "Scene exported to " + filename;
+	statusTimer = 2.0f;
+}
+
+void UIWindow::exportCurrentFrame() {
+	if (exportFbo.getWidth() != drawingArea.getWidth() || exportFbo.getHeight() != drawingArea.getHeight()) {
+		exportFbo.allocate(drawingArea.getWidth(), drawingArea.getHeight(), GL_RGBA);
+	}
+
+	exportFbo.begin();
+	ofClear(255, 255, 255, 0);
+	ofPushMatrix();
+	ofTranslate(-drawingArea.x, -drawingArea.y);
+	imageManager.draw();
+	sceneGraph.draw();
+	ofPopMatrix();
+	exportFbo.end();
+
+	std::string filename = exportFolder + "/frame_" + ofToString(exportFrameCount, 4, '0') + ".png";
+	ofPixels pixels;
+	exportFbo.readToPixels(pixels);
+	ofImage img;
+	img.setFromPixels(pixels);
+	img.save(filename);
+
+	exportFrameCount++;
+	statusMessage = "Exporting frame " + ofToString(exportFrameCount);
+}

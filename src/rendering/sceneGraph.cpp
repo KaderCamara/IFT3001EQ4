@@ -75,6 +75,7 @@ std::vector<Shape> SceneGraph::getAllShapes() {
 	return shapes;
 }
 void SceneGraph::draw() {
+	ofSetColor(255, 255, 255);
 	for (const auto & s : shapes) {
 		if (s.type == "point") {
 			ofDrawCircle(s.start, 2);

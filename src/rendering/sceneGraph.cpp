@@ -24,23 +24,49 @@ void SceneGraph::clear() {
 	selectedIndex = -1;
 }
 
-int SceneGraph::selectShapeAt(float x, float y) {
+void SceneGraph::selectShapeAt(float x, float y, bool addToSelection) {
+	if (!addToSelection)
+		selectedIndices.clear();
+
 	for (int i = 0; i < shapes.size(); ++i) {
 		if (insideBounds(shapes[i], x, y)) {
-			selectedIndex = i;
-			return i;
+			auto it = std::find(selectedIndices.begin(), selectedIndices.end(), i);
+			if (it != selectedIndices.end()) {
+				selectedIndices.erase(it);
+			} else {
+				selectedIndices.push_back(i);
+			}
+			break;
 		}
 	}
-	selectedIndex = -1;
-	return -1;
+}
+
+void SceneGraph::deselectAll() {
+	selectedIndices.clear();
 }
 
 void SceneGraph::updateSelectedAttributes(const ofColor & color, float size) {
-	if(selectedIndex >= 0 && selectedIndex < shapes.size()) {
-		Shape & selected = shapes[selectedIndex];
-		// when you add color/size attributes to Shape, update them here
-		// e.g., selected.color = color; selected.size = size;
+	for (int i : selectedIndices) {
+		if (i >= 0 && i < shapes.size()) {
+			Shape & s = shapes[i];
+			s.color = color;
+			s.scale = size;
+		}
 	}
+}
+
+void SceneGraph::removeSelectedShapes() {
+	if (selectedIndices.empty()) return;
+
+	std::sort(selectedIndices.begin(), selectedIndices.end(), std::greater<int>());
+
+	for (int index : selectedIndices) {
+		if (index >= 0 && index < shapes.size()) {
+			shapes.erase(shapes.begin() + index);
+		}
+	}
+
+	selectedIndices.clear();
 }
 
 bool SceneGraph::insideBounds(const Shape& s, float x, float y) {
@@ -74,24 +100,53 @@ bool SceneGraph::insideBounds(const Shape& s, float x, float y) {
 std::vector<Shape> SceneGraph::getAllShapes() {
 	return shapes;
 }
+
 void SceneGraph::draw() {
-	ofSetColor(255, 255, 255);
-	for (const auto & s : shapes) {
+	for (int i = 0; i < shapes.size(); ++i) {
+		const Shape & s = shapes[i];
+		bool isSelected = std::find(selectedIndices.begin(), selectedIndices.end(), i) != selectedIndices.end();
+
+		ofPushStyle();
+
+		if (isSelected) {
+			ofSetColor(ofColor::yellow);
+			ofSetLineWidth(3);
+		} else {
+			ofSetColor(s.color);
+			ofSetLineWidth(1);
+		}
+
 		if (s.type == "point") {
-			ofDrawCircle(s.start, 2);
+			ofDrawCircle(s.start, 3 * s.scale);
 		} else if (s.type == "line") {
 			ofDrawLine(s.start, s.end);
 		} else if (s.type == "triangle") {
-			ofDrawTriangle(s.start, ofPoint(s.end.x, s.start.y), s.end);
+			ofPoint a = s.start;
+			ofPoint b(s.end.x, s.start.y);
+			ofPoint c = s.end;
+			ofDrawTriangle(a, b, c);
 		} else if (s.type == "square") {
-			float side = std::abs(s.end.x - s.start.x);
+			float side = std::abs(s.end.x - s.start.x) * s.scale;
 			ofDrawRectangle(s.start.x, s.start.y, side, side);
 		} else if (s.type == "rectangle") {
-			ofDrawRectangle(s.start.x, s.start.y,
-				s.end.x - s.start.x, s.end.y - s.start.y);
+			float w = (s.end.x - s.start.x) * s.scale;
+			float h = (s.end.y - s.start.y) * s.scale;
+			ofDrawRectangle(s.start.x, s.start.y, w, h);
 		} else if (s.type == "circle") {
-			float radius = ofDist(s.start.x, s.start.y, s.end.x, s.end.y);
+			float radius = ofDist(s.start.x, s.start.y, s.end.x, s.end.y) * s.scale;
 			ofDrawCircle(s.start, radius);
+		} else {
+			ofPushMatrix();
+			ofScale(s.scale, s.scale, s.scale);
+			s.mesh3D.drawWireframe();
+			ofPopMatrix();
 		}
+
+		if (isSelected) {
+			ofNoFill();
+			ofSetColor(ofColor::yellow);
+		}
+
+		ofPopStyle();
 	}
 }

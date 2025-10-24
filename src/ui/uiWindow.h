@@ -114,5 +114,12 @@ private:
 	void exportCurrentFrame();
 	void onExportImagePressed();
 	void exportScene();
+
+	// vidual feedback
+	ofColor feedbackColor = ofColor::white;
+	float feedbackAlpha = 255.0f;
+	bool feedbackFlash = false;
+	float feedbackTimer = 0.0f;
+	float feedbackFlashDuration = 0.5f;
 	
 };

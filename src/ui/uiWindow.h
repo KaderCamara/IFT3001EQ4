@@ -23,6 +23,7 @@ public:
 	bool isSaveShapeRequested() const { return saveShape; }
 	bool isDeleteShapeRequested() const { return deleteShape; }
 	bool is3DviewRequested() const { return showView3D; }
+	bool is2DviewRequested() const { return showDrawMenu; }
 	void clearRequests();
 
 private:

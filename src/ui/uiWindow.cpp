@@ -14,10 +14,10 @@ void UIWindow::setup() {
 	drawMenuPanel.setup("Draw Menu");
 	drawMenuPanel.add(drawPointButton.setup("Draw a point"));
 	drawMenuPanel.add(drawLineButton.setup("Draw a line"));
-	drawMenuPanel.add(drawTriangleButton.setup("Draw a triangle"));
-	drawMenuPanel.add(drawSquareButton.setup("Draw a square"));
-	drawMenuPanel.add(drawRectangleButton.setup("Draw a rectangle"));
-	drawMenuPanel.add(drawCircleButton.setup("Draw a circle"));
+	drawMenuPanel.add(drawTriangleButton.setup("Draw a triangle | view in 3D mode"));
+	drawMenuPanel.add(drawSquareButton.setup("Draw a square | view in 3D mode"));
+	drawMenuPanel.add(drawRectangleButton.setup("Draw a rectangle | view in 3D mode"));
+	drawMenuPanel.add(drawCircleButton.setup("Draw a circle | view in 3D mode"));
 	drawMenuPanel.add(saveShapeButton.setup("save the shape"));
 	drawMenuPanel.add(deleteShapeButton.setup("delete the shape"));
 	drawMenuPanel.add(selectionButton.setup("select or interact"));

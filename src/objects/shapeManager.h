@@ -11,6 +11,8 @@ public:
 
 	Shape getCurrentShape() const { return currentShapeToDraw; }
 	void convertTo3d(Shape & shape);
+	void setDrawingParameters(float lineW, ofColor stroke, ofColor fill);
+	void drawShapePrimitive(const Shape & s);
 
 private:
 	Shape currentShapeToDraw = {

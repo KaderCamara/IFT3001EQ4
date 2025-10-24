@@ -5,7 +5,6 @@
 
 #include "application.h"
 
-// fonction appelée à l'initialisation de l'application
 void Application::setup()
 {
   ofSetWindowTitle("3D app");
@@ -32,15 +31,32 @@ void Application::update() {
 		renderer.selectingModeOff();
 	}
 	if (uiWindow.is3DviewRequested()) {
-		renderer.view3DMode();
-	}
+			if (renderer.is3DView()) {
+				renderer.view2DMode();
+			} else {
+				renderer.view3DMode();
+			}
+		}
 
 	uiWindow.clearRequests();
 }
 
-void Application::draw()
-{
-  renderer.setDrawingArea(uiWindow.getDrawingArea());
+void Application::draw() {
+	renderer.setDrawingArea(uiWindow.getDrawingArea());
+	renderer.applyDrawingParameters(
+		uiWindow.getLineWidth(),
+		uiWindow.getStrokeColor(),
+		uiWindow.getFillColor(),
+		uiWindow.getBackgroundColor(),
+		uiWindow.isHSBMode(),
+		uiWindow.getHue(),
+		uiWindow.getSaturation(),
+		uiWindow.getBrightness());
+	renderer.updateShapeManagerParams(
+		uiWindow.getLineWidth(),
+		uiWindow.getStrokeColor(),
+		uiWindow.getFillColor());
+	uiWindow.getBackgroundColor();
   renderer.draw();
   uiWindow.draw();
 }
@@ -61,8 +77,6 @@ void Application::mouseReleased(int x, int y, int button) {
 		uiWindow.mouseReleased(x, y, button);
 	}
 }
-
-
 
 void Application::dragEvent(ofDragInfo dragInfo) {
 	uiWindow.handleFileDragAndDrop(dragInfo);

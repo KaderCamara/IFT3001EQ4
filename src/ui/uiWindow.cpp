@@ -31,6 +31,20 @@ void UIWindow::setup() {
 	saveShapeButton.addListener(this, &UIWindow::onSaveShapePressed);
 	deleteShapeButton.addListener(this, &UIWindow::onDeleteShapePressed);
 	selectionButton.addListener(this, &UIWindow::onSelectionPressed);
+
+	// --- Drawing parameters ---
+	drawParamsPanel.setup("Drawing Parameters");
+	drawParamsPanel.add(lineWidth.set("Line Width", 2.0, 1.0, 10.0));
+	drawParamsPanel.add(strokeColor.set("Stroke Color", ofColor(0, 0, 0)));
+	drawParamsPanel.add(fillColor.set("Fill Color", ofColor(255, 0, 0)));
+	drawParamsPanel.add(backgroundColor.set("Background", ofColor(180, 200, 220)));
+	drawParamsPanel.add(useHSB.set("HSB Mode", false));
+
+	drawParamsPanel.add(hue.set("Hue", 128, 0, 255));
+	drawParamsPanel.add(saturation.set("Saturation", 255, 0, 255));
+	drawParamsPanel.add(brightness.set("Brightness", 255, 0, 255));
+
+
 }
 
 void UIWindow::update() {
@@ -68,6 +82,14 @@ void UIWindow::draw() {
 	if (showDrawMenu) {
 		drawMenuPanel.draw();
 	}
+	//drawing settings panel
+	// Drawing parameter panel (à gauche)
+	if (showDrawMenu) {
+		float panelWidth = ofGetWidth() / 6;
+		drawParamsPanel.setPosition(10, menuBarHeight + 10);
+		drawParamsPanel.setSize(panelWidth - 20, 200);
+		drawParamsPanel.draw();
+	}
 	imageManager.draw();
 }
 
@@ -81,6 +103,7 @@ void UIWindow::onDrawTabPressed() {
 }
 void UIWindow::onView3DTabPressed() {
 	showView3D = !showView3D;
+	view3DRequested = true;
 }
 
 //menu actions
@@ -161,6 +184,7 @@ void UIWindow::onDeleteShapePressed() {
 void UIWindow::clearRequests() {
 	saveShape = false;
 	deleteShape = false;
+	view3DRequested = false;
 }
 
 void UIWindow::onSelectionPressed() {

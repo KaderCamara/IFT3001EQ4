@@ -10,6 +10,11 @@ void Renderer::setup()
 }
 
 void Renderer::draw(){
+	ofPushStyle();
+	ofSetColor(currentBgColor);
+	ofDrawRectangle(drawingArea.x, drawingArea.y, drawingArea.width, drawingArea.height);
+	ofPopStyle();
+	ofSetLineWidth(currentLineWidth);
 	if (view3D) {
 		draw3D();
 	} else {
@@ -82,3 +87,23 @@ void Renderer::mouseReleased(int x, int y, int button) {
 	}
 }
 
+void Renderer::view2DMode() {
+	view3D = false;
+}
+
+void Renderer::applyDrawingParameters(float lineW, const ofColor & stroke, const ofColor & fill, const ofColor & bg, bool useHSB, float hue, float saturation, float brightness) {
+	currentLineWidth = lineW;
+	useHSBmode = useHSB;
+	if (useHSBmode) {
+		currentStrokeColor = ofColor::fromHsb(hue, saturation, brightness);
+		currentFillColor = ofColor::fromHsb(hue, saturation, brightness);
+		currentBgColor = ofColor::fromHsb(hue, saturation, brightness);
+	} else {
+		currentStrokeColor = stroke;
+		currentFillColor = fill;
+		currentBgColor = bg;
+	}
+}
+void Renderer::updateShapeManagerParams(float lineW, ofColor stroke, ofColor fill) {
+	shapeManager.setDrawingParameters(lineW, stroke, fill);
+}

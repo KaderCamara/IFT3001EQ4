@@ -24,6 +24,15 @@ public:
 	bool isDeleteShapeRequested() const { return deleteShape; }
 	bool is3DviewRequested() const { return showView3D; }
 	void clearRequests();
+	bool view3DRequested = false;
+	float getLineWidth() const { return lineWidth; }
+	ofColor getStrokeColor() const { return strokeColor; }
+	ofColor getFillColor() const { return fillColor; }
+	ofColor getBackgroundColor() const { return backgroundColor; }
+	bool isHSBMode() const { return useHSB; }
+	float getHue() const { return hue; }
+	float getSaturation() const { return saturation; }
+	float getBrightness() const { return brightness; }
 
 private:
 
@@ -91,6 +100,18 @@ private:
 	TabButton imageTab = { "Image", ofRectangle(0, 0, 100, 50) };
 	TabButton drawTab = { "Draw", ofRectangle(100, 0, 100, 50) };
 	TabButton view3DTab = { "3D view", ofRectangle(200, 0, 100, 50) };
+
+	// --- Drawing parameters panel ---
+	ofxPanel drawParamsPanel;
+	ofParameter<float> lineWidth;
+	ofParameter<ofColor> strokeColor;
+	ofParameter<ofColor> fillColor;
+	ofParameter<ofColor> backgroundColor;
+	ofParameter<bool> useHSB;
+	ofParameter<float> hue;
+	ofParameter<float> saturation;
+	ofParameter<float> brightness;
+	
 
 
 	

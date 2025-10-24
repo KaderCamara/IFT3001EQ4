@@ -17,6 +17,12 @@ public:
   void mouseReleased(int x, int y, int button);
   void draw3D();
 
+  // MODIFICATIONS JORDAN
+  void view2DMode();
+  bool is3DView() const { return view3D; }
+  void applyDrawingParameters(float lineW, const ofColor & stroke, const ofColor & fill, const ofColor & bg, bool useHSB, float hue, float saturation, float brightness);
+  void updateShapeManagerParams(float lineW, ofColor stroke, ofColor fill);
+
   //mini-controller
   void save();
   void deleteShape();
@@ -37,4 +43,10 @@ private:
   bool shapeSelected = false;
   int shapeSelectedIndex = -1;
   bool view3D = false;
+  // --- Parameters from UI ---
+  float currentLineWidth = 2.0f;
+  ofColor currentStrokeColor = ofColor::black;
+  ofColor currentFillColor = ofColor::white;
+  ofColor currentBgColor = ofColor::white;
+  bool useHSBmode = false;
 };

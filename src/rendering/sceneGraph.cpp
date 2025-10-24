@@ -76,6 +76,14 @@ std::vector<Shape> SceneGraph::getAllShapes() {
 }
 void SceneGraph::draw() {
 	for (const auto & s : shapes) {
+		// JORDAN
+		ofPushMatrix();
+		ofTranslate(s.translation);
+		ofTranslate((s.start.x + s.end.x) / 2, (s.start.y + s.end.y) / 2);
+		ofRotateDeg(s.rotation);
+		ofScale(s.scale, s.scale);
+		ofTranslate(-(s.start.x + s.end.x) / 2, -(s.start.y + s.end.y) / 2);
+		// END JORDAN
 		if (s.type == "point") {
 			ofDrawCircle(s.start, 2);
 		} else if (s.type == "line") {
@@ -92,5 +100,16 @@ void SceneGraph::draw() {
 			float radius = ofDist(s.start.x, s.start.y, s.end.x, s.end.y);
 			ofDrawCircle(s.start, radius);
 		}
+		ofPopMatrix(); // JORDAN
 	}
-}
+	}
+
+// JORDAN: transformation FUNCTIONS
+	void SceneGraph::updateSelectedTransform(float tx, float ty, float rot, float scale) {
+		if (selectedIndex >= 0 && selectedIndex < shapes.size()) {
+			shapes[selectedIndex].translation.set(tx, ty);
+			shapes[selectedIndex].rotation = rot;
+			shapes[selectedIndex].scale = scale;
+		}
+	}
+

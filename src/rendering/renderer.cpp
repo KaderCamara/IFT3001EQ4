@@ -107,3 +107,8 @@ void Renderer::applyDrawingParameters(float lineW, const ofColor & stroke, const
 void Renderer::updateShapeManagerParams(float lineW, ofColor stroke, ofColor fill) {
 	shapeManager.setDrawingParameters(lineW, stroke, fill);
 }
+
+// Transformation functions
+void Renderer::applyTransformationToSelectedShape(float tx, float ty, float rot, float scale) {
+	sceneGraph.updateSelectedTransform(tx, ty, rot, scale);
+}

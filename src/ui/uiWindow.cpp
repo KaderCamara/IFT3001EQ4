@@ -44,6 +44,13 @@ void UIWindow::setup() {
 	drawParamsPanel.add(saturation.set("Saturation", 255, 0, 255));
 	drawParamsPanel.add(brightness.set("Brightness", 255, 0, 255));
 
+	// Transformation parameters
+	transformPanel.setup("Transformations");
+	transformPanel.add(translateX.set("Translate X", 0.0, -2000, 2000));
+	transformPanel.add(translateY.set("Translate Y", 0.0, -2000, 2000));
+	transformPanel.add(rotation.set("Rotation", 0.0, -720, 720));
+	transformPanel.add(scaleFactor.set("Scale", 1.0, 0.1, 5.0));
+
 
 }
 
@@ -89,6 +96,20 @@ void UIWindow::draw() {
 		drawParamsPanel.setPosition(10, menuBarHeight + 10);
 		drawParamsPanel.setSize(panelWidth - 20, 200);
 		drawParamsPanel.draw();
+	}
+
+	// transformation panel
+	if (selectShape) {
+		float panelWidth = ofGetWidth() / 6;
+		transformPanel.setPosition(10, menuBarHeight + 250);
+		transformPanel.setSize(panelWidth - 20, 180);
+		float windowWidth = drawingArea.getWidth();
+		float windowHeight = drawingArea.getHeight();
+		translateX.setMin(-windowWidth / 2);
+		translateX.setMax(windowWidth / 2);
+		translateY.setMin(-windowHeight / 2);
+		translateY.setMax(windowHeight / 2);
+		transformPanel.draw();
 	}
 	imageManager.draw();
 }

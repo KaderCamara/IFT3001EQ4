@@ -34,6 +34,12 @@ public:
 	float getSaturation() const { return saturation; }
 	float getBrightness() const { return brightness; }
 
+	// Transformation getters
+	float getTranslateX() const { return translateX; }
+	float getTranslateY() const { return translateY; }
+	float getRotation() const { return rotation; }
+	float getScale() const { return scaleFactor; }
+
 private:
 
 	struct TabButton {
@@ -111,6 +117,12 @@ private:
 	ofParameter<float> hue;
 	ofParameter<float> saturation;
 	ofParameter<float> brightness;
+
+	// Transformation attributes
+	ofxPanel transformPanel;
+	ofParameter<float> translateX, translateY;
+	ofParameter<float> rotation;
+	ofParameter<float> scaleFactor;
 	
 
 

@@ -22,6 +22,7 @@ public:
   bool is3DView() const { return view3D; }
   void applyDrawingParameters(float lineW, const ofColor & stroke, const ofColor & fill, const ofColor & bg, bool useHSB, float hue, float saturation, float brightness);
   void updateShapeManagerParams(float lineW, ofColor stroke, ofColor fill);
+  void applyTransformationToSelectedShape(float tx, float ty, float rot, float scale);
 
   //mini-controller
   void save();

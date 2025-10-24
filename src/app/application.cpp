@@ -43,6 +43,7 @@ void Application::update() {
 
 void Application::draw() {
 	renderer.setDrawingArea(uiWindow.getDrawingArea());
+
 	renderer.applyDrawingParameters(
 		uiWindow.getLineWidth(),
 		uiWindow.getStrokeColor(),
@@ -57,6 +58,13 @@ void Application::draw() {
 		uiWindow.getStrokeColor(),
 		uiWindow.getFillColor());
 	uiWindow.getBackgroundColor();
+
+	renderer.applyTransformationToSelectedShape(
+		uiWindow.getTranslateX(),
+		uiWindow.getTranslateY(),
+		uiWindow.getRotation(),
+		uiWindow.getScale());
+
   renderer.draw();
   uiWindow.draw();
 }

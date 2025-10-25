@@ -6,6 +6,7 @@
 #include "sceneGraph.h"
 #include "cameraManager.h"
 
+
 class Renderer
 {
 public:
@@ -18,6 +19,7 @@ public:
   void mouseReleased(int x, int y, int button);
   void keyPressed(int key);
   void draw3D();
+  void setShowBoundingBox(bool state) { showBoundingBox = state; }
 
   //mini-controller
   void save();
@@ -31,6 +33,7 @@ public:
 private:
   ofTrueTypeFont font;
   ofRectangle drawingArea;
+  ofRectangle getMeshBoundingBox(const ofMesh & mesh);
   std::string currentShape = "none";
   bool drawing = false;
   bool selecting = false;
@@ -39,6 +42,7 @@ private:
   SceneGraph sceneGraph;
   ofPoint startPoint, endPoint;
   bool shapeSelected = false;
+  bool showBoundingBox = false;
   int shapeSelectedIndex = -1;
   bool view3D = false;
   bool view2D = true;

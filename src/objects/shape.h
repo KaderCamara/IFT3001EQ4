@@ -7,4 +7,6 @@ struct Shape {
 	ofPoint start, end;
 	ofMesh mesh3D;
 	bool is3D = false;
+	ofColor color = ofColor::white;
+	float scale = 1.0f;
 };

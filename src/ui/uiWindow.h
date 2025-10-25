@@ -7,6 +7,7 @@
 #include "ofxGui.h"
 #include "../image/imageManager.h"
 #include "rendering/sceneGraph.h"
+#include "rendering/renderer.h"
 
 class UIWindow  {
 public:
@@ -26,6 +27,10 @@ public:
 	bool is2DviewRequested() const { return showDrawMenu; }
 	bool isQuadViewRequested() const { return showQuadView; }
 	void clearRequests();
+	bool showBoundingBox = false;
+	bool showWireframe = false; 
+	bool getShowBoundingBox() const { return showBoundingBox; }
+	bool getShowWireframe() const { return showWireframe; }
 
 private:
 
@@ -36,6 +41,8 @@ private:
 		bool active = false;
 	};
 
+	CameraManager cameraManager;
+
 	//drawing area
 	ofRectangle drawingArea;
 
@@ -43,6 +50,8 @@ private:
 	ofxPanel imageMenuPanel;
 	ofxPanel drawMenuPanel;
 	ofxPanel view3DMenuPanel;
+	ofxPanel deletePanel;
+	ofxPanel view3DPanel;
 
 	//image tab elements
 	ofxButton importImageButton;
@@ -62,6 +71,10 @@ private:
 	ofxButton saveShapeButton;
 	ofxButton deleteShapeButton;
 	ofxButton selectionButton;
+	ofxButton exportSequenceButton;
+	ofxButton exportImageButton;
+	ofxButton showBoundingBoxButton;
+	ofxButton wireframeButton;
 	std::string currentShape = "none";
 	bool showDrawMenu = false;
 	bool saveShape = false;
@@ -77,6 +90,9 @@ private:
 	void onDeleteShapePressed();
 	void onSaveShapePressed();
 	void onSelectionPressed();
+	void onShowBoundingBoxPressed();
+	void onWireframePressed();
+
 
 	//view3D
 	void onView3DTabPressed();
@@ -93,6 +109,7 @@ private:
 	//general
 	ofTrueTypeFont font;
 	ImageManager imageManager;
+	SceneGraph sceneGraph;
 	//float SideMenuwidth = 200;
 	float menuBarHeight = 50;
 	float buttonsWidth = 100;
@@ -103,6 +120,30 @@ private:
 	TabButton drawTab = { "Draw", ofRectangle(100, 0, 100, 50) };
 	TabButton view3DTab = { "3D view", ofRectangle(200, 0, 100, 50) };
 
+	// status box
+	float statusTimer = 0.0f;
+	std::string statusMessage;
+	ofRectangle statusBox;
 
+	// Export
+	ofFbo exportFbo;
+	std::string exportFolder = "export";
+	bool exportSequence = false;
+	int exportFrameCount = 0;
+	int maxFrames = 100;
+	float exportInterval = 0.5f;
+	float exportTimer = 0.0f;
+
+	void onExportSequencePressed();
+	void exportCurrentFrame();
+	void onExportImagePressed();
+	void exportScene();
+
+	// vidual feedback
+	ofColor feedbackColor = ofColor::white;
+	float feedbackAlpha = 255.0f;
+	bool feedbackFlash = false;
+	float feedbackTimer = 0.0f;
+	float feedbackFlashDuration = 0.5f;
 	
 };

@@ -27,8 +27,8 @@ ofEasyCam & CameraManager::getCurrentCamera() {
 }
 
 void CameraManager::setPerspectiveView(int viewIndex) {
-	if (viewIndex >= 0 && viewIndex < 5) { 
-		currentCam = &cameras[viewIndex];
+	if (viewIndex >= 0 && viewIndex < 5) { // CHANGED: Now supports 0-4
+	currentCam = &cameras[viewIndex];
 	}
 }
 
@@ -135,4 +135,21 @@ void CameraManager::calculateSceneBounds(const std::vector<Shape> & shapes,
 	if (radius < 50.0f) {
 		radius = 50.0f;
 	}
+}
+
+
+void CameraManager::setCameraPosition(int index, const ofVec3f & pos) {
+	if (index >= 0 && index < 5) cameras[index].setPosition(pos);
+}
+
+void CameraManager::setCameraLookAt(int index, const ofVec3f & target) {
+	if (index >= 0 && index < 5) cameras[index].lookAt(target);
+}
+
+void CameraManager::setCameraOrtho(int index, bool ortho) {
+	if (index < 0 || index >= 5) return;
+	if (ortho)
+		cameras[index].enableOrtho();
+	else
+		cameras[index].disableOrtho();
 }

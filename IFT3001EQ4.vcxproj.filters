@@ -70,6 +70,9 @@
     <ClCompile Include="src\objects\shapeManager3D.cpp">
       <Filter>src\objects</Filter>
     </ClCompile>
+    <ClCompile Include="src\rendering\cameraManager.cpp">
+      <Filter>src\rendering</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -457,6 +460,9 @@
     </ClInclude>
     <ClInclude Include="src\objects\shape.h">
       <Filter>src\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="src\rendering\cameraManager.h">
+      <Filter>src\rendering</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

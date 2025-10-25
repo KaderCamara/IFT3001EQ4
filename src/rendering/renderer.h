@@ -4,6 +4,7 @@
 #include "ofMain.h"
 #include "../objects/shapeManager.h"
 #include "sceneGraph.h"
+#include "cameraManager.h"
 
 class Renderer
 {
@@ -15,6 +16,7 @@ public:
   void setCurrentShape(const std::string & shape) { currentShape = shape; }
   void mousePressed(int x, int y, int button);
   void mouseReleased(int x, int y, int button);
+  void keyPressed(int key);
   void draw3D();
   void setShowBoundingBox(bool state) { showBoundingBox = state; }
 
@@ -24,7 +26,8 @@ public:
   void selectingModeOn();
   void selectingModeOff();
   void view3DMode();
-  ofEasyCam cam;
+  void view2DMode();
+  void viewQuadMode();
 
 private:
   ofTrueTypeFont font;
@@ -33,11 +36,16 @@ private:
   bool drawing = false;
   bool selecting = false;
   ShapeManager shapeManager;
+  CameraManager cameraManager;
   SceneGraph sceneGraph;
   ofPoint startPoint, endPoint;
   bool shapeSelected = false;
   bool showBoundingBox = false;
   int shapeSelectedIndex = -1;
   bool view3D = false;
+  bool view2D = true;
+  bool viewQuad = false;
+  void drawQuadView();
+  float camDistance = 600.0f;
   void drawBoundingBox(const ofMesh & mesh);
 };

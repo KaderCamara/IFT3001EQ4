@@ -24,6 +24,8 @@ public:
 	bool isSaveShapeRequested() const { return saveShape; }
 	bool isDeleteShapeRequested() const { return deleteShape; }
 	bool is3DviewRequested() const { return showView3D; }
+	bool is2DviewRequested() const { return showDrawMenu; }
+	bool isQuadViewRequested() const { return showQuadView; }
 	void clearRequests();
 	bool showBoundingBox = false;
 	bool showWireframe = false; 
@@ -44,6 +46,7 @@ private:
 	//panels of the menu choices
 	ofxPanel imageMenuPanel;
 	ofxPanel drawMenuPanel;
+	ofxPanel view3DMenuPanel;
 	ofxPanel deletePanel;
 	ofxPanel view3DPanel;
 
@@ -91,6 +94,14 @@ private:
 	//view3D
 	void onView3DTabPressed();
 	bool showView3D = false;
+	bool show3DMenu = false; 
+	//view quad
+	bool showQuadView = false;
+	ofxButton quadViewButton;
+	ofxLabel cameraTitle;
+	ofxLabel cameraInstructions1;
+	ofxLabel cameraInstructions2;
+	void onQuadViewButtonPressed();
 
 	//general
 	ofTrueTypeFont font;

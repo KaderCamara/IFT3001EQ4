@@ -34,6 +34,12 @@ void Application::update() {
 	if (uiWindow.is3DviewRequested()) {
 		renderer.view3DMode();
 	}
+	if (uiWindow.is2DviewRequested()) {
+		renderer.view2DMode();
+	}
+	if (uiWindow.isQuadViewRequested()) {
+		renderer.viewQuadMode();
+	}
 
 	uiWindow.clearRequests();
 }
@@ -43,6 +49,14 @@ void Application::draw()
   renderer.setDrawingArea(uiWindow.getDrawingArea());
   renderer.draw();
   uiWindow.draw();
+}
+
+
+void Application::keyPressed(int key) {
+	// NEW: Forward keyboard events to renderer
+	renderer.keyPressed(key);
+
+	// Your other key handling here
 }
 
 void Application::mousePressed(int x, int y, int button) {

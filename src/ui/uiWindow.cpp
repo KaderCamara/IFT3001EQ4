@@ -19,10 +19,10 @@ void UIWindow::setup() {
 	drawMenuPanel.setup("Draw Menu");
 	drawMenuPanel.add(drawPointButton.setup("Draw a point"));
 	drawMenuPanel.add(drawLineButton.setup("Draw a line"));
-	drawMenuPanel.add(drawTriangleButton.setup("Draw a triangle"));
-	drawMenuPanel.add(drawSquareButton.setup("Draw a square"));
-	drawMenuPanel.add(drawRectangleButton.setup("Draw a rectangle"));
-	drawMenuPanel.add(drawCircleButton.setup("Draw a circle"));
+	drawMenuPanel.add(drawTriangleButton.setup("Draw a triangle | view in 3D mode"));
+	drawMenuPanel.add(drawSquareButton.setup("Draw a square | view in 3D mode"));
+	drawMenuPanel.add(drawRectangleButton.setup("Draw a rectangle | view in 3D mode"));
+	drawMenuPanel.add(drawCircleButton.setup("Draw a circle | view in 3D mode"));
 	drawMenuPanel.add(saveShapeButton.setup("save the shape"));
 	drawMenuPanel.add(selectionButton.setup("select or interact"));
 	drawMenuPanel.add(exportSequenceButton.setup("Export Sequence"));
@@ -49,6 +49,14 @@ void UIWindow::setup() {
 	drawCircleButton.addListener(this, &UIWindow::onDrawACirclePressed);
 	saveShapeButton.addListener(this, &UIWindow::onSaveShapePressed);
 	selectionButton.addListener(this, &UIWindow::onSelectionPressed);
+
+	//3d view Menu
+	view3DMenuPanel.setup("3D View Menu");
+	view3DMenuPanel.add(cameraTitle.setup("Camera Controls", ""));
+	view3DMenuPanel.add(cameraInstructions1.setup("1:Top 2:Front 3:Side", ""));
+	view3DMenuPanel.add(cameraInstructions2.setup("4:Bottom 5:Free (drag)", ""));
+	view3DMenuPanel.add(quadViewButton.setup("view with 4 cameras at the same time."));
+	quadViewButton.addListener(this, &UIWindow::onQuadViewButtonPressed);
 	exportSequenceButton.addListener(this, &UIWindow::onExportSequencePressed);
 	exportImageButton.addListener(this, &UIWindow::onExportImagePressed);
 
@@ -89,6 +97,9 @@ void UIWindow::draw() {
 	//draw panel 
 	drawMenuPanel.setPosition(ofGetWidth() - sideMenuWidth, menuBarHeight);
 	drawMenuPanel.setSize(sideMenuWidth, ofGetHeight() - menuBarHeight);
+	//3d panel
+	view3DMenuPanel.setPosition(ofGetWidth() - sideMenuWidth, menuBarHeight);
+	view3DMenuPanel.setSize(sideMenuWidth, ofGetHeight() - menuBarHeight);
 
 
 	for (auto & tab : { imageTab, drawTab, view3DTab }) {
@@ -110,7 +121,9 @@ void UIWindow::draw() {
 			deletePanel.draw();
 		}
 	}
-
+	if (show3DMenu) {
+		view3DMenuPanel.draw();
+	}
 	imageManager.draw();
 	if (!statusMessage.empty()) {
 		ofSetColor(0, 0, 0, 180);
@@ -138,6 +151,7 @@ void UIWindow::onDrawTabPressed() {
 }
 void UIWindow::onView3DTabPressed() {
 	showView3D = !showView3D;
+	show3DMenu = !show3DMenu;
 }
 
 //menu actions
@@ -163,6 +177,8 @@ void UIWindow::mousePressed(int x, int y, int button) {
 		drawTab.active = false;
 		view3DTab.active = false;
 		showView3D = false;
+		show3DMenu = false;
+		showQuadView = false;
 		currentShape = "none";
 		imageTab.active = true;
 		selectShape = false;
@@ -173,14 +189,18 @@ void UIWindow::mousePressed(int x, int y, int button) {
 		imageTab.active = false;
 		view3DTab.active = false;
 		showView3D = false;
+		show3DMenu = false;
+		showQuadView = false;
 		drawTab.active = true;
 
 	} else if (view3DTab.bounds.inside(x, y)) {
 		showView3D = !showView3D;
+		show3DMenu = true;
 		showImageMenu = false;
 		showDrawMenu = false;
 		drawTab.active = false;
 		imageTab.active = false;
+		showQuadView = false;
 		currentShape = "none";
 		view3DTab.active = true;
 		selectShape = false;
@@ -238,6 +258,11 @@ void UIWindow::onSelectionPressed() {
 	selectShape = true;
 	currentShape = "none";
 	statusMessage = "Selection mode activated";
+}
+
+//3d
+void UIWindow::onQuadViewButtonPressed() {
+	showQuadView = true;
 }
 
 

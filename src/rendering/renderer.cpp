@@ -20,17 +20,11 @@ void Renderer::setup() {
 	cameraManager.setup();
 }
 
-void Renderer::draw(){
+void Renderer::draw() {
 	ofPushStyle();
 	ofSetColor(currentBgColor);
 	ofDrawRectangle(drawingArea.x, drawingArea.y, drawingArea.width, drawingArea.height);
 	ofPopStyle();
-	ofSetLineWidth(currentLineWidth);
-	ofPushStyle();
-	ofSetColor(currentBgColor);
-	ofDrawRectangle(drawingArea.x, drawingArea.y, drawingArea.width, drawingArea.height);
-	ofPopStyle();
-	ofSetLineWidth(currentLineWidth);
 
 	if (viewQuad) {
 		drawQuadView();
@@ -52,12 +46,15 @@ void Renderer::draw(){
 
 		ofPushStyle();
 
-		if (isSelected)
+		if (isSelected) {
+			ofNoFill();
 			ofSetColor(ofColor::yellow);
-		else
+			ofSetLineWidth(3);
+		} else {
+			ofFill();
 			ofSetColor(s.color);
-
-		ofSetLineWidth(isSelected ? 3 : 1);
+			ofSetLineWidth(currentLineWidth);
+		}
 
 		if (s.type == "point") {
 			ofDrawCircle(s.start, 3 * s.scale);
@@ -79,9 +76,30 @@ void Renderer::draw(){
 			s.mesh3D.drawWireframe();
 		}
 
+		if (isSelected && s.type != "line" && s.type != "point") {
+			ofNoFill();
+			ofSetColor(ofColor::yellow);
+			ofSetLineWidth(2);
+
+			if (s.type == "triangle") {
+				ofDrawTriangle(s.start, ofPoint(s.end.x, s.start.y), s.end);
+			} else if (s.type == "square") {
+				float side = std::abs(s.end.x - s.start.x) * s.scale;
+				ofDrawRectangle(s.start.x, s.start.y, side, side);
+			} else if (s.type == "rectangle") {
+				float w = (s.end.x - s.start.x) * s.scale;
+				float h = (s.end.y - s.start.y) * s.scale;
+				ofDrawRectangle(s.start.x, s.start.y, w, h);
+			} else if (s.type == "circle") {
+				float radius = ofDist(s.start.x, s.start.y, s.end.x, s.end.y) * s.scale;
+				ofDrawCircle(s.start, radius);
+			}
+		}
+
 		ofPopStyle();
 	}
 
+	// Dessiner la shape en cours de création
 	if (currentShape != "none") {
 		shapeManager.draw();
 	}

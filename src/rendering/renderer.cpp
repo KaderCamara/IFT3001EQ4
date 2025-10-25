@@ -16,49 +16,56 @@ void Renderer::setup() {
 void Renderer::draw() {
 	if (viewQuad) {
 		drawQuadView();
-	} else if (view3D) {
+		return;
+	}
+	if (view3D) {
 		draw3D();
-	} else if (view2D) {
-		for (auto & s : sceneGraph.shapes) {
-			if (s.type == "none" || s.type == "x") continue;
+		return;
+	}
+	if (!view2D) return;
 
-			ofPushStyle();
+	for (int i = 0; i < sceneGraph.shapes.size(); ++i) {
+		auto & s = sceneGraph.shapes[i];
+		if (s.type == "none" || s.type == "x") continue;
+
+		bool isSelected = std::find(sceneGraph.selectedIndices.begin(),
+							  sceneGraph.selectedIndices.end(), i)
+			!= sceneGraph.selectedIndices.end();
+
+		ofPushStyle();
+
+		if (isSelected)
+			ofSetColor(ofColor::yellow);
+		else
 			ofSetColor(s.color);
-			ofSetLineWidth(1);
 
-			// Toujours dessiner en 2D à partir des données 2D d'origine,
-			// même si la shape a été convertie en 3D (s.is3D == true).
-			if (s.type == "point") {
-				ofDrawCircle(s.start, 3 * s.scale);
-			} else if (s.type == "line") {
-				ofDrawLine(s.start, s.end);
-			} else if (s.type == "triangle") {
-				ofDrawTriangle(s.start, ofPoint(s.end.x, s.start.y), s.end);
-			} else if (s.type == "square") {
-				float side = std::abs(s.end.x - s.start.x) * s.scale;
-				ofDrawRectangle(s.start.x, s.start.y, side, side);
-			} else if (s.type == "rectangle") {
-				float w = (s.end.x - s.start.x) * s.scale;
-				float h = (s.end.y - s.start.y) * s.scale;
-				ofDrawRectangle(s.start.x, s.start.y, w, h);
-			} else if (s.type == "circle") {
-				float radius = ofDist(s.start.x, s.start.y, s.end.x, s.end.y) * s.scale;
-				ofDrawCircle(s.start, radius);
-			} else {
-				// fallback — si type inconnu, dessiner wireframe (optionnel)
-				if (s.mesh3D.getNumVertices() > 0) {
-					ofSetColor(180);
-					s.mesh3D.drawWireframe();
-				}
-			}
+		ofSetLineWidth(isSelected ? 3 : 1);
 
-			ofPopStyle();
+		if (s.type == "point") {
+			ofDrawCircle(s.start, 3 * s.scale);
+		} else if (s.type == "line") {
+			ofDrawLine(s.start, s.end);
+		} else if (s.type == "triangle") {
+			ofDrawTriangle(s.start, ofPoint(s.end.x, s.start.y), s.end);
+		} else if (s.type == "square") {
+			float side = std::abs(s.end.x - s.start.x) * s.scale;
+			ofDrawRectangle(s.start.x, s.start.y, side, side);
+		} else if (s.type == "rectangle") {
+			float w = (s.end.x - s.start.x) * s.scale;
+			float h = (s.end.y - s.start.y) * s.scale;
+			ofDrawRectangle(s.start.x, s.start.y, w, h);
+		} else if (s.type == "circle") {
+			float radius = ofDist(s.start.x, s.start.y, s.end.x, s.end.y) * s.scale;
+			ofDrawCircle(s.start, radius);
+		} else if (s.mesh3D.getNumVertices() > 0) {
+			s.mesh3D.drawWireframe();
 		}
 
-		// dessine la shape en cours
-		if (currentShape != "none") {
-			shapeManager.draw();
-		}
+		ofPopStyle();
+	}
+
+	if (currentShape != "none") {
+		shapeManager.draw();
 	}
 }
 

@@ -125,7 +125,7 @@ void SceneGraph::draw() {
 
 			if (isSelected) {
 				ofNoFill();
-				ofSetColor(ofColor::red);
+				ofSetColor(ofColor::yellow);
 				ofSetLineWidth(3);
 			} else {
 				ofFill();
@@ -153,7 +153,7 @@ void SceneGraph::draw() {
 
 			if (isSelected) {
 				ofNoFill();
-				ofSetColor(ofColor::red);
+				ofSetColor(ofColor::yellow);
 				ofSetLineWidth(2);
 				if (s.type == "square" || s.type == "rectangle") {
 					float w = (s.end.x - s.start.x) * s.scale;

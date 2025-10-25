@@ -49,6 +49,7 @@ public:
 	void clearClear3DModelRequest() { clear3DModelRequested = false; }
 	void onClear3DModelPressed();
 
+
 private:
 
 	struct TabButton {
@@ -138,9 +139,13 @@ private:
 	bool import3DModelRequested = false;
 	ofxButton clear3DModelButton;
 	bool clear3DModelRequested = false;
-	
-	
 
+	//
+	float prochainY = 0.0f;
+
+	
+	
+	
 
 	
 };

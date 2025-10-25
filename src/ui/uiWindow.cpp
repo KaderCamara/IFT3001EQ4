@@ -76,11 +76,13 @@ void UIWindow::draw() {
 	//panels here so it is responsive with the height and width
 	//image panel 
 	float sideMenuWidth = ofGetWidth() / 6;
+
 	imageMenuPanel.setPosition(ofGetWidth() - sideMenuWidth, menuBarHeight);
 	imageMenuPanel.setSize(sideMenuWidth, ofGetHeight()-menuBarHeight);
 	//draw panel 
 	drawMenuPanel.setPosition(ofGetWidth() - sideMenuWidth, menuBarHeight);
 	drawMenuPanel.setSize(sideMenuWidth, ofGetHeight() - menuBarHeight);
+	prochainY = menuBarHeight;
 
 
 	for (auto & tab : { imageTab, drawTab, view3DTab }) {
@@ -100,15 +102,16 @@ void UIWindow::draw() {
 	// Drawing parameter panel (à gauche)
 	if (showDrawMenu) {
 		float panelWidth = ofGetWidth() / 6;
-		drawParamsPanel.setPosition(10, menuBarHeight + 10);
-		drawParamsPanel.setSize(panelWidth - 20, 200);
+		drawParamsPanel.setPosition(10, prochainY);
+		drawParamsPanel.setSize(panelWidth - 20, 400);
 		drawParamsPanel.draw();
+		prochainY += drawParamsPanel.getHeight() + 10;
 	}
-
+	
 	// transformation panel
 	if (selectShape) {
 		float panelWidth = ofGetWidth() / 6;
-		transformPanel.setPosition(10, menuBarHeight + 250);
+		transformPanel.setPosition(10, prochainY);
 		transformPanel.setSize(panelWidth - 20, 180);
 		float windowWidth = drawingArea.getWidth();
 		float windowHeight = drawingArea.getHeight();
@@ -117,6 +120,7 @@ void UIWindow::draw() {
 		translateY.setMin(-windowHeight / 2);
 		translateY.setMax(windowHeight / 2);
 		transformPanel.draw();
+		prochainY = menuBarHeight + 10;
 	}
 	imageManager.draw();
 }
@@ -241,5 +245,6 @@ void UIWindow::onImport3DModelPressed() {
 void UIWindow::onClear3DModelPressed() {
 	clear3DModelRequested = true;
 }
+
 
 

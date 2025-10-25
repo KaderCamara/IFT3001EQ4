@@ -13,19 +13,64 @@ void ShapeManager::draw() {
 	const auto & s = currentShapeToDraw;
 	if (s.type == "x") return;
 
-	// --- remplissage ---
-	ofFill();
-	ofSetColor(fillColor);
-	ofSetLineWidth(lineWidth);
-	drawShapePrimitive(s);
-
-	// --- contour ---
-	ofNoFill();
-	ofSetColor(strokeColor);
-	ofSetLineWidth(lineWidth);
-	drawShapePrimitive(s);
-
-	ofFill();
+	if (s.type == "point") {
+		ofFill();
+		ofSetColor(fillColor);
+		ofSetLineWidth(lineWidth);
+		ofDrawCircle(s.start, 2);
+		ofNoFill();
+		ofSetColor(strokeColor);
+		ofSetLineWidth(lineWidth);
+		ofFill();
+	} else if (s.type == "line") {
+		ofFill();
+		ofSetColor(fillColor);
+		ofSetLineWidth(lineWidth);
+		ofDrawLine(s.start, s.end);
+		ofNoFill();
+		ofSetColor(strokeColor);
+		ofSetLineWidth(lineWidth);
+		ofFill();
+	} else if (s.type == "triangle") {
+		ofFill();
+		ofSetColor(fillColor);
+		ofSetLineWidth(lineWidth);
+		ofDrawTriangle(s.start, ofPoint(s.end.x, s.start.y), s.end);
+		ofNoFill();
+		ofSetColor(strokeColor);
+		ofSetLineWidth(lineWidth);
+		ofFill();
+	} else if (s.type == "square") {
+		ofFill();
+		ofSetColor(fillColor);
+		ofSetLineWidth(lineWidth);
+		float side = std::abs(s.end.x - s.start.x);
+		ofDrawRectangle(s.start.x, s.start.y, side, side);
+		ofNoFill();
+		ofSetColor(strokeColor);
+		ofSetLineWidth(lineWidth);
+		ofFill();
+	} else if (s.type == "rectangle") {
+		ofFill();
+		ofSetColor(fillColor);
+		ofSetLineWidth(lineWidth);
+		ofDrawRectangle(s.start.x, s.start.y,
+			s.end.x - s.start.x, s.end.y - s.start.y);
+		ofNoFill();
+		ofSetColor(strokeColor);
+		ofSetLineWidth(lineWidth);
+		ofFill();
+	} else if (s.type == "circle") {
+		ofFill();
+		ofSetColor(fillColor);
+		ofSetLineWidth(lineWidth);
+		float radius = ofDist(s.start.x, s.start.y, s.end.x, s.end.y);
+		ofDrawCircle(s.start, radius);
+		ofNoFill();
+		ofSetColor(strokeColor);
+		ofSetLineWidth(lineWidth);
+		ofFill();
+	}
 }
 
 void ShapeManager::drawShape(const std::string & type, const ofPoint & start, const ofPoint & end) {

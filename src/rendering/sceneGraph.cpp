@@ -102,8 +102,7 @@ void SceneGraph::draw() {
 		}
 		ofPopMatrix(); // JORDAN
 	}
-
-	}
+}
 
 // JORDAN: transformation FUNCTIONS
 	void SceneGraph::updateSelectedTransform(float tx, float ty, float rot, float scale) {

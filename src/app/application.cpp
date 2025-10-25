@@ -68,7 +68,7 @@ void Application::draw() {
 		uiWindow.getLineWidth(),
 		uiWindow.getStrokeColor(),
 		uiWindow.getFillColor());
-	//uiWindow.getBackgroundColor();
+	uiWindow.getBackgroundColor();
 
 	renderer.applyTransformationToSelectedShape(
 		uiWindow.getTranslateX(),

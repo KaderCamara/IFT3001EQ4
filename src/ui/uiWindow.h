@@ -142,5 +142,4 @@ private:
 
 	//
 	float prochainY = 0.0f;
-
 };

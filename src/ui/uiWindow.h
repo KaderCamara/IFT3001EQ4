@@ -139,7 +139,6 @@ private:
 	bool import3DModelRequested = false;
 	ofxButton clear3DModelButton;
 	bool clear3DModelRequested = false;
-
 	//
 	float prochainY = 0.0f;
 };

@@ -97,6 +97,8 @@ void Application::mouseReleased(int x, int y, int button) {
 	}
 }
 
+
+
 void Application::dragEvent(ofDragInfo dragInfo) {
 	uiWindow.handleFileDragAndDrop(dragInfo);
 }

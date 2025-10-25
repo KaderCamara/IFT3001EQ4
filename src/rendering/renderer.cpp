@@ -115,6 +115,13 @@ void Renderer::viewQuadMode() {
 	viewQuad = true;
 	view3D = false;
 	view2D = false;
+
+	for (auto & s : sceneGraph.shapes) {
+		if (!s.is3D) {
+			shapeManager.convertTo3d(s);
+		}
+	}
+
 	cameraManager.markDirty();
 }
 
@@ -124,7 +131,9 @@ void Renderer::view3DMode() {
 	viewQuad = false;
 
 	for (auto & s : sceneGraph.shapes) {
-		if (!s.is3D) shapeManager.convertTo3d(s);
+		if (!s.is3D) {
+			shapeManager.convertTo3d(s);
+		}
 	}
 
 	cameraManager.markDirty();
@@ -134,14 +143,12 @@ void Renderer::view2DMode() {
 	view2D = true;
 	view3D = false;
 	viewQuad = false;
+
+	cameraManager.markDirty();
 }
 
 void Renderer::draw3D() {
-	for (auto & s : sceneGraph.shapes) {
-		if (!s.is3D) {
-			shapeManager.convertTo3d(s);
-		}
-	}
+
 
 	if (cameraManager.needsUpdate()) {
 		cameraManager.lookAtScene(sceneGraph.shapes, false);
@@ -224,11 +231,7 @@ void Renderer::keyPressed(int key) {
 }
 
 void Renderer::drawQuadView() {
-	for (auto & s : sceneGraph.shapes) {
-		if (!s.is3D) {
-			shapeManager.convertTo3d(s);
-		}
-	}
+
 
 	if (cameraManager.needsUpdate()) {
 		cameraManager.lookAtScene(sceneGraph.shapes, true);

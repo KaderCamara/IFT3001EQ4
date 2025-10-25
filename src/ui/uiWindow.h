@@ -28,6 +28,8 @@ public:
 	bool isQuadViewRequested() const { return showQuadView; }
 	void clearRequests();
 	bool view3DRequested = false;
+	bool view2DRequested = false;
+	bool quadViewRequested = false;
 	float getLineWidth() const { return lineWidth; }
 	ofColor getStrokeColor() const { return strokeColor; }
 	ofColor getFillColor() const { return fillColor; }

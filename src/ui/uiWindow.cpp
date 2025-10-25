@@ -161,7 +161,7 @@ void UIWindow::draw() {
 		view3DPanel.setSize(sideMenuWidth, ofGetHeight() - menuBarHeight);
 		view3DPanel.draw();
 	}
-	}
+
 	//drawing settings panel
 	// Drawing parameter panel (a gauche)
 	if (showDrawMenu) {
@@ -246,6 +246,11 @@ void UIWindow::mousePressed(int x, int y, int button) {
 		imageTab.active = true;
 		selectShape = false;
 
+		// AJOUTER ces lignes
+		view3DRequested = false;
+		view2DRequested = true;
+		quadViewRequested = false;
+
 	} else if (drawTab.bounds.inside(x, y)) {
 		showDrawMenu = !showDrawMenu;
 		showImageMenu = false;
@@ -256,17 +261,38 @@ void UIWindow::mousePressed(int x, int y, int button) {
 		showQuadView = false;
 		drawTab.active = true;
 
+		// AJOUTER ces lignes
+		view3DRequested = false;
+		view2DRequested = true;
+		quadViewRequested = false;
+
 	} else if (view3DTab.bounds.inside(x, y)) {
 		showView3D = !showView3D;
-		show3DMenu = true;
+		show3DMenu = showView3D;
 		showImageMenu = false;
 		showDrawMenu = false;
 		drawTab.active = false;
 		imageTab.active = false;
 		showQuadView = false;
 		currentShape = "none";
-		view3DTab.active = true;
+		view3DTab.active = showView3D;
 		selectShape = false;
+
+		// MODIFIER ces lignes
+		view3DRequested = showView3D;
+		view2DRequested = !showView3D;
+		quadViewRequested = false;
+	}
+}
+
+void UIWindow::onQuadViewButtonPressed() {
+	showQuadView = !showQuadView;
+
+	// AJOUTER ces lignes
+	quadViewRequested = showQuadView;
+	if (showQuadView) {
+		view3DRequested = false;
+		view2DRequested = false;
 	}
 }
 
@@ -315,7 +341,6 @@ void UIWindow::onDeleteShapePressed() {
 void UIWindow::clearRequests() {
 	saveShape = false;
 	deleteShape = false;
-	view3DRequested = false;
 }
 
 void UIWindow::onSelectionPressed() {
@@ -324,10 +349,7 @@ void UIWindow::onSelectionPressed() {
 	statusMessage = "Selection mode activated";
 }
 
-//3d
-void UIWindow::onQuadViewButtonPressed() {
-	showQuadView = true;
-}
+
 
 //general
 void UIWindow::onClearImagePressed() {

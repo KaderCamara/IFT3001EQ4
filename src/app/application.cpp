@@ -18,27 +18,32 @@ void Application::setup()
 
 void Application::update() {
 	uiWindow.update();
+
 	if (uiWindow.isSaveShapeRequested()) {
 		renderer.setCurrentShape(uiWindow.getCurrentShape());
 		renderer.save();
 	}
+
 	if (uiWindow.isDeleteShapeRequested()) {
 		renderer.deleteShape();
 	}
+
 	if (uiWindow.isSelectShapeRequested()) {
 		renderer.selectingModeOn();
-	}
-	if (!uiWindow.isSelectShapeRequested()) {
+	} else {
 		renderer.selectingModeOff();
 	}
-	if (uiWindow.is3DviewRequested()) {
-			if (renderer.is3DView()) {
-				renderer.view2DMode();
-			} else {
-				renderer.view3DMode();
-			}
-		}
-	if (uiWindow.isImport3DModelRequested()) { // 3D IMPORT
+
+	if (uiWindow.isQuadViewRequested()) {
+		renderer.viewQuadMode();
+	} else if (uiWindow.is3DviewRequested()) {
+		renderer.view3DMode();
+	} else if (uiWindow.is2DviewRequested()) {
+		renderer.view2DMode();
+	}
+
+	// 3D IMPORT
+	if (uiWindow.isImport3DModelRequested()) {
 		renderer.import3DModel();
 		renderer.view3DMode();
 		uiWindow.clearImport3DModelRequest();
@@ -47,12 +52,6 @@ void Application::update() {
 	if (uiWindow.isClear3DModelRequested()) {
 		renderer.clear3DModels();
 		uiWindow.clearClear3DModelRequest();
-	}
-	if (uiWindow.is2DviewRequested()) {
-		renderer.view2DMode();
-	}
-	if (uiWindow.isQuadViewRequested()) {
-		renderer.viewQuadMode();
 	}
 
 	uiWindow.clearRequests();

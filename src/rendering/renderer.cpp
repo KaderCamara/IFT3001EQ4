@@ -1,23 +1,107 @@
 // Renderer.cpp
 #include "renderer.h"
+#include <cfloat>
+#include "ofMain.h"
+#include "cameraManager.h"
+#include "sceneGraph.h"
+#include "../objects/shapeManager.h"
+#include "../objects/shapeManager3D.h"
+#include "../ui/uiWindow.h"
+
+
+bool g_showBoundingBox = false;
+bool g_showWireframe = false;
 
 void Renderer::setup() {
+	ofSetFrameRate(60);
+	ofSetWindowShape(512, 512);
 	ofSetFrameRate(60);
 	ofSetWindowShape(512, 512);
 	cameraManager.setup();
 }
 
 void Renderer::draw() {
+	ofPushStyle();
+	ofSetColor(currentBgColor);
+	ofDrawRectangle(drawingArea.x, drawingArea.y, drawingArea.width, drawingArea.height);
+	ofPopStyle();
+
 	if (viewQuad) {
 		drawQuadView();
-	} else if (view3D) {
-		draw3D();
+		return;
 	}
-	else if (view2D) {
-		sceneGraph.draw();
-		if (currentShape != "none") {
-			shapeManager.draw();
+	if (view3D) {
+		draw3D();
+		return;
+	}
+	if (!view2D) return;
+
+	for (int i = 0; i < sceneGraph.shapes.size(); ++i) {
+		auto & s = sceneGraph.shapes[i];
+		if (s.type == "none" || s.type == "x") continue;
+
+		bool isSelected = std::find(sceneGraph.selectedIndices.begin(),
+							  sceneGraph.selectedIndices.end(), i)
+			!= sceneGraph.selectedIndices.end();
+
+		ofPushStyle();
+
+		if (isSelected) {
+			ofNoFill();
+			ofSetColor(ofColor::yellow);
+			ofSetLineWidth(3);
+		} else {
+			ofFill();
+			ofSetColor(s.color);
+			ofSetLineWidth(currentLineWidth);
 		}
+
+		if (s.type == "point") {
+			ofDrawCircle(s.start, 3 * s.scale);
+		} else if (s.type == "line") {
+			ofDrawLine(s.start, s.end);
+		} else if (s.type == "triangle") {
+			ofDrawTriangle(s.start, ofPoint(s.end.x, s.start.y), s.end);
+		} else if (s.type == "square") {
+			float side = std::abs(s.end.x - s.start.x) * s.scale;
+			ofDrawRectangle(s.start.x, s.start.y, side, side);
+		} else if (s.type == "rectangle") {
+			float w = (s.end.x - s.start.x) * s.scale;
+			float h = (s.end.y - s.start.y) * s.scale;
+			ofDrawRectangle(s.start.x, s.start.y, w, h);
+		} else if (s.type == "circle") {
+			float radius = ofDist(s.start.x, s.start.y, s.end.x, s.end.y) * s.scale;
+			ofDrawCircle(s.start, radius);
+		} else if (s.mesh3D.getNumVertices() > 0) {
+			s.mesh3D.drawWireframe();
+		}
+
+		if (isSelected && s.type != "line" && s.type != "point") {
+			ofNoFill();
+			ofSetColor(ofColor::yellow);
+			ofSetLineWidth(2);
+
+			if (s.type == "triangle") {
+				ofDrawTriangle(s.start, ofPoint(s.end.x, s.start.y), s.end);
+			} else if (s.type == "square") {
+				float side = std::abs(s.end.x - s.start.x) * s.scale;
+				ofDrawRectangle(s.start.x, s.start.y, side, side);
+			} else if (s.type == "rectangle") {
+				float w = (s.end.x - s.start.x) * s.scale;
+				float h = (s.end.y - s.start.y) * s.scale;
+				ofDrawRectangle(s.start.x, s.start.y, w, h);
+			} else if (s.type == "circle") {
+				float radius = ofDist(s.start.x, s.start.y, s.end.x, s.end.y) * s.scale;
+				ofDrawCircle(s.start, radius);
+			}
+		}
+
+		ofPopStyle();
+	}
+
+	// Dessiner la shape en cours de création
+	if (currentShape != "none") {
+		shapeManager.draw();
 	}
 }
 
@@ -28,8 +112,7 @@ void Renderer::save() {
 
 void Renderer::deleteShape() {
 	if (shapeSelected) {
-		sceneGraph.removeShape(shapeSelectedIndex);
-		shapeSelectedIndex = -1;
+		sceneGraph.removeSelectedShapes();
 		shapeSelected = false;
 		cameraManager.markDirty();
 	} else {
@@ -50,13 +133,27 @@ void Renderer::viewQuadMode() {
 	viewQuad = true;
 	view3D = false;
 	view2D = false;
+
+	for (auto & s : sceneGraph.shapes) {
+		if (!s.is3D) {
+			shapeManager.convertTo3d(s);
+		}
+	}
+
 	cameraManager.markDirty();
 }
 
 void Renderer::view3DMode() {
 	view3D = true;
 	view2D = false;
-	viewQuad = false; 
+	viewQuad = false;
+
+	for (auto & s : sceneGraph.shapes) {
+		if (!s.is3D) {
+			shapeManager.convertTo3d(s);
+		}
+	}
+
 	cameraManager.markDirty();
 }
 
@@ -64,24 +161,42 @@ void Renderer::view2DMode() {
 	view2D = true;
 	view3D = false;
 	viewQuad = false;
+
+	cameraManager.markDirty();
 }
 
 void Renderer::draw3D() {
-	for (auto & s : sceneGraph.shapes) {
-		if (!s.is3D) {
-			shapeManager.convertTo3d(s);
-		}
-	}
+
 
 	if (cameraManager.needsUpdate()) {
 		cameraManager.lookAtScene(sceneGraph.shapes, false);
 	}
 
 	cameraManager.getCurrentCamera().begin();
-
 	ofSetColor(255);
-	for (const auto & s : sceneGraph.shapes) {
-		s.mesh3D.draw(); 
+
+	for (auto & s : sceneGraph.shapes) {
+		ofMesh & mesh3D = s.mesh3D;
+
+		if (g_showWireframe) {
+			mesh3D.drawWireframe();
+		} else {
+			mesh3D.draw();
+		}
+
+		if (g_showBoundingBox) {
+			glm::vec3 min(FLT_MAX), max(-FLT_MAX);
+			for (auto & v : mesh3D.getVertices()) {
+				min = glm::min(min, v);
+				max = glm::max(max, v);
+			}
+
+			ofPushStyle();
+			ofNoFill();
+			ofSetColor(ofColor::green);
+			ofDrawBox((min + max) * 0.5f, max.x - min.x, max.y - min.y, max.z - min.z);
+			ofPopStyle();
+		}
 	}
 
 	cameraManager.getCurrentCamera().end();
@@ -93,10 +208,8 @@ void Renderer::mousePressed(int x, int y, int button) {
 		drawing = true;
 	}
 	if (selecting) {
-		shapeSelectedIndex = sceneGraph.selectShapeAt(x, y);
-		if (shapeSelectedIndex != -1) {
-			shapeSelected = true;
-		}
+		sceneGraph.selectShapeAt(x, y, ofGetKeyPressed(OF_KEY_CONTROL) || ofGetKeyPressed(OF_KEY_COMMAND));
+		shapeSelected = !sceneGraph.selectedIndices.empty();
 	}
 }
 
@@ -106,6 +219,7 @@ void Renderer::mouseReleased(int x, int y, int button) {
 		shapeManager.drawShape(currentShape, startPoint, endPoint);
 		drawing = false;
 	}
+
 }
 
 
@@ -135,14 +249,10 @@ void Renderer::keyPressed(int key) {
 }
 
 void Renderer::drawQuadView() {
-	for (auto & s : sceneGraph.shapes) {
-		if (!s.is3D) {
-			shapeManager.convertTo3d(s);
-		}
-	}
+
 
 	if (cameraManager.needsUpdate()) {
-		cameraManager.lookAtScene(sceneGraph.shapes, true); 
+		cameraManager.lookAtScene(sceneGraph.shapes, true);
 	}
 
 	int w = drawingArea.width; 
@@ -214,4 +324,89 @@ void Renderer::drawQuadView() {
 	ofDrawLine(offsetX + halfW, offsetY, offsetX + halfW, offsetY + h); //vertical
 	ofDrawLine(offsetX, offsetY + halfH, offsetX + w, offsetY + halfH); // horizontal 
 	ofPopStyle();
+}
+
+
+
+void Renderer::applyDrawingParameters(float lineW, const ofColor & stroke, const ofColor & fill, const ofColor & bg, bool useHSB, float hue, float saturation, float brightness) {
+	currentLineWidth = lineW;
+	useHSBmode = useHSB;
+	if (useHSBmode) {
+		currentStrokeColor = ofColor::fromHsb(hue, saturation, brightness);
+		currentFillColor = ofColor::fromHsb(hue, saturation, brightness);
+		currentBgColor = ofColor::fromHsb(hue, saturation, brightness);
+	} else {
+		currentStrokeColor = stroke;
+		currentFillColor = fill;
+		currentBgColor = bg;
+	}
+}
+void Renderer::updateShapeManagerParams(float lineW, ofColor stroke, ofColor fill) {
+	shapeManager.setDrawingParameters(lineW, stroke, fill);
+}
+
+
+ofRectangle Renderer::getMeshBoundingBox(const ofMesh & mesh) {
+	if (mesh.getNumVertices() == 0) return ofRectangle();
+	glm::vec3 min = mesh.getVertex(0);
+	glm::vec3 max = mesh.getVertex(0);
+	for (std::size_t i = 1; i < mesh.getNumVertices(); ++i) {
+		const glm::vec3 & v = mesh.getVertex(i);
+		min.x = std::min(min.x, v.x);
+		min.y = std::min(min.y, v.y);
+		min.z = std::min(min.z, v.z);
+		max.x = std::max(max.x, v.x);
+		max.y = std::max(max.y, v.y);
+		max.z = std::max(max.z, v.z);
+	}
+	return ofRectangle(min.x, min.y, max.x - min.x, max.y - min.y);
+}
+// Transformation functions
+void Renderer::applyTransformationToSelectedShape(float tx, float ty, float rot, float scale) {
+	sceneGraph.updateSelectedTransform(tx, ty, rot, scale);
+}
+
+
+// 3D IMPORT FUNCTIONS: HARDCODED FOR NOW
+void Renderer::import3DModel() {
+	// Ouvre le sélecteur de fichiers
+	ofFileDialogResult result = ofSystemLoadDialog("Select a 3D model (.obj, .ply, .stl)", false);
+	if (!result.bSuccess) return;
+
+	std::string path = result.getPath();
+	std::string extension = ofFilePath::getFileExt(path);
+
+	// Convertir en minuscules (version C++ standard)
+	std::transform(extension.begin(), extension.end(), extension.begin(),
+		[](unsigned char c) { return std::tolower(c); });
+
+	// Vérifie les formats pris en charge
+	if (extension != "obj" && extension != "ply" && extension != "stl" && extension != "fbx") {
+		return; // format non pris en charge
+	}
+
+	// Charger le modèle avec Assimp
+	ofxAssimpModelLoader loader;
+	if (!loader.loadModel(path)) return;
+
+	// Ajouter chaque mesh du modele dans la scene
+	int numMeshes = loader.getMeshCount();
+	for (int i = 0; i < numMeshes; i++) {
+		Shape newShape;
+		newShape.type = "3DModel";
+		newShape.is3D = true;
+		newShape.mesh3D = loader.getMesh(i);
+		sceneGraph.addShape(newShape);
+	}
+
+	// Activer directement la vue 3D
+	view3D = true;
+}
+void Renderer::clear3DModels() {
+	auto shapes = sceneGraph.getAllShapes(); // copie
+	shapes.erase(
+		std::remove_if(shapes.begin(), shapes.end(),
+			[](const Shape & s) { return s.is3D; }),
+		shapes.end());
+	sceneGraph.setShapes(shapes); //ajouter dans SceneGraph
 }

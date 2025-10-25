@@ -19,9 +19,18 @@ public:
 	void markDirty() { isDirty = true; }
 	bool needsUpdate() const { return isDirty; }
 
+	void setCameraPosition(int index, const ofVec3f & pos);
+	void setCameraLookAt(int index, const ofVec3f & target);
+	void setCameraOrtho(int index, bool ortho);
+
+	int getCurrentCameraIndex() const { return currentCameraIndex; }
+
 private:
 	ofEasyCam cameras[5];
 	ofEasyCam * currentCam;
+	int currentCameraIndex = 4;
+
+	// NEW: Track if scene changed
 	bool isDirty = true;
 
 	void calculateSceneBounds(const std::vector<Shape> & shapes,

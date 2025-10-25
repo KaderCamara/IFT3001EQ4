@@ -1,8 +1,8 @@
-//classe qui s'occupe des formes 
+//classe qui s'occupe des formes
 #pragma once
+#include "ShapeManager3D.h"
 #include "ofMain.h"
 #include "shape.h"
-#include "ShapeManager3D.h"
 
 class ShapeManager {
 public:
@@ -10,8 +10,15 @@ public:
 	void draw();
 	void deleteCurrentShapeToDraw();
 
-	Shape getCurrentShape() const { return currentShapeToDraw; }
+	Shape getCurrentShape() const {
+		Shape s = currentShapeToDraw;
+		s.color = fillColor;
+		return s;
+	}
+
 	void convertTo3d(Shape & shape);
+	void setDrawingParameters(float lineW, ofColor stroke, ofColor fill);
+	void drawShapePrimitive(const Shape & s);
 
 private:
 	Shape currentShapeToDraw = {
@@ -19,5 +26,7 @@ private:
 	};
 	ShapeManager3D shapeManager3D;
 
+	float lineWidth = 2.0f;
+	ofColor strokeColor = ofColor::black;
+	ofColor fillColor = ofColor::white;
 };
-	

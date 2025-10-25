@@ -30,6 +30,7 @@ public:
 	bool showBoundingBox = false;
 	bool showWireframe = false; 
 	bool getShowBoundingBox() const { return showBoundingBox; }
+	bool getShowWireframe() const { return showWireframe; }
 
 private:
 
@@ -39,6 +40,8 @@ private:
 		bool hovered = false;
 		bool active = false;
 	};
+
+	CameraManager cameraManager;
 
 	//drawing area
 	ofRectangle drawingArea;

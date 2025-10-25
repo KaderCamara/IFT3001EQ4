@@ -24,10 +24,17 @@ public:
 	void markClean() { isDirty = false; }
 	void markDirty() { isDirty = true; }
 
+	void setCameraPosition(int index, const ofVec3f & pos);
+	void setCameraLookAt(int index, const ofVec3f & target);
+	void setCameraOrtho(int index, bool ortho);
+
+	int getCurrentCameraIndex() const { return currentCameraIndex; }
+
 private:
 	// CHANGED: Added 5th camera for free rotation
 	ofEasyCam cameras[5];
 	ofEasyCam * currentCam;
+	int currentCameraIndex = 4;
 
 	// NEW: Track if scene changed
 	bool isDirty = true;

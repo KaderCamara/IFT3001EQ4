@@ -18,12 +18,12 @@ void UIWindow::setup() {
 	drawMenuPanel.setup("Draw Menu");
 	drawMenuPanel.add(drawPointButton.setup("Draw a point"));
 	drawMenuPanel.add(drawLineButton.setup("Draw a line"));
-	drawMenuPanel.add(drawTriangleButton.setup("Draw a triangle | view in 3D mode"));
-	drawMenuPanel.add(drawSquareButton.setup("Draw a square | view in 3D mode"));
-	drawMenuPanel.add(drawRectangleButton.setup("Draw a rectangle | view in 3D mode"));
-	drawMenuPanel.add(drawCircleButton.setup("Draw a circle | view in 3D mode"));
-	drawMenuPanel.add(saveShapeButton.setup("save the shape"));
-	drawMenuPanel.add(selectionButton.setup("select or interact"));
+	drawMenuPanel.add(drawTriangleButton.setup("Draw a triangle | 3D view"));
+	drawMenuPanel.add(drawSquareButton.setup("Draw a square | 3D view"));
+	drawMenuPanel.add(drawRectangleButton.setup("Draw a rectangle | 3D view"));
+	drawMenuPanel.add(drawCircleButton.setup("Draw a circle | 3D view"));
+	drawMenuPanel.add(saveShapeButton.setup("Save shape"));
+	drawMenuPanel.add(selectionButton.setup("Select/Interact"));
 	drawMenuPanel.add(exportSequenceButton.setup("Export Sequence"));
 	drawMenuPanel.add(exportImageButton.setup("Export Image"));
 
@@ -39,8 +39,7 @@ void UIWindow::setup() {
 	deletePanel.setup("Delete");
 	deletePanel.add(deleteShapeButton.setup("delete the shape"));
 
-	deleteShapeButton.addListener(this, &UIWindow::onDeleteShapePressed);
-	drawPointButton.addListener(this, &UIWindow::onDrawAPointPressed);
+    drawPointButton.addListener(this, &UIWindow::onDrawAPointPressed);
 	drawLineButton.addListener(this, &UIWindow::onDrawALinePressed);
 	drawTriangleButton.addListener(this, &UIWindow::onDrawATrianglePressed);
 	drawSquareButton.addListener(this, &UIWindow::onDrawASquarePressed);
@@ -48,16 +47,23 @@ void UIWindow::setup() {
 	drawCircleButton.addListener(this, &UIWindow::onDrawACirclePressed);
 	saveShapeButton.addListener(this, &UIWindow::onSaveShapePressed);
 	selectionButton.addListener(this, &UIWindow::onSelectionPressed);
+	deleteShapeButton.addListener(this, &UIWindow::onDeleteShapePressed);
+	exportSequenceButton.addListener(this, &UIWindow::onExportSequencePressed);
+	exportImageButton.addListener(this, &UIWindow::onExportImagePressed);
 
 	//3d view Menu
-	view3DMenuPanel.setup("3D View Menu");
+	view3DPanel.setup("3D View Menu");
+	view3DPanel.add(showBoundingBoxButton.setup("Show Bounding Boxes"));
+	showBoundingBoxButton.addListener(this, &UIWindow::onShowBoundingBoxPressed);
+
+	view3DPanel.add(wireframeButton.setup("Wireframe Mode"));
+	wireframeButton.addListener(this, &UIWindow::onWireframePressed);
+
 	view3DPanel.add(cameraTitle.setup("Camera Controls", ""));
 	view3DPanel.add(cameraInstructions1.setup("1:Top 2:Front 3:Side", ""));
 	view3DPanel.add(cameraInstructions2.setup("4:Bottom 5:Free (drag)", ""));
 	view3DPanel.add(quadViewButton.setup("4 Cameras View"));
 	quadViewButton.addListener(this, &UIWindow::onQuadViewButtonPressed);
-	exportSequenceButton.addListener(this, &UIWindow::onExportSequencePressed);
-	exportImageButton.addListener(this, &UIWindow::onExportImagePressed);
 
 	//interface box
 	statusBox.set(10, menuBarHeight + 10, 250, 40);

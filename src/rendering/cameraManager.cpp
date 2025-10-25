@@ -1,31 +1,27 @@
 #include "CameraManager.h"
 
 void CameraManager::setup() {
-	// CHANGED: Now setup 5 cameras (added free camera at index 4)
 	for (int i = 0; i < 5; i++) {
 		cameras[i].setNearClip(0.1f);
 		cameras[i].setFarClip(10000.0f);
 	}
 
-	// NEW: Disable mouse control for fixed cameras (0-3)
-	// Only the free camera (4) allows mouse rotation
+	//camera free pour faire ce qu'on veut
 	for (int i = 0; i < 4; i++) {
 		cameras[i].disableMouseInput();
-		// FIX: Use orthographic projection for fixed views (no distortion)
-		cameras[i].disableOrtho(); // Disable first
-		cameras[i].enableOrtho(); // Then enable for proper setup
+		cameras[i].disableOrtho(); 
+		cameras[i].enableOrtho();
 	}
-	cameras[4].enableMouseInput(); // Free camera has mouse control
-	cameras[4].disableOrtho(); // Perspective for free camera
+	cameras[4].enableMouseInput();
+	cameras[4].disableOrtho();
 
-	currentCam = &cameras[4]; // CHANGED: Default to free camera instead of top
+	currentCam = &cameras[4];
 }
 
 void CameraManager::update() {
-	// You can add camera animations or smooth transitions here if needed
+	
 }
 
-// NEW: Return reference to current camera
 ofEasyCam & CameraManager::getCurrentCamera() {
 	return *currentCam;
 }
@@ -36,27 +32,24 @@ void CameraManager::setPerspectiveView(int viewIndex) {
 	}
 }
 
-// CHANGED: Complete rewrite using proper 3D bounding calculation
 void CameraManager::lookAtScene(const std::vector<Shape> & shapes, bool isQuadView) {
 	if (shapes.empty()) return;
 
-	// Calculate scene center and bounding radius
+	// pour avoir le centre de la scene
 	ofVec3f center;
 	float radius;
 	calculateSceneBounds(shapes, center, radius);
 
-	// FIX: Different distance for quad view vs single view
+	//la disctance plus grande avec les 4 vue car sinon c'est trop proche
 	float distance;
 	if (isQuadView) {
 		distance = radius * 30.0f;
 		if (distance < 3000.0f) distance = 3000.0f;
 	} else {
-		// Normal distance for single 3D view
 		distance = radius * 15.0f;
 		if (distance < 1500.0f) distance = 1500.0f;
 	}
 
-	// Position each fixed camera at appropriate angle
 	// Camera 0: Top view (looking down -Y axis)
 	cameras[0].setPosition(center.x, center.y + distance, center.z);
 	cameras[0].lookAt(center);
@@ -74,38 +67,29 @@ void CameraManager::lookAtScene(const std::vector<Shape> & shapes, bool isQuadVi
 	cameras[3].lookAt(center);
 
 	// Camera 4: Free camera - ONLY set target and distance, don't set position!
-	// This allows mouse control to work
 	cameras[4].setTarget(center);
 	cameras[4].setDistance(distance);
-	// DON'T call setPosition or lookAt - let the user control it!
 
-	// Mark as updated
 	isDirty = false;
 }
 
-// NEW: Helper function to calculate proper 3D bounding sphere
-// This uses actual mesh vertices instead of just start/end points
+
 void CameraManager::calculateSceneBounds(const std::vector<Shape> & shapes,
 	ofVec3f & center, float & radius) {
-	// SAFETY CHECK: Make sure we have shapes with vertices
 	if (shapes.empty()) {
 		center = ofVec3f(0, 0, 0);
 		radius = 100.0f;
 		return;
 	}
 
-	// Find axis-aligned bounding box (AABB)
 	ofVec3f minPt(FLT_MAX, FLT_MAX, FLT_MAX);
 	ofVec3f maxPt(-FLT_MAX, -FLT_MAX, -FLT_MAX);
 
 	int totalVertices = 0;
 
 	for (const auto & s : shapes) {
-		// CHANGED: Use actual mesh vertices instead of start/end points
-		// This properly accounts for 3D depth
 		const auto & vertices = s.mesh3D.getVertices();
 
-		// DEBUG: Print vertex count to help diagnose issues
 		if (vertices.empty()) {
 			cout << "WARNING: Shape has no vertices in mesh!" << endl;
 			continue;
@@ -124,22 +108,17 @@ void CameraManager::calculateSceneBounds(const std::vector<Shape> & shapes,
 		}
 	}
 
-	// SAFETY CHECK: If no vertices found, use default
 	if (totalVertices == 0) {
 		cout << "ERROR: No vertices found in any shape mesh!" << endl;
-		center = ofVec3f(256, 256, 0); // Middle of 512x512 window
+		center = ofVec3f(256, 256, 0);
 		radius = 200.0f;
 		return;
 	}
 
-	// Center is midpoint of bounding box
 	center = (minPt + maxPt) * 0.5f;
 
-	// DEBUG: Print bounds info
 	cout << "Scene bounds: min(" << minPt << ") max(" << maxPt << ") center(" << center << ")" << endl;
 
-	// CHANGED: Calculate bounding sphere radius
-	// This is the maximum distance from center to any vertex
 	radius = 0;
 	for (const auto & s : shapes) {
 		const auto & vertices = s.mesh3D.getVertices();
@@ -153,7 +132,6 @@ void CameraManager::calculateSceneBounds(const std::vector<Shape> & shapes,
 
 	cout << "Scene radius: " << radius << endl;
 
-	// Ensure minimum radius so camera doesn't get too close
 	if (radius < 50.0f) {
 		radius = 50.0f;
 	}

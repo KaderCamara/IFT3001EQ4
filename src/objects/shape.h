@@ -1,3 +1,4 @@
+//pour la structure des formes, vu notre architecture, ca evite les boucle entre les include
 #pragma once
 #include "ofMain.h"
 

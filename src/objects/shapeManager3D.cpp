@@ -13,8 +13,6 @@ ofMesh ShapeManager3D::to3DDraw(const Shape & shape) {
 	if (shape.type == "triangle") {
 		return to3DCone(shape, mesh);
 	}
-
-	// Return empty mesh for unsupported types
 	return mesh;
 }
 
@@ -22,12 +20,10 @@ ofMesh ShapeManager3D::to3DCube(const Shape & shape, ofMesh mesh) {
 	float width, height;
 
 	if (shape.type == "square") {
-		// Match 2D behavior: use only X distance for both dimensions
 		float side = abs(shape.end.x - shape.start.x);
 		width = side;
 		height = side;
 	} else {
-		// Rectangle uses actual width and height
 		width = abs(shape.end.x - shape.start.x);
 		height = abs(shape.end.y - shape.start.y);
 	}
@@ -38,7 +34,6 @@ ofMesh ShapeManager3D::to3DCube(const Shape & shape, ofMesh mesh) {
 	float halfW = width / 2.0f;
 	float halfH = height / 2.0f;
 
-	// Create cube centered on (centerX, centerY)
 	mesh.addVertex({ centerX - halfW, centerY - halfH, -halfZ });
 	mesh.addVertex({ centerX + halfW, centerY - halfH, -halfZ });
 	mesh.addVertex({ centerX + halfW, centerY + halfH, -halfZ });
@@ -64,18 +59,14 @@ ofMesh ShapeManager3D::to3DCube(const Shape & shape, ofMesh mesh) {
 }
 
 ofMesh ShapeManager3D::to3DSphere(const Shape & shape, ofMesh mesh) {
-	// FIX: Use distance formula like 2D drawing does
 	float radius = ofDist(shape.start.x, shape.start.y, shape.end.x, shape.end.y);
 
-	// Ensure positive radius
 	if (radius < 1.0f) radius = 1.0f;
 
-	ofPoint center = shape.start; // Center at start point, like 2D
-
+	ofPoint center = shape.start; 
 	ofSpherePrimitive sphere(radius, 16);
 	mesh = sphere.getMesh();
 
-	// Translate to center position
 	for (auto & v : mesh.getVertices()) {
 		v += center;
 	}
@@ -84,11 +75,10 @@ ofMesh ShapeManager3D::to3DSphere(const Shape & shape, ofMesh mesh) {
 }
 
 ofMesh ShapeManager3D::to3DCone(const Shape & shape, ofMesh mesh) {
-	float width = abs(shape.end.x - shape.start.x); // FIX: Use abs()
-	float height = abs(shape.end.y - shape.start.y); // FIX: Use abs()
+	float width = abs(shape.end.x - shape.start.x);
+	float height = abs(shape.end.y - shape.start.y);
 	float radius = std::min(width, height) / 2.0f;
 
-	// Ensure positive radius and height
 	if (radius < 1.0f) radius = 1.0f;
 	if (height < 1.0f) height = 1.0f;
 
@@ -101,7 +91,6 @@ ofMesh ShapeManager3D::to3DCone(const Shape & shape, ofMesh mesh) {
 	ofConePrimitive cone(radius, height, 16, 4);
 	mesh = cone.getMesh();
 
-	// Translate to center position
 	for (auto & v : mesh.getVertices()) {
 		v += center;
 	}

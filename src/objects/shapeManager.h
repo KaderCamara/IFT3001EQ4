@@ -1,3 +1,4 @@
+//classe qui s'occupe des formes 
 #pragma once
 #include "ofMain.h"
 #include "shape.h"

@@ -53,10 +53,7 @@ void Application::draw()
 
 
 void Application::keyPressed(int key) {
-	// NEW: Forward keyboard events to renderer
 	renderer.keyPressed(key);
-
-	// Your other key handling here
 }
 
 void Application::mousePressed(int x, int y, int button) {

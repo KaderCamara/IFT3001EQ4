@@ -5,11 +5,9 @@
 bool g_showBoundingBox = false;
 bool g_showWireframe = false;
 
-void Renderer::setup()
-{
-  ofSetFrameRate(60);
-  ofSetWindowShape(512, 512);
 void Renderer::setup() {
+	ofSetFrameRate(60);
+	ofSetWindowShape(512, 512);
 	ofSetFrameRate(60);
 	ofSetWindowShape(512, 512);
 	cameraManager.setup();
@@ -20,8 +18,7 @@ void Renderer::draw() {
 		drawQuadView();
 	} else if (view3D) {
 		draw3D();
-	}
-	else if (view2D) {
+	} else if (view2D) {
 		sceneGraph.draw();
 		if (currentShape != "none") {
 			shapeManager.draw();
@@ -65,7 +62,7 @@ void Renderer::viewQuadMode() {
 void Renderer::view3DMode() {
 	view3D = true;
 	view2D = false;
-	viewQuad = false; 
+	viewQuad = false;
 	cameraManager.markDirty();
 }
 
@@ -94,12 +91,25 @@ void Renderer::draw3D() {
 	// Draw solid meshes
 	ofSetColor(255);
 	for (const auto & s : sceneGraph.shapes) {
-		s.mesh3D.draw(); // Changed from drawWireframe()
+		// Wireframe ou solide
+		if (g_showWireframe) {
+			s.mesh3D.drawWireframe();
+		} else {
+			s.mesh3D.draw();
+		}
+
+		// Bounding box
+		if (g_showBoundingBox) {
+			ofNoFill();
+			ofSetColor(ofColor::green);
+			ofSetLineWidth(1);
+			ofRectangle bbox = getMeshBoundingBox(s.mesh3D);
+			ofDrawRectangle(bbox);
+		}
 	}
 
 	cameraManager.getCurrentCamera().end();
 }
-
 
 void Renderer::mousePressed(int x, int y, int button) {
 	if (currentShape != "none") {
@@ -111,7 +121,6 @@ void Renderer::mousePressed(int x, int y, int button) {
 		shapeSelected = !sceneGraph.selectedIndices.empty();
 	}
 }
-
 
 void Renderer::mouseReleased(int x, int y, int button) {
 	if (drawing) {
@@ -155,7 +164,7 @@ void Renderer::drawQuadView() {
 	}
 
 	if (cameraManager.needsUpdate()) {
-		cameraManager.lookAtScene(sceneGraph.shapes, true); 
+		cameraManager.lookAtScene(sceneGraph.shapes, true);
 	}
 
 	// FIX: Use width and height, not x and y!
@@ -231,4 +240,20 @@ void Renderer::drawQuadView() {
 	ofDrawLine(offsetX + halfW, offsetY, offsetX + halfW, offsetY + h); // Vertical line
 	ofDrawLine(offsetX, offsetY + halfH, offsetX + w, offsetY + halfH); // Horizontal line
 	ofPopStyle();
+}
+
+ofRectangle Renderer::getMeshBoundingBox(const ofMesh & mesh) {
+	if (mesh.getNumVertices() == 0) return ofRectangle();
+	glm::vec3 min = mesh.getVertex(0);
+	glm::vec3 max = mesh.getVertex(0);
+	for (std::size_t i = 1; i < mesh.getNumVertices(); ++i) {
+		const glm::vec3 & v = mesh.getVertex(i);
+		min.x = std::min(min.x, v.x);
+		min.y = std::min(min.y, v.y);
+		min.z = std::min(min.z, v.z);
+		max.x = std::max(max.x, v.x);
+		max.y = std::max(max.y, v.y);
+		max.z = std::max(max.z, v.z);
+	}
+	return ofRectangle(min.x, min.y, max.x - min.x, max.y - min.y);
 }

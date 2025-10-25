@@ -1,7 +1,6 @@
 #include "sceneGraph.h"
 
-
-void SceneGraph::addShape(const Shape &shape) {
+void SceneGraph::addShape(const Shape & shape) {
 	shapes.push_back(shape);
 }
 
@@ -69,7 +68,7 @@ void SceneGraph::removeSelectedShapes() {
 	selectedIndices.clear();
 }
 
-bool SceneGraph::insideBounds(const Shape& s, float x, float y) {
+bool SceneGraph::insideBounds(const Shape & s, float x, float y) {
 	if (s.type == "point") {
 		return ofDist(x, y, s.start.x, s.start.y) <= 5;
 	} else if (s.type == "line") {

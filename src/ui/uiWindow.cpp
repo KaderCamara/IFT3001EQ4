@@ -3,9 +3,8 @@
 #include "uiWindow.h"
 
 extern bool g_showBoundingBox;
-extern bool g_showWireframe; 
+extern bool g_showWireframe;
 
-bool g_showWireframe = false;
 
 void UIWindow::setup() {
 	//image menu
@@ -52,10 +51,10 @@ void UIWindow::setup() {
 
 	//3d view Menu
 	view3DMenuPanel.setup("3D View Menu");
-	view3DMenuPanel.add(cameraTitle.setup("Camera Controls", ""));
-	view3DMenuPanel.add(cameraInstructions1.setup("1:Top 2:Front 3:Side", ""));
-	view3DMenuPanel.add(cameraInstructions2.setup("4:Bottom 5:Free (drag)", ""));
-	view3DMenuPanel.add(quadViewButton.setup("view with 4 cameras at the same time."));
+	view3DPanel.add(cameraTitle.setup("Camera Controls", ""));
+	view3DPanel.add(cameraInstructions1.setup("1:Top 2:Front 3:Side", ""));
+	view3DPanel.add(cameraInstructions2.setup("4:Bottom 5:Free (drag)", ""));
+	view3DPanel.add(quadViewButton.setup("4 Cameras View"));
 	quadViewButton.addListener(this, &UIWindow::onQuadViewButtonPressed);
 	exportSequenceButton.addListener(this, &UIWindow::onExportSequencePressed);
 	exportImageButton.addListener(this, &UIWindow::onExportImagePressed);
@@ -90,20 +89,19 @@ void UIWindow::draw() {
 	ofDrawRectangle(0, 0, ofGetWidth(), menuBarHeight);
 
 	//panels here so it is responsive with the height and width
-	//image panel 
+	//image panel
 	float sideMenuWidth = ofGetWidth() / 6;
 	imageMenuPanel.setPosition(ofGetWidth() - sideMenuWidth, menuBarHeight);
-	imageMenuPanel.setSize(sideMenuWidth, ofGetHeight()-menuBarHeight);
-	//draw panel 
+	imageMenuPanel.setSize(sideMenuWidth, ofGetHeight() - menuBarHeight);
+	//draw panel
 	drawMenuPanel.setPosition(ofGetWidth() - sideMenuWidth, menuBarHeight);
 	drawMenuPanel.setSize(sideMenuWidth, ofGetHeight() - menuBarHeight);
 	//3d panel
 	view3DMenuPanel.setPosition(ofGetWidth() - sideMenuWidth, menuBarHeight);
 	view3DMenuPanel.setSize(sideMenuWidth, ofGetHeight() - menuBarHeight);
 
-
 	for (auto & tab : { imageTab, drawTab, view3DTab }) {
-		ofSetColor(tab.active ? 100 : 150); 
+		ofSetColor(tab.active ? 100 : 150);
 		ofDrawRectangle(tab.bounds);
 
 		ofSetColor(255);
@@ -122,7 +120,10 @@ void UIWindow::draw() {
 		}
 	}
 	if (show3DMenu) {
-		view3DMenuPanel.draw();
+		float sideMenuWidth = ofGetWidth() / 6;
+		view3DPanel.setPosition(ofGetWidth() - sideMenuWidth, menuBarHeight);
+		view3DPanel.setSize(sideMenuWidth, ofGetHeight() - menuBarHeight);
+		view3DPanel.draw();
 	}
 	imageManager.draw();
 	if (!statusMessage.empty()) {
@@ -265,7 +266,6 @@ void UIWindow::onQuadViewButtonPressed() {
 	showQuadView = true;
 }
 
-
 //general
 void UIWindow::onClearImagePressed() {
 	imageManager.clear();
@@ -273,11 +273,10 @@ void UIWindow::onClearImagePressed() {
 }
 
 void UIWindow::mouseReleased(int x, int y, int button) {
-	if (currentShape != "none" &&  showDrawMenu ) {
+	if (currentShape != "none" && showDrawMenu) {
 		cout << "you went over the zone allowed to draw";
 	}
 }
-
 
 void UIWindow::onExportSequencePressed() {
 	exportSequence = !exportSequence;
@@ -298,7 +297,6 @@ void UIWindow::onExportSequencePressed() {
 		statusMessage = "Export stopped";
 	}
 }
-
 
 void UIWindow::onExportImagePressed() {
 	exportScene();
@@ -364,13 +362,13 @@ void UIWindow::exportCurrentFrame() {
 	statusMessage = "Exporting frame " + ofToString(exportFrameCount);
 }
 
-void UIWindow::onShowBoundingBoxPressed() {
-	showBoundingBox = !showBoundingBox;
-	g_showBoundingBox = showBoundingBox;
-	statusMessage = showBoundingBox ? "Bounding boxes ON" : "Bounding boxes OFF";
-}
-
 void UIWindow::onWireframePressed() {
 	g_showWireframe = !g_showWireframe;
 	statusMessage = g_showWireframe ? "Wireframe ON" : "Wireframe OFF";
 }
+
+void UIWindow::onShowBoundingBoxPressed() {
+	g_showBoundingBox = !g_showBoundingBox;
+	statusMessage = g_showBoundingBox ? "Bounding boxes ON" : "Bounding boxes OFF";
+}
+

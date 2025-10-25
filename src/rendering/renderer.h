@@ -6,6 +6,7 @@
 #include "sceneGraph.h"
 #include "cameraManager.h"
 
+
 class Renderer
 {
 public:
@@ -32,6 +33,7 @@ public:
 private:
   ofTrueTypeFont font;
   ofRectangle drawingArea;
+  ofRectangle getMeshBoundingBox(const ofMesh & mesh);
   std::string currentShape = "none";
   bool drawing = false;
   bool selecting = false;
@@ -47,5 +49,4 @@ private:
   bool viewQuad = false;
   void drawQuadView();
   float camDistance = 600.0f;
-  void drawBoundingBox(const ofMesh & mesh);
 };

@@ -169,3 +169,19 @@ void SceneGraph::draw() {
 		}
 	}
 }
+
+
+// JORDAN: transformation FUNCTIONS
+	void SceneGraph::updateSelectedTransform(float tx, float ty, float rot, float scale) {
+		if (selectedIndex >= 0 && selectedIndex < shapes.size()) {
+			shapes[selectedIndex].translation.set(tx, ty);
+			shapes[selectedIndex].rotation = rot;
+			shapes[selectedIndex].scale = scale;
+		}
+	}
+
+// 3D IMPORT FUNCTIONS
+	void SceneGraph::setShapes(const std::vector<Shape> & newShapes) {
+		shapes = newShapes;
+	}
+

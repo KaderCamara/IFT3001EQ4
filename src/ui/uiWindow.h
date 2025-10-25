@@ -27,10 +27,37 @@ public:
 	bool is2DviewRequested() const { return showDrawMenu; }
 	bool isQuadViewRequested() const { return showQuadView; }
 	void clearRequests();
+	bool view3DRequested = false;
+	bool view2DRequested = false;
+	bool quadViewRequested = false;
+	float getLineWidth() const { return lineWidth; }
+	ofColor getStrokeColor() const { return strokeColor; }
+	ofColor getFillColor() const { return fillColor; }
+	ofColor getBackgroundColor() const { return backgroundColor; }
+	bool isHSBMode() const { return useHSB; }
+	float getHue() const { return hue; }
+	float getSaturation() const { return saturation; }
+	float getBrightness() const { return brightness; }
+
+	// Transformation getters
+	float getTranslateX() const { return translateX; }
+	float getTranslateY() const { return translateY; }
+	float getRotation() const { return rotation; }
+	float getScale() const { return scaleFactor; }
+
+	// 3D IMPORT
+
+	bool isImport3DModelRequested() const { return import3DModelRequested; }
+	void clearImport3DModelRequest() { import3DModelRequested = false; }
+	void onImport3DModelPressed();
+	bool isClear3DModelRequested() const { return clear3DModelRequested; }
+	void clearClear3DModelRequest() { clear3DModelRequested = false; }
+	void onClear3DModelPressed();
 	bool showBoundingBox = false;
 	bool showWireframe = false; 
 	bool getShowBoundingBox() const { return showBoundingBox; }
 	bool getShowWireframe() const { return showWireframe; }
+
 
 private:
 
@@ -138,7 +165,30 @@ private:
 	void exportCurrentFrame();
 	void onExportImagePressed();
 	void exportScene();
+	// --- Drawing parameters panel ---
+	ofxPanel drawParamsPanel;
+	ofParameter<float> lineWidth;
+	ofParameter<ofColor> strokeColor;
+	ofParameter<ofColor> fillColor;
+	ofParameter<ofColor> backgroundColor;
+	ofParameter<bool> useHSB;
+	ofParameter<float> hue;
+	ofParameter<float> saturation;
+	ofParameter<float> brightness;
 
+	// Transformation attributes
+	ofxPanel transformPanel;
+	ofParameter<float> translateX, translateY;
+	ofParameter<float> rotation;
+	ofParameter<float> scaleFactor;
+
+	// Bouton d'importation 3D
+	ofxButton import3DModelButton;
+	bool import3DModelRequested = false;
+	ofxButton clear3DModelButton;
+	bool clear3DModelRequested = false;
+	//
+	float prochainY = 0.0f;
 	// vidual feedback
 	ofColor feedbackColor = ofColor::white;
 	float feedbackAlpha = 255.0f;

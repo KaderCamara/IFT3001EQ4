@@ -14,6 +14,13 @@ void UIWindow::setup() {
 	importImageButton.addListener(this, &UIWindow::onImportImagePressed);
 	clearButton.addListener(this, &UIWindow::onClearImagePressed);
 
+	// Import 3D Model Button in Image Menu
+	imageMenuPanel.add(import3DModelButton.setup("Import 3D Model"));
+	imageMenuPanel.add(clear3DModelButton.setup("Clear 3D Models"));
+	import3DModelButton.addListener(this, &UIWindow::onImport3DModelPressed);
+	clear3DModelButton.addListener(this, &UIWindow::onClear3DModelPressed);
+
+
 	//draw menu
 	drawMenuPanel.setup("Draw Menu");
 	drawMenuPanel.add(drawPointButton.setup("Draw a point"));
@@ -70,6 +77,27 @@ void UIWindow::setup() {
 
 	//export
 	exportFbo.allocate(ofGetWidth(), ofGetHeight() - menuBarHeight, GL_RGBA);
+
+	// --- Drawing parameters ---
+	drawParamsPanel.setup("Drawing Parameters");
+	drawParamsPanel.add(lineWidth.set("Line Width", 2.0, 1.0, 10.0));
+	drawParamsPanel.add(strokeColor.set("Stroke Color", ofColor(0, 0, 0)));
+	drawParamsPanel.add(fillColor.set("Fill Color", ofColor(255, 0, 0)));
+	drawParamsPanel.add(backgroundColor.set("Background", ofColor(180, 200, 220)));
+	drawParamsPanel.add(useHSB.set("HSB Mode", false));
+
+	drawParamsPanel.add(hue.set("Hue", 128, 0, 255));
+	drawParamsPanel.add(saturation.set("Saturation", 255, 0, 255));
+	drawParamsPanel.add(brightness.set("Brightness", 255, 0, 255));
+
+	// Transformation parameters
+	transformPanel.setup("Transformations");
+	transformPanel.add(translateX.set("Translate X", 0.0, -2000, 2000));
+	transformPanel.add(translateY.set("Translate Y", 0.0, -2000, 2000));
+	transformPanel.add(rotation.set("Rotation", 0.0, -720, 720));
+	transformPanel.add(scaleFactor.set("Scale", 1.0, 0.1, 5.0));
+
+
 }
 
 void UIWindow::update() {
@@ -97,6 +125,7 @@ void UIWindow::draw() {
 	//panels here so it is responsive with the height and width
 	//image panel
 	float sideMenuWidth = ofGetWidth() / 6;
+
 	imageMenuPanel.setPosition(ofGetWidth() - sideMenuWidth, menuBarHeight);
 	imageMenuPanel.setSize(sideMenuWidth, ofGetHeight() - menuBarHeight);
 	//draw panel
@@ -105,6 +134,7 @@ void UIWindow::draw() {
 	//3d panel
 	view3DMenuPanel.setPosition(ofGetWidth() - sideMenuWidth, menuBarHeight);
 	view3DMenuPanel.setSize(sideMenuWidth, ofGetHeight() - menuBarHeight);
+	prochainY = menuBarHeight;
 
 	for (auto & tab : { imageTab, drawTab, view3DTab }) {
 		ofSetColor(tab.active ? 100 : 150);
@@ -130,6 +160,31 @@ void UIWindow::draw() {
 		view3DPanel.setPosition(ofGetWidth() - sideMenuWidth, menuBarHeight);
 		view3DPanel.setSize(sideMenuWidth, ofGetHeight() - menuBarHeight);
 		view3DPanel.draw();
+	}
+
+	//drawing settings panel
+	// Drawing parameter panel (a gauche)
+	if (showDrawMenu) {
+		float panelWidth = ofGetWidth() / 6;
+		drawParamsPanel.setPosition(10, prochainY);
+		drawParamsPanel.setSize(panelWidth - 20, 200);
+		drawParamsPanel.draw();
+		prochainY += drawParamsPanel.getHeight() + 10;
+	}
+	
+	// transformation panel
+	if (selectShape) {
+		float panelWidth = ofGetWidth() / 6;
+		transformPanel.setPosition(10, prochainY);
+		transformPanel.setSize(panelWidth - 20, 180);
+		float windowWidth = drawingArea.getWidth();
+		float windowHeight = drawingArea.getHeight();
+		translateX.setMin(-windowWidth / 2);
+		translateX.setMax(windowWidth / 2);
+		translateY.setMin(-windowHeight / 2);
+		translateY.setMax(windowHeight / 2);
+		transformPanel.draw();
+		prochainY = menuBarHeight + 10;
 	}
 	imageManager.draw();
 	if (!statusMessage.empty()) {
@@ -159,6 +214,7 @@ void UIWindow::onDrawTabPressed() {
 void UIWindow::onView3DTabPressed() {
 	showView3D = !showView3D;
 	show3DMenu = !show3DMenu;
+	view3DRequested = true;
 }
 
 //menu actions
@@ -190,6 +246,11 @@ void UIWindow::mousePressed(int x, int y, int button) {
 		imageTab.active = true;
 		selectShape = false;
 
+		// AJOUTER ces lignes
+		view3DRequested = false;
+		view2DRequested = true;
+		quadViewRequested = false;
+
 	} else if (drawTab.bounds.inside(x, y)) {
 		showDrawMenu = !showDrawMenu;
 		showImageMenu = false;
@@ -200,17 +261,38 @@ void UIWindow::mousePressed(int x, int y, int button) {
 		showQuadView = false;
 		drawTab.active = true;
 
+		// AJOUTER ces lignes
+		view3DRequested = false;
+		view2DRequested = true;
+		quadViewRequested = false;
+
 	} else if (view3DTab.bounds.inside(x, y)) {
 		showView3D = !showView3D;
-		show3DMenu = true;
+		show3DMenu = showView3D;
 		showImageMenu = false;
 		showDrawMenu = false;
 		drawTab.active = false;
 		imageTab.active = false;
 		showQuadView = false;
 		currentShape = "none";
-		view3DTab.active = true;
+		view3DTab.active = showView3D;
 		selectShape = false;
+
+		// MODIFIER ces lignes
+		view3DRequested = showView3D;
+		view2DRequested = !showView3D;
+		quadViewRequested = false;
+	}
+}
+
+void UIWindow::onQuadViewButtonPressed() {
+	showQuadView = !showQuadView;
+
+	// AJOUTER ces lignes
+	quadViewRequested = showQuadView;
+	if (showQuadView) {
+		view3DRequested = false;
+		view2DRequested = false;
 	}
 }
 
@@ -267,10 +349,7 @@ void UIWindow::onSelectionPressed() {
 	statusMessage = "Selection mode activated";
 }
 
-//3d
-void UIWindow::onQuadViewButtonPressed() {
-	showQuadView = true;
-}
+
 
 //general
 void UIWindow::onClearImagePressed() {
@@ -366,6 +445,16 @@ void UIWindow::exportCurrentFrame() {
 
 	exportFrameCount++;
 	statusMessage = "Exporting frame " + ofToString(exportFrameCount);
+}
+
+// 3D IMPORT 
+
+void UIWindow::onImport3DModelPressed() {
+	import3DModelRequested = true;
+}
+
+void UIWindow::onClear3DModelPressed() {
+	clear3DModelRequested = true;
 }
 
 void UIWindow::onWireframePressed() {

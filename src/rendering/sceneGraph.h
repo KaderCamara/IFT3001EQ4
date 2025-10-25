@@ -20,6 +20,11 @@ public:
 
 	void draw();
 
+	//JORDAN: transformation functions
+	void updateSelectedTransform(float tx, float ty, float rot, float scale);
+	//3D IMPORT functions
+	void setShapes(const std::vector<Shape> & newShapes);
+
 	private:
 	int selectedIndex = -1;
 	bool insideBounds(const Shape & shape, float x, float y);

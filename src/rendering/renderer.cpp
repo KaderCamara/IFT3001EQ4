@@ -1,70 +1,217 @@
-// IFT3100A25_BonjourMonde/renderer.cpp
-// Classe responsable du rendu de l'application.  dessins etc
-
+// Renderer.cpp
 #include "renderer.h"
 
-void Renderer::setup()
-{
-  /*// fréquence de rafraîchissement du rendu de la fenêtre d'affichage par seconde
-  ofSetFrameRate(60);
-
-  // résolution de la fenêtre d'affichage en fonction de l'image
-  ofSetWindowShape(512, 512);
-
-  // configurer le niveau de précision des ellipse
-  ofSetCircleResolution(64);
-
-  // chargement du code source des shaders
-  shader.load(
-    "flat_tint_330_vs.glsl",
-    "flat_tint_330_fs.glsl");
-
-  // sélectionner une nouvelle couleur au hasard
-  select_random_colors();*/
+void Renderer::setup() {
+	ofSetFrameRate(60);
+	ofSetWindowShape(512, 512);
+	cameraManager.setup();
 }
 
-void Renderer::draw()
-{
-  /*// effacer la fenêtre d'affichage et remplir avec la couleur d'arrière-plan
-  ofClear(color_background.r, color_background.g, color_background.b);
-
-  // activer le shader
-  shader.begin();
-
-  // passer la couleur de la teinte RGBA au shader sous forme d'un attribut uniforme (avec composantes normalisées)
-  shader.setUniform4f("tint", color_tint.r / 255.0f, color_tint.g / 255.0f, color_tint.b / 255.0f, 1.0f);
-
-  // dessiner 2 lignes à partir des coins de la fenêtre d'affichage
-  ofDrawLine(0.0f, 0.0f, ofGetWidth(), ofGetHeight());
-  ofDrawLine(0.0f, ofGetHeight(), ofGetWidth(), 0.0f);
-
-  // activer la zone de remplissage
-  ofFill();
-
-  // dessiner une ellipse
-  ofDrawEllipse(ofGetWidth() / 2.0f, ofGetHeight() / 2.0f, ofGetWidth() / 8.0f, ofGetHeight() / 8.0f);
-
-  // désactiver la zone de remplissage
-  ofNoFill();
-
-  // dessiner un rectangle
-  ofDrawRectangle(ofGetWidth() / 4.0f, ofGetHeight() / 4.0f, ofGetWidth() / 2.0f, ofGetHeight() / 2.0f);
-
-  // désactiver le shader
-  shader.end();*/
+void Renderer::draw() {
+	if (viewQuad) {
+		drawQuadView();
+	} else if (view3D) {
+		draw3D();
+	}
+	else if (view2D) {
+		sceneGraph.draw();
+		if (currentShape != "none") {
+			shapeManager.draw();
+		}
+	}
 }
 
-// fonction qui permet de sélectionner une nouvelle couleur aléatoire
-void Renderer::select_random_colors()
-{
-  /*// choisir une nouvelle valeur aléatoire par chaque composante de la couleur
-  color_random.set(ofRandom(255), ofRandom(255), ofRandom(255));
+void Renderer::save() {
+	sceneGraph.addShape(shapeManager.getCurrentShape());
+	cameraManager.markDirty();
+}
 
-  // utiliser la couleur aléatoire comme couleur d'arrière-plan
-  color_background.set(color_random.r, color_random.g, color_random.b);
+void Renderer::deleteShape() {
+	if (shapeSelected) {
+		sceneGraph.removeShape(shapeSelectedIndex);
+		shapeSelectedIndex = -1;
+		shapeSelected = false;
+		cameraManager.markDirty();
+	} else {
+		cout << "no shape was selected" << endl;
+	}
+}
 
-  // utiliser l'inverse de couleur aléatoire comme couleur de tinte
-  color_tint.set(255 - color_random.r, 255 - color_random.g, 255 - color_random.b);
+void Renderer::selectingModeOn() {
+	selecting = true;
+	shapeManager.deleteCurrentShapeToDraw();
+}
 
-  ofLog() << "<renderer::select random colors (" << color_random << ")>";*/
+void Renderer::selectingModeOff() {
+	selecting = false;
+}
+
+void Renderer::viewQuadMode() {
+	viewQuad = true;
+	view3D = false;
+	view2D = false;
+	cameraManager.markDirty();
+}
+
+void Renderer::view3DMode() {
+	view3D = true;
+	view2D = false;
+	viewQuad = false; 
+	cameraManager.markDirty();
+}
+
+void Renderer::view2DMode() {
+	view2D = true;
+	view3D = false;
+	viewQuad = false;
+}
+
+void Renderer::draw3D() {
+	for (auto & s : sceneGraph.shapes) {
+		if (!s.is3D) {
+			shapeManager.convertTo3d(s);
+		}
+	}
+
+	if (cameraManager.needsUpdate()) {
+		cameraManager.lookAtScene(sceneGraph.shapes, false);
+	}
+
+	cameraManager.getCurrentCamera().begin();
+
+	ofSetColor(255);
+	for (const auto & s : sceneGraph.shapes) {
+		s.mesh3D.draw(); 
+	}
+
+	cameraManager.getCurrentCamera().end();
+}
+
+void Renderer::mousePressed(int x, int y, int button) {
+	if (currentShape != "none") {
+		startPoint.set(x, y);
+		drawing = true;
+	}
+	if (selecting) {
+		shapeSelectedIndex = sceneGraph.selectShapeAt(x, y);
+		if (shapeSelectedIndex != -1) {
+			shapeSelected = true;
+		}
+	}
+}
+
+void Renderer::mouseReleased(int x, int y, int button) {
+	if (drawing) {
+		endPoint.set(x, y);
+		shapeManager.drawShape(currentShape, startPoint, endPoint);
+		drawing = false;
+	}
+}
+
+
+void Renderer::keyPressed(int key) {
+	if (viewQuad) {
+		return;
+	}
+	
+	if (key == '1') {
+		cameraManager.setPerspectiveView(0);
+		cout << "Camera: Top view" << endl;
+	} else if (key == '2') {
+		cameraManager.setPerspectiveView(1);
+		cout << "Camera: Front view" << endl;
+	} else if (key == '3') {
+		cameraManager.setPerspectiveView(2);
+		cout << "Camera: Side view" << endl;
+	} else if (key == '4') {
+		cameraManager.setPerspectiveView(3);
+		cout << "Camera: Bottom view" << endl;
+	} else if (key == '5') {
+		cameraManager.setPerspectiveView(4);
+		cout << "Camera: Free view (drag to rotate)" << endl;
+	}
+
+	
+}
+
+void Renderer::drawQuadView() {
+	for (auto & s : sceneGraph.shapes) {
+		if (!s.is3D) {
+			shapeManager.convertTo3d(s);
+		}
+	}
+
+	if (cameraManager.needsUpdate()) {
+		cameraManager.lookAtScene(sceneGraph.shapes, true); 
+	}
+
+	int w = drawingArea.width; 
+	int h = drawingArea.height;
+	int halfW = w / 2;
+	int halfH = h / 2;
+
+	int offsetX = drawingArea.x;
+	int offsetY = drawingArea.y;
+
+	//camera top left
+	ofViewport(offsetX, offsetY, halfW, halfH);
+	cameraManager.setPerspectiveView(0);
+	cameraManager.getCurrentCamera().begin();
+	ofSetColor(255);
+	for (const auto & s : sceneGraph.shapes) {
+		s.mesh3D.draw();
+	}
+	cameraManager.getCurrentCamera().end();
+
+	ofSetColor(0);
+	ofDrawBitmapString("Top View", offsetX + 10, offsetY + 20);
+
+	//camera top right
+	ofViewport(offsetX + halfW, offsetY, halfW, halfH);
+	cameraManager.setPerspectiveView(1);
+	cameraManager.getCurrentCamera().begin();
+	ofSetColor(255);
+	for (const auto & s : sceneGraph.shapes) {
+		s.mesh3D.draw();
+	}
+	cameraManager.getCurrentCamera().end();
+
+	ofSetColor(0);
+	ofDrawBitmapString("Front View", offsetX + halfW + 10, offsetY + 20);
+
+	//camera bottom left
+	ofViewport(offsetX, offsetY + halfH, halfW, halfH);
+	cameraManager.setPerspectiveView(2);
+	cameraManager.getCurrentCamera().begin();
+	ofSetColor(255);
+	for (const auto & s : sceneGraph.shapes) {
+		s.mesh3D.draw();
+	}
+	cameraManager.getCurrentCamera().end();
+
+	ofSetColor(0);
+	ofDrawBitmapString("Side View", offsetX + 10, offsetY + halfH + 20);
+
+	//camera bottom right
+	ofViewport(offsetX + halfW, offsetY + halfH, halfW, halfH);
+	cameraManager.setPerspectiveView(3);
+	cameraManager.getCurrentCamera().begin();
+	ofSetColor(255);
+	for (const auto & s : sceneGraph.shapes) {
+		s.mesh3D.draw();
+	}
+	cameraManager.getCurrentCamera().end();
+
+	ofSetColor(0);
+	ofDrawBitmapString("Bottom View", offsetX + halfW + 10, offsetY + halfH + 20);
+
+	ofViewport(0, 0, ofGetWidth(), ofGetHeight());
+
+	// les lignes de separation
+	ofPushStyle();
+	ofSetColor(100);
+	ofSetLineWidth(2);
+	ofDrawLine(offsetX + halfW, offsetY, offsetX + halfW, offsetY + h); //vertical
+	ofDrawLine(offsetX, offsetY + halfH, offsetX + w, offsetY + halfH); // horizontal 
+	ofPopStyle();
 }

@@ -19,6 +19,19 @@ void ImageManager::draw() {
     }
 }
 
+void ImageManager::loadFromDrag(ofDragInfo dragInfo) {
+	std::string path = dragInfo.files[0].string();
+	ofFile file(path);
+
+	std::string ext = ofToLower(file.getExtension());
+	if (ext == "png" || ext == "jpg" || ext == "jpeg") {
+		importedImage.load(path);
+		imageLoaded = true;
+	} else {
+		std::cout << "Unsupported file type: " << ext << std::endl;
+	}
+}
+
 void ImageManager::clear() {
 	imageLoaded = false;
 	importedImage.clear();

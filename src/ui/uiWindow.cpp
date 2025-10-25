@@ -99,11 +99,11 @@ void UIWindow::draw() {
 		drawMenuPanel.draw();
 	}
 	//drawing settings panel
-	// Drawing parameter panel (à gauche)
+	// Drawing parameter panel (a gauche)
 	if (showDrawMenu) {
 		float panelWidth = ofGetWidth() / 6;
 		drawParamsPanel.setPosition(10, prochainY);
-		drawParamsPanel.setSize(panelWidth - 20, 400);
+		drawParamsPanel.setSize(panelWidth - 20, 200);
 		drawParamsPanel.draw();
 		prochainY += drawParamsPanel.getHeight() + 10;
 	}

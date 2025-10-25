@@ -5,6 +5,7 @@
 
 #include "application.h"
 
+// fonction appelée à l'initialisation de l'application
 void Application::setup()
 {
   ofSetWindowTitle("3D app");
@@ -67,7 +68,7 @@ void Application::draw() {
 		uiWindow.getLineWidth(),
 		uiWindow.getStrokeColor(),
 		uiWindow.getFillColor());
-	uiWindow.getBackgroundColor();
+	//uiWindow.getBackgroundColor();
 
 	renderer.applyTransformationToSelectedShape(
 		uiWindow.getTranslateX(),

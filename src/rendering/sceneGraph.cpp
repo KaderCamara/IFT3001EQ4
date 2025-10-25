@@ -102,6 +102,7 @@ void SceneGraph::draw() {
 		}
 		ofPopMatrix(); // JORDAN
 	}
+
 	}
 
 // JORDAN: transformation FUNCTIONS

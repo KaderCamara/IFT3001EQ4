@@ -136,7 +136,7 @@ void Renderer::import3DModel() {
 	ofxAssimpModelLoader loader;
 	if (!loader.loadModel(path)) return;
 
-	// Ajouter chaque mesh du modèle dans la scène
+	// Ajouter chaque mesh du modele dans la scene
 	int numMeshes = loader.getMeshCount();
 	for (int i = 0; i < numMeshes; i++) {
 		Shape newShape;
@@ -155,5 +155,5 @@ void Renderer::clear3DModels() {
 		std::remove_if(shapes.begin(), shapes.end(),
 			[](const Shape & s) { return s.is3D; }),
 		shapes.end());
-	sceneGraph.setShapes(shapes); // à ajouter dans SceneGraph
+	sceneGraph.setShapes(shapes); //ajouter dans SceneGraph
 }

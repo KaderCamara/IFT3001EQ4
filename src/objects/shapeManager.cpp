@@ -37,4 +37,3 @@ void ShapeManager::convertTo3d(Shape& shape) {
 	shape.mesh3D = shapeManager3D.to3DDraw(shape);
 }
 
-

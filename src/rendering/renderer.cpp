@@ -19,7 +19,43 @@ void Renderer::draw() {
 	} else if (view3D) {
 		draw3D();
 	} else if (view2D) {
-		sceneGraph.draw();
+		for (auto & s : sceneGraph.shapes) {
+			if (s.type == "none" || s.type == "x") continue;
+
+			ofPushStyle();
+			ofSetColor(s.color);
+			ofSetLineWidth(1);
+
+			// Toujours dessiner en 2D à partir des données 2D d'origine,
+			// même si la shape a été convertie en 3D (s.is3D == true).
+			if (s.type == "point") {
+				ofDrawCircle(s.start, 3 * s.scale);
+			} else if (s.type == "line") {
+				ofDrawLine(s.start, s.end);
+			} else if (s.type == "triangle") {
+				ofDrawTriangle(s.start, ofPoint(s.end.x, s.start.y), s.end);
+			} else if (s.type == "square") {
+				float side = std::abs(s.end.x - s.start.x) * s.scale;
+				ofDrawRectangle(s.start.x, s.start.y, side, side);
+			} else if (s.type == "rectangle") {
+				float w = (s.end.x - s.start.x) * s.scale;
+				float h = (s.end.y - s.start.y) * s.scale;
+				ofDrawRectangle(s.start.x, s.start.y, w, h);
+			} else if (s.type == "circle") {
+				float radius = ofDist(s.start.x, s.start.y, s.end.x, s.end.y) * s.scale;
+				ofDrawCircle(s.start, radius);
+			} else {
+				// fallback — si type inconnu, dessiner wireframe (optionnel)
+				if (s.mesh3D.getNumVertices() > 0) {
+					ofSetColor(180);
+					s.mesh3D.drawWireframe();
+				}
+			}
+
+			ofPopStyle();
+		}
+
+		// dessine la shape en cours
 		if (currentShape != "none") {
 			shapeManager.draw();
 		}
@@ -28,7 +64,6 @@ void Renderer::draw() {
 
 void Renderer::save() {
 	sceneGraph.addShape(shapeManager.getCurrentShape());
-	// NEW: Mark camera as needing update when scene changes
 	cameraManager.markDirty();
 }
 
@@ -36,7 +71,6 @@ void Renderer::deleteShape() {
 	if (shapeSelected) {
 		sceneGraph.removeSelectedShapes();
 		shapeSelected = false;
-		// NEW: Mark camera as needing update when scene changes
 		cameraManager.markDirty();
 	} else {
 		cout << "no shape was selected" << endl;
@@ -63,6 +97,11 @@ void Renderer::view3DMode() {
 	view3D = true;
 	view2D = false;
 	viewQuad = false;
+
+	for (auto & s : sceneGraph.shapes) {
+		if (!s.is3D) shapeManager.convertTo3d(s);
+	}
+
 	cameraManager.markDirty();
 }
 
@@ -72,39 +111,41 @@ void Renderer::view2DMode() {
 	viewQuad = false;
 }
 
-// CHANGED: Only recalculate camera when scene has changed
 void Renderer::draw3D() {
-	// Convert all shapes to 3D first
 	for (auto & s : sceneGraph.shapes) {
 		if (!s.is3D) {
 			shapeManager.convertTo3d(s);
 		}
 	}
 
-	// Update camera if needed
 	if (cameraManager.needsUpdate()) {
 		cameraManager.lookAtScene(sceneGraph.shapes, false);
 	}
 
 	cameraManager.getCurrentCamera().begin();
-
-	// Draw solid meshes
 	ofSetColor(255);
-	for (const auto & s : sceneGraph.shapes) {
-		// Wireframe ou solide
+
+	for (auto & s : sceneGraph.shapes) {
+		ofMesh & mesh3D = s.mesh3D;
+
 		if (g_showWireframe) {
-			s.mesh3D.drawWireframe();
+			mesh3D.drawWireframe();
 		} else {
-			s.mesh3D.draw();
+			mesh3D.draw();
 		}
 
-		// Bounding box
 		if (g_showBoundingBox) {
+			glm::vec3 min(FLT_MAX), max(-FLT_MAX);
+			for (auto & v : mesh3D.getVertices()) {
+				min = glm::min(min, v);
+				max = glm::max(max, v);
+			}
+
+			ofPushStyle();
 			ofNoFill();
 			ofSetColor(ofColor::green);
-			ofSetLineWidth(1);
-			ofRectangle bbox = getMeshBoundingBox(s.mesh3D);
-			ofDrawRectangle(bbox);
+			ofDrawBox((min + max) * 0.5f, max.x - min.x, max.y - min.y, max.z - min.z);
+			ofPopStyle();
 		}
 	}
 

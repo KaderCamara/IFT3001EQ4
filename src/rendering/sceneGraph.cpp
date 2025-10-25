@@ -80,19 +80,34 @@ bool SceneGraph::insideBounds(const Shape & s, float x, float y) {
 		ofPoint b(s.end.x, s.start.y);
 		ofPoint c = s.end;
 		float denom = ((b.y - c.y) * (a.x - c.x) + (c.x - b.x) * (a.y - c.y));
+		if (fabs(denom) < 1e-6) return false;
 		float alpha = ((b.y - c.y) * (x - c.x) + (c.x - b.x) * (y - c.y)) / denom;
 		float beta = ((c.y - a.y) * (x - c.x) + (a.x - c.x) * (y - c.y)) / denom;
 		float gamma = 1.0f - alpha - beta;
 		return (alpha >= 0 && beta >= 0 && gamma >= 0);
 	} else if (s.type == "square") {
-		float side = std::abs(s.end.x - s.start.x);
+		float side = std::abs(s.end.x - s.start.x) * s.scale;
 		return (x >= s.start.x && x <= s.start.x + side && y >= s.start.y && y <= s.start.y + side);
 	} else if (s.type == "circle") {
-		float radius = ofDist(s.start.x, s.start.y, s.end.x, s.end.y);
+		float radius = ofDist(s.start.x, s.start.y, s.end.x, s.end.y) * s.scale;
 		return ofDist(x, y, s.start.x, s.start.y) <= radius;
 	} else if (s.type == "rectangle") {
-		return (x >= s.start.x && x <= s.end.x && y >= s.start.y && y <= s.end.y);
+		float x0 = std::min(s.start.x, s.end.x);
+		float x1 = std::max(s.start.x, s.end.x);
+		float y0 = std::min(s.start.y, s.end.y);
+		float y1 = std::max(s.start.y, s.end.y);
+		return (x >= x0 && x <= x1 && y >= y0 && y <= y1);
 	}
+
+	if (s.is3D && s.mesh3D.getNumVertices() > 0) {
+		glm::vec3 mn(FLT_MAX), mx(-FLT_MAX);
+		for (auto & v : s.mesh3D.getVertices()) {
+			mn = glm::min(mn, v);
+			mx = glm::max(mx, v);
+		}
+		if (x >= mn.x && x <= mx.x && y >= mn.y && y <= mx.y) return true;
+	}
+
 	return false;
 }
 

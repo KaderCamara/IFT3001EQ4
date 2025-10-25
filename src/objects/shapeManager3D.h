@@ -1,3 +1,4 @@
+//classes qui s'occupe de tout ce qui est 3d etc
 #pragma once
 #include "ofMain.h"
 #include "shape.h"

@@ -248,6 +248,7 @@
     <ClCompile Include="..\..\..\addons\ofxGui\src\ofxToggle.cpp" />
     <ClCompile Include="src\objects\shapeManager3D.cpp" />
     <ClCompile Include="src\objects\shapeManager.cpp" />
+    <ClCompile Include="src\rendering\cameraManager.cpp" />
     <ClCompile Include="src\rendering\renderer.cpp" />
     <ClCompile Include="src\rendering\sceneGraph.cpp" />
     <ClCompile Include="src\rendering\shaderManager.cpp" />
@@ -360,6 +361,7 @@
     <ClInclude Include="src\objects\shape.h" />
     <ClInclude Include="src\objects\shapeManager3D.h" />
     <ClInclude Include="src\objects\shapeManager.h" />
+    <ClInclude Include="src\rendering\cameraManager.h" />
     <ClInclude Include="src\rendering\renderer.h" />
     <ClInclude Include="src\rendering\sceneGraph.h" />
     <ClInclude Include="src\rendering\shaderManager.h" />

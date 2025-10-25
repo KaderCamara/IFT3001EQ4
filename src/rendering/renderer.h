@@ -6,6 +6,9 @@
 #include "sceneGraph.h"
 #include "ofxAssimpModelLoader.h"
 #include <algorithm>
+#include "cameraManager.h"
+#include "../objects/shapeManager3D.h"
+
 
 class Renderer
 {
@@ -17,7 +20,9 @@ public:
   void setCurrentShape(const std::string & shape) { currentShape = shape; }
   void mousePressed(int x, int y, int button);
   void mouseReleased(int x, int y, int button);
+  void keyPressed(int key);
   void draw3D();
+  void setShowBoundingBox(bool state) { showBoundingBox = state; }
 
   // MODIFICATIONS JORDAN
   void view2DMode();
@@ -34,18 +39,21 @@ public:
   void selectingModeOn();
   void selectingModeOff();
   void view3DMode();
-  ofEasyCam cam;
+  void viewQuadMode();
 
 private:
   ofTrueTypeFont font;
   ofRectangle drawingArea;
+  ofRectangle getMeshBoundingBox(const ofMesh & mesh);
   std::string currentShape = "none";
   bool drawing = false;
   bool selecting = false;
   ShapeManager shapeManager;
+  CameraManager cameraManager;
   SceneGraph sceneGraph;
   ofPoint startPoint, endPoint;
   bool shapeSelected = false;
+  bool showBoundingBox = false;
   int shapeSelectedIndex = -1;
   bool view3D = false;
   // --- Parameters from UI ---

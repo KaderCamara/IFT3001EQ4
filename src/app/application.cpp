@@ -48,6 +48,12 @@ void Application::update() {
 		renderer.clear3DModels();
 		uiWindow.clearClear3DModelRequest();
 	}
+	if (uiWindow.is2DviewRequested()) {
+		renderer.view2DMode();
+	}
+	if (uiWindow.isQuadViewRequested()) {
+		renderer.viewQuadMode();
+	}
 
 	uiWindow.clearRequests();
 }
@@ -78,6 +84,11 @@ void Application::draw() {
 
   renderer.draw();
   uiWindow.draw();
+}
+
+
+void Application::keyPressed(int key) {
+	renderer.keyPressed(key);
 }
 
 void Application::mousePressed(int x, int y, int button) {

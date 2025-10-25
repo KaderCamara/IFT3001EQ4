@@ -1,6 +1,12 @@
 // Renderer.cpp
 #include "renderer.h"
 #include <cfloat>
+#include "ofMain.h"
+#include "cameraManager.h"
+#include "sceneGraph.h"
+#include "../objects/shapeManager.h"
+#include "../objects/shapeManager3D.h"
+#include "../ui/uiWindow.h"
 
 
 bool g_showBoundingBox = false;

@@ -56,6 +56,10 @@ private:
   bool showBoundingBox = false;
   int shapeSelectedIndex = -1;
   bool view3D = false;
+  bool view2D = true;
+  bool viewQuad = false;
+  void drawQuadView();
+  float camDistance = 600.0f;
   // --- Parameters from UI ---
   float currentLineWidth = 2.0f;
   ofColor currentStrokeColor = ofColor::black;

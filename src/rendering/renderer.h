@@ -26,6 +26,7 @@ public:
   void selectingModeOff();
   void view3DMode();
   void view2DMode();
+  void viewQuadMode();
 
 private:
   ofTrueTypeFont font;
@@ -41,5 +42,7 @@ private:
   int shapeSelectedIndex = -1;
   bool view3D = false;
   bool view2D = true;
+  bool viewQuad = false;
+  void drawQuadView();
   float camDistance = 600.0f;
 };

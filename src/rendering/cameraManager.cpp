@@ -37,7 +37,7 @@ void CameraManager::setPerspectiveView(int viewIndex) {
 }
 
 // CHANGED: Complete rewrite using proper 3D bounding calculation
-void CameraManager::lookAtScene(const std::vector<Shape> & shapes) {
+void CameraManager::lookAtScene(const std::vector<Shape> & shapes, bool isQuadView) {
 	if (shapes.empty()) return;
 
 	// Calculate scene center and bounding radius
@@ -45,9 +45,16 @@ void CameraManager::lookAtScene(const std::vector<Shape> & shapes) {
 	float radius;
 	calculateSceneBounds(shapes, center, radius);
 
-	// Add padding so shapes aren't too close to edge
-	float distance = radius * 10.0f;
-	if (distance < 1000.0f) distance = 1000.0f;
+	// FIX: Different distance for quad view vs single view
+	float distance;
+	if (isQuadView) {
+		distance = radius * 30.0f;
+		if (distance < 3000.0f) distance = 3000.0f;
+	} else {
+		// Normal distance for single 3D view
+		distance = radius * 15.0f;
+		if (distance < 1500.0f) distance = 1500.0f;
+	}
 
 	// Position each fixed camera at appropriate angle
 	// Camera 0: Top view (looking down -Y axis)

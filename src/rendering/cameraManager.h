@@ -17,7 +17,7 @@ public:
 
 	// CHANGED: Now only recalculates when called (not every frame)
 	// Call this when shapes are added/removed/modified
-	void lookAtScene(const std::vector<Shape> & shapes);
+	void lookAtScene(const std::vector<Shape> & shapes, bool isQuadView = false);
 
 	// NEW: Check if camera needs updating
 	bool needsUpdate() const { return isDirty; }

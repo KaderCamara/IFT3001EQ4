@@ -37,6 +37,9 @@ void Application::update() {
 	if (uiWindow.is2DviewRequested()) {
 		renderer.view2DMode();
 	}
+	if (uiWindow.isQuadViewRequested()) {
+		renderer.viewQuadMode();
+	}
 
 	uiWindow.clearRequests();
 }

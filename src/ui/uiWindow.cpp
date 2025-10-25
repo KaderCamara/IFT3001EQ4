@@ -31,6 +31,14 @@ void UIWindow::setup() {
 	saveShapeButton.addListener(this, &UIWindow::onSaveShapePressed);
 	deleteShapeButton.addListener(this, &UIWindow::onDeleteShapePressed);
 	selectionButton.addListener(this, &UIWindow::onSelectionPressed);
+
+	//3d view Menu
+	view3DMenuPanel.setup("3D View Menu");
+	view3DMenuPanel.add(cameraTitle.setup("Camera Controls", ""));
+	view3DMenuPanel.add(cameraInstructions1.setup("1:Top 2:Front 3:Side", ""));
+	view3DMenuPanel.add(cameraInstructions2.setup("4:Bottom 5:Free (drag)", ""));
+	view3DMenuPanel.add(quadViewButton.setup("view with 4 cameras at the same time."));
+	quadViewButton.addListener(this, &UIWindow::onQuadViewButtonPressed);
 }
 
 void UIWindow::update() {
@@ -53,6 +61,9 @@ void UIWindow::draw() {
 	//draw panel 
 	drawMenuPanel.setPosition(ofGetWidth() - sideMenuWidth, menuBarHeight);
 	drawMenuPanel.setSize(sideMenuWidth, ofGetHeight() - menuBarHeight);
+	//3d panel
+	view3DMenuPanel.setPosition(ofGetWidth() - sideMenuWidth, menuBarHeight);
+	view3DMenuPanel.setSize(sideMenuWidth, ofGetHeight() - menuBarHeight);
 
 
 	for (auto & tab : { imageTab, drawTab, view3DTab }) {
@@ -68,6 +79,9 @@ void UIWindow::draw() {
 	if (showDrawMenu) {
 		drawMenuPanel.draw();
 	}
+	if (show3DMenu) {
+		view3DMenuPanel.draw();
+	}
 	imageManager.draw();
 }
 
@@ -81,6 +95,7 @@ void UIWindow::onDrawTabPressed() {
 }
 void UIWindow::onView3DTabPressed() {
 	showView3D = !showView3D;
+	show3DMenu = !show3DMenu;
 }
 
 //menu actions
@@ -104,6 +119,8 @@ void UIWindow::mousePressed(int x, int y, int button) {
 		drawTab.active = false;
 		view3DTab.active = false;
 		showView3D = false;
+		show3DMenu = false;
+		showQuadView = false;
 		currentShape = "none";
 		imageTab.active = true;
 
@@ -113,14 +130,18 @@ void UIWindow::mousePressed(int x, int y, int button) {
 		imageTab.active = false;
 		view3DTab.active = false;
 		showView3D = false;
+		show3DMenu = false;
+		showQuadView = false;
 		drawTab.active = true;
 
 	} else if (view3DTab.bounds.inside(x, y)) {
 		showView3D = !showView3D;
+		show3DMenu = true;
 		showImageMenu = false;
 		showDrawMenu = false;
 		drawTab.active = false;
 		imageTab.active = false;
+		showQuadView = false;
 		currentShape = "none";
 		view3DTab.active = true;
 	}
@@ -166,6 +187,11 @@ void UIWindow::clearRequests() {
 void UIWindow::onSelectionPressed() {
 	selectShape = true;
 	currentShape = "none";
+}
+
+//3d
+void UIWindow::onQuadViewButtonPressed() {
+	showQuadView = true;
 }
 
 

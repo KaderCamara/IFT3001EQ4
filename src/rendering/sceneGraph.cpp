@@ -38,8 +38,6 @@ int SceneGraph::selectShapeAt(float x, float y) {
 void SceneGraph::updateSelectedAttributes(const ofColor & color, float size) {
 	if(selectedIndex >= 0 && selectedIndex < shapes.size()) {
 		Shape & selected = shapes[selectedIndex];
-		// when you add color/size attributes to Shape, update them here
-		// e.g., selected.color = color; selected.size = size;
 	}
 }
 

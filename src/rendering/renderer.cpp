@@ -23,7 +23,6 @@ void Renderer::draw() {
 
 void Renderer::save() {
 	sceneGraph.addShape(shapeManager.getCurrentShape());
-	// NEW: Mark camera as needing update when scene changes
 	cameraManager.markDirty();
 }
 
@@ -32,7 +31,6 @@ void Renderer::deleteShape() {
 		sceneGraph.removeShape(shapeSelectedIndex);
 		shapeSelectedIndex = -1;
 		shapeSelected = false;
-		// NEW: Mark camera as needing update when scene changes
 		cameraManager.markDirty();
 	} else {
 		cout << "no shape was selected" << endl;
@@ -68,26 +66,22 @@ void Renderer::view2DMode() {
 	viewQuad = false;
 }
 
-// CHANGED: Only recalculate camera when scene has changed
 void Renderer::draw3D() {
-	// Convert all shapes to 3D first
 	for (auto & s : sceneGraph.shapes) {
 		if (!s.is3D) {
 			shapeManager.convertTo3d(s);
 		}
 	}
 
-	// Update camera if needed
 	if (cameraManager.needsUpdate()) {
 		cameraManager.lookAtScene(sceneGraph.shapes, false);
 	}
 
 	cameraManager.getCurrentCamera().begin();
 
-	// Draw solid meshes
 	ofSetColor(255);
 	for (const auto & s : sceneGraph.shapes) {
-		s.mesh3D.draw(); // Changed from drawWireframe()
+		s.mesh3D.draw(); 
 	}
 
 	cameraManager.getCurrentCamera().end();
@@ -114,30 +108,30 @@ void Renderer::mouseReleased(int x, int y, int button) {
 	}
 }
 
-// NEW: Add keyboard controls for camera switching
+
 void Renderer::keyPressed(int key) {
 	if (viewQuad) {
-		return; // Early exit
+		return;
 	}
-	// Switch camera views with number keys
+	
 	if (key == '1') {
-		cameraManager.setPerspectiveView(0); // Top view
+		cameraManager.setPerspectiveView(0);
 		cout << "Camera: Top view" << endl;
 	} else if (key == '2') {
-		cameraManager.setPerspectiveView(1); // Front view
+		cameraManager.setPerspectiveView(1);
 		cout << "Camera: Front view" << endl;
 	} else if (key == '3') {
-		cameraManager.setPerspectiveView(2); // Side view
+		cameraManager.setPerspectiveView(2);
 		cout << "Camera: Side view" << endl;
 	} else if (key == '4') {
-		cameraManager.setPerspectiveView(3); // Bottom view
+		cameraManager.setPerspectiveView(3);
 		cout << "Camera: Bottom view" << endl;
 	} else if (key == '5') {
-		cameraManager.setPerspectiveView(4); // Free rotation view
+		cameraManager.setPerspectiveView(4);
 		cout << "Camera: Free view (drag to rotate)" << endl;
 	}
 
-	// You can add more keys for other functionality here
+	
 }
 
 void Renderer::drawQuadView() {
@@ -151,13 +145,11 @@ void Renderer::drawQuadView() {
 		cameraManager.lookAtScene(sceneGraph.shapes, true); 
 	}
 
-	// FIX: Use width and height, not x and y!
-	int w = drawingArea.width; // CHANGED from drawingArea.x
-	int h = drawingArea.height; // CHANGED from drawingArea.y
+	int w = drawingArea.width; 
+	int h = drawingArea.height;
 	int halfW = w / 2;
 	int halfH = h / 2;
 
-	// FIX: Offset viewports by drawingArea position
 	int offsetX = drawingArea.x;
 	int offsetY = drawingArea.y;
 
@@ -171,7 +163,6 @@ void Renderer::drawQuadView() {
 	}
 	cameraManager.getCurrentCamera().end();
 
-	// Draw label
 	ofSetColor(0);
 	ofDrawBitmapString("Top View", offsetX + 10, offsetY + 20);
 
@@ -214,14 +205,13 @@ void Renderer::drawQuadView() {
 	ofSetColor(0);
 	ofDrawBitmapString("Bottom View", offsetX + halfW + 10, offsetY + halfH + 20);
 
-	// Reset viewport to full screen
 	ofViewport(0, 0, ofGetWidth(), ofGetHeight());
 
-	// Draw borders between viewports
+	// les lignes de separation
 	ofPushStyle();
 	ofSetColor(100);
 	ofSetLineWidth(2);
-	ofDrawLine(offsetX + halfW, offsetY, offsetX + halfW, offsetY + h); // Vertical line
-	ofDrawLine(offsetX, offsetY + halfH, offsetX + w, offsetY + halfH); // Horizontal line
+	ofDrawLine(offsetX + halfW, offsetY, offsetX + halfW, offsetY + h); //vertical
+	ofDrawLine(offsetX, offsetY + halfH, offsetX + w, offsetY + halfH); // horizontal 
 	ofPopStyle();
 }

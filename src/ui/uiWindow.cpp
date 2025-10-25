@@ -42,7 +42,6 @@ void UIWindow::setup() {
 }
 
 void UIWindow::update() {
-	// No special logic yet
 }
 
 void UIWindow::draw() {
@@ -53,7 +52,7 @@ void UIWindow::draw() {
 	ofSetColor(50, 50, 50);
 	ofDrawRectangle(0, 0, ofGetWidth(), menuBarHeight);
 
-	//panels here so it is responsive with the height and width
+	//panels here so it is responsive with the height and width, il faut que ca soit auto
 	//image panel 
 	float sideMenuWidth = ofGetWidth() / 6;
 	imageMenuPanel.setPosition(ofGetWidth() - sideMenuWidth, menuBarHeight);

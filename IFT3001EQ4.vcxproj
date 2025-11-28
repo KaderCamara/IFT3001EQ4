@@ -246,6 +246,9 @@
     <ClCompile Include="..\..\..\addons\ofxGui\src\ofxSlider.cpp" />
     <ClCompile Include="..\..\..\addons\ofxGui\src\ofxSliderGroup.cpp" />
     <ClCompile Include="..\..\..\addons\ofxGui\src\ofxToggle.cpp" />
+    <ClCompile Include="src\objects\BezierCurve.cpp" />
+    <ClCompile Include="src\objects\controlPointsManager.cpp" />
+    <ClCompile Include="src\objects\curveManager.cpp" />
     <ClCompile Include="src\objects\shapeManager3D.cpp" />
     <ClCompile Include="src\objects\shapeManager.cpp" />
     <ClCompile Include="src\rendering\cameraManager.cpp" />
@@ -358,6 +361,9 @@
     <ClInclude Include="..\..\..\addons\ofxGui\src\ofxSlider.h" />
     <ClInclude Include="..\..\..\addons\ofxGui\src\ofxSliderGroup.h" />
     <ClInclude Include="..\..\..\addons\ofxGui\src\ofxToggle.h" />
+    <ClInclude Include="src\objects\BezierCurve.h" />
+    <ClInclude Include="src\objects\controlPointsManager.h" />
+    <ClInclude Include="src\objects\curveManager.h" />
     <ClInclude Include="src\objects\shape.h" />
     <ClInclude Include="src\objects\shapeManager3D.h" />
     <ClInclude Include="src\objects\shapeManager.h" />

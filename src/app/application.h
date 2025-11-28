@@ -30,7 +30,5 @@ public:
 
   void dragEvent(ofDragInfo dragInfo);
 
-  void mouseMoved(int x, int y);
-
   void exit();
 };

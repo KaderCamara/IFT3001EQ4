@@ -10,11 +10,14 @@
 #include "../objects/shapeManager3D.h"
 #include <vector>
 #include "glm/glm.hpp"
+#include "../objects/curveManager.h"
+#include "../objects/controlPointsManager.h"
 
 
 class Renderer
 {
 public:
+	ofRectangle getDrawingArea() const { return drawingArea; };
   void setup();
   void draw();
   
@@ -47,8 +50,10 @@ public:
   void addControlPoint(int x, int y);
   void setPointPreview(int x, int y);
   void clearPointPreview();
+  void generateBezierCurveFromControlPoints();
+  void clearCurves();
 
-private:
+  private:
   ofTrueTypeFont font;
   ofRectangle drawingArea;
   ofRectangle getMeshBoundingBox(const ofMesh & mesh);
@@ -75,9 +80,10 @@ private:
   bool useHSBmode = false;
 
   // CURVES CONTROL POINTS
-  std::vector<glm::vec2> controlPoints;
-  bool hasPointPreview = false;
+  //bool hasPointPreview = false;
   glm::vec2 pointPreview;
+  CurveManager curveManager;
+  ControlPointsManager controlPointsManager;
 
   // 3D IMPORT
   bool modelImported = false;

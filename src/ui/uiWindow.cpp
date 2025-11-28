@@ -46,6 +46,8 @@ void UIWindow::setup() {
 	curvesPanel.setup("Curves Menu");
 	curvesPanel.add(placePointsButton.setup("Place Points"));
 	curvesPanel.add(generateBezierCurveButton.setup("Generate Bezier curve"));
+	curvesPanel.add(clearCurvesButton.setup("Clear Curves"));
+	clearCurvesButton.addListener(this, &UIWindow::onClearCurvesPressed);
 	generateBezierCurveButton.addListener(this, &UIWindow::onGenerateBezierCurvePressed);
 	placePointsButton.addListener(this, &UIWindow::onPlacePointsPressed);
 
@@ -516,8 +518,13 @@ void UIWindow::onPlacePointsPressed() {
 }
 
 bool UIWindow::isPlacePointsMode() const { return placePointsMode; }
+
 void UIWindow::onGenerateBezierCurvePressed() {
 	generateBezierCurveRequested = true;
 	statusMessage = "Curves: Generate curve requested";
 }
 
+void UIWindow::onClearCurvesPressed() {
+	clearCurvesRequested = true;
+	statusMessage = "Curves: Clear all curves requested";
+}

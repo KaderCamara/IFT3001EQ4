@@ -54,6 +54,14 @@ void Application::update() {
 		uiWindow.clearClear3DModelRequest();
 	}
 
+	if (uiWindow.isGenerateCurveRequested()) {
+		renderer.generateBezierCurveFromControlPoints();
+		uiWindow.clearGenerateCurveRequest();
+	}
+	if (uiWindow.isClearCurvesRequested()) {
+		renderer.clearCurves();
+		uiWindow.clearClearCurvesRequest();
+	}
 	uiWindow.clearRequests();
 }
 
@@ -87,7 +95,16 @@ void Application::draw() {
 
 
 void Application::keyPressed(int key) {
-	renderer.keyPressed(key);
+	if (uiWindow.getPlacePointsModeState()) {
+		// if we are in place points mode, when entering P key
+		if (key == 'p' || key == 'P') {
+			// we unable place points mode
+			uiWindow.placePointsMode= false;
+			uiWindow.statusMessage = "Place Points Mode disabled.\n";
+		}
+	}
+		
+	//renderer.keyPressed(key);
 }
 
 void Application::mousePressed(int x, int y, int button) {
@@ -127,11 +144,3 @@ void Application::exit()
   ofLog() << "<app::exit>";
 }
 
-void Application::mouseMoved(int x, int y) {
-	// if we are in place points mode, we set the point preview
-	if (uiWindow.isPlacePointsMode() && uiWindow.getDrawingArea().inside(x, y)) {
-		renderer.setPointPreview(x, y);
-	} else {
-		renderer.clearPointPreview();
-	}
-}

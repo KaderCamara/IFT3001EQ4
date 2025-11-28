@@ -9,6 +9,7 @@
 #include "../ui/uiWindow.h"
 
 
+
 bool g_showBoundingBox = false;
 bool g_showWireframe = false;
 
@@ -100,39 +101,10 @@ void Renderer::draw() {
 	}
 
 	//--------- Draw control points for curves-----------//
-	//--------- -----------------------------------------//
-	// Segments between control points
-	ofPushStyle();
-	ofSetColor(ofColor::red);
-	ofSetLineWidth(2);
-	for (size_t i = 0; i + 1 < controlPoints.size(); ++i) {
-		ofDrawLine(controlPoints[i], controlPoints[i + 1]);
-	}
-	ofPopStyle();
-
-	// preview point
-	if (hasPointPreview) {
-		ofPushStyle();
-		ofSetColor(ofColor::red, 100);
-		ofSetLineWidth(1);
-		const auto & lastPoint = controlPoints.empty() ? startPoint : controlPoints.back();
-		ofDrawLine(lastPoint.x, lastPoint.y, pointPreview.x, pointPreview.y);
-		ofPopStyle();
-	}
-	ofPushStyle();
-	ofSetColor(ofColor::red);
-	for (size_t i = 0; i < controlPoints.size(); ++i) {
-		const auto & p = controlPoints[i];
-
-		// red circle
-		ofDrawCircle(p, 4);
-
-		// point number
-		ofDrawBitmapStringHighlight(ofToString(i + 1), p.x + 6, p.y - 6);
-	}
-
-	ofPopStyle();
-
+	// Generate points for curves
+	controlPointsManager.drawPointsForCurves();
+	//---- Generate and draw Bezier curve ----//
+	curveManager.draw();
 	// Dessiner la shape en cours de création
 	if (currentShape != "none") {
 		shapeManager.draw();
@@ -452,25 +424,23 @@ void Renderer::addControlPoint(int x, int y) {
 	if (!drawingArea.inside(x, y)) {
 		return;
 	}
-
-	controlPoints.push_back(glm::vec2(x, y));
+	controlPointsManager.addControlPoint(x, y);
 }
-void Renderer::setPointPreview(int x, int y) {
-	// no points = no preview
-	if (controlPoints.empty()) {
-		hasPointPreview = false;
+
+void Renderer::generateBezierCurveFromControlPoints() {
+	clearCurves(); // on efface les courbes précédentes, au cas ou on ajoute un dernier point
+	// Pas de courbe si moins de 2 points
+	if (controlPointsManager.getControlPoints().size() < 2) {
 		return;
 	}
 
-	// drawing area check
-	if (!drawingArea.inside(x, y)) {
-		hasPointPreview = false;
-		return;
-	}
+	// On ajoute une nouvelle courbe au manager
+	curveManager.addBezierCurve(controlPointsManager.getControlPoints());
 
-	hasPointPreview = true;
-	pointPreview = glm::vec2(x, y);
+	// Optionnel : on vide les points de contrôle pour préparer une nouvelle courbe
+	//controlPoints.clear();
+	//hasPointPreview = false;
 }
-void Renderer::clearPointPreview() {
-	hasPointPreview = false;
+void Renderer::clearCurves() {
+	curveManager.clear();
 }

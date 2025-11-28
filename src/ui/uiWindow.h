@@ -60,8 +60,13 @@ public:
 
 	// CURVE AND POINTSD
 	bool isPlacePointsMode() const;
+	bool placePointsMode = false;
 	bool isGenerateCurveRequested() const { return generateBezierCurveRequested; }
 	void clearGenerateCurveRequest() { generateBezierCurveRequested = false; }
+	bool isClearCurvesRequested() const { return clearCurvesRequested; }
+	void clearClearCurvesRequest() { clearCurvesRequested = false; }
+	bool getPlacePointsModeState() const { return placePointsMode; }
+	std::string statusMessage;
 
 private:
 
@@ -141,12 +146,15 @@ private:
 	// curves tab elements
 	void onCurveTabPressed();
 	bool showCurvesMenu = false;
-	bool placePointsMode = false;
+	
 	bool generateBezierCurveRequested = false;
+	bool clearCurvesRequested = false;
 	void onPlacePointsPressed();
 	void onGenerateBezierCurvePressed();
+	void onClearCurvesPressed();
 	ofxButton placePointsButton;
 	ofxButton generateBezierCurveButton;
+	ofxButton clearCurvesButton;
 
 	//general
 	ofTrueTypeFont font;
@@ -165,7 +173,7 @@ private:
 
 	// status box
 	float statusTimer = 0.0f;
-	std::string statusMessage;
+	
 	ofRectangle statusBox;
 
 	// Export

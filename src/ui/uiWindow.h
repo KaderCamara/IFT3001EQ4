@@ -79,6 +79,7 @@ private:
 	ofxPanel view3DMenuPanel;
 	ofxPanel deletePanel;
 	ofxPanel view3DPanel;
+	ofxPanel curvesPanel;
 
 	//image tab elements
 	ofxButton importImageButton;
@@ -133,6 +134,14 @@ private:
 	ofxLabel cameraInstructions2;
 	void onQuadViewButtonPressed();
 
+	// curves tab elements
+	void onCurveTabPressed();
+	bool showCurvesMenu = false;
+	bool placePointsMode = false;
+	bool isPlacePointsMode() const;
+	void onPlacePointsPressed();
+	ofxButton placePointsButton;
+
 	//general
 	ofTrueTypeFont font;
 	ImageManager imageManager;
@@ -146,6 +155,7 @@ private:
 	TabButton imageTab = { "Image", ofRectangle(0, 0, 100, 50) };
 	TabButton drawTab = { "Draw", ofRectangle(100, 0, 100, 50) };
 	TabButton view3DTab = { "3D view", ofRectangle(200, 0, 100, 50) };
+	TabButton curvesTab = { "Curves", ofRectangle(300, 0, 100, 50) };
 
 	// status box
 	float statusTimer = 0.0f;

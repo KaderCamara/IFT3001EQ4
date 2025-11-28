@@ -42,6 +42,11 @@ void UIWindow::setup() {
 	view3DPanel.add(wireframeButton.setup("Wireframe Mode"));
 	wireframeButton.addListener(this, &UIWindow::onWireframePressed);
 
+	// curves menu
+	curvesPanel.setup("Curves Menu");
+	curvesPanel.add(placePointsButton.setup("Place Points"));
+	placePointsButton.addListener(this, &UIWindow::onPlacePointsPressed);
+
 	// delete panel
 	deletePanel.setup("Delete");
 	deletePanel.add(deleteShapeButton.setup("delete the shape"));
@@ -136,7 +141,11 @@ void UIWindow::draw() {
 	view3DMenuPanel.setSize(sideMenuWidth, ofGetHeight() - menuBarHeight);
 	prochainY = menuBarHeight;
 
-	for (auto & tab : { imageTab, drawTab, view3DTab }) {
+	// curvesPanel
+	curvesPanel.setPosition(ofGetWidth() - sideMenuWidth, menuBarHeight);
+	curvesPanel.setSize(sideMenuWidth, ofGetHeight() - menuBarHeight);
+
+	for (auto & tab : { imageTab, drawTab, view3DTab, curvesTab }) {
 		ofSetColor(tab.active ? 100 : 150);
 		ofDrawRectangle(tab.bounds);
 
@@ -160,6 +169,12 @@ void UIWindow::draw() {
 		view3DPanel.setPosition(ofGetWidth() - sideMenuWidth, menuBarHeight);
 		view3DPanel.setSize(sideMenuWidth, ofGetHeight() - menuBarHeight);
 		view3DPanel.draw();
+	}
+	if (showCurvesMenu) {
+		float sideMenuWidth = ofGetWidth() / 6;
+		curvesPanel.setPosition(ofGetWidth() - sideMenuWidth, menuBarHeight);
+		curvesPanel.setSize(sideMenuWidth, ofGetHeight() - menuBarHeight);
+		curvesPanel.draw();
 	}
 
 	//drawing settings panel
@@ -282,6 +297,29 @@ void UIWindow::mousePressed(int x, int y, int button) {
 		view3DRequested = showView3D;
 		view2DRequested = !showView3D;
 		quadViewRequested = false;
+
+	} else if (curvesTab.bounds.inside(x, y)) {
+		showImageMenu = false;
+		showDrawMenu = false;
+		show3DMenu = false;
+		showView3D = false;
+		showQuadView = false;
+
+		imageTab.active = false;
+		drawTab.active = false;
+		view3DTab.active = false;
+		curvesTab.active = true;
+
+		// Activer le menu Curves
+		showCurvesMenu = true;
+
+		// On reste en 2D par défaut pour les courbes
+		view3DRequested = false;
+		view2DRequested = true;
+		quadViewRequested = false;
+
+		currentShape = "none";
+		selectShape = false;
 	}
 }
 
@@ -465,5 +503,11 @@ void UIWindow::onWireframePressed() {
 void UIWindow::onShowBoundingBoxPressed() {
 	g_showBoundingBox = !g_showBoundingBox;
 	statusMessage = g_showBoundingBox ? "Bounding boxes ON" : "Bounding boxes OFF";
+}
+void UIWindow::onPlacePointsPressed() {
+	placePointsMode = !placePointsMode;
+	statusMessage = placePointsMode
+		? "Curves: Place points mode ON"
+		: "Curves: Place points mode OFF";
 }
 

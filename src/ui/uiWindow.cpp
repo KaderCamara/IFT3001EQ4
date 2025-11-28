@@ -45,6 +45,8 @@ void UIWindow::setup() {
 	// curves menu
 	curvesPanel.setup("Curves Menu");
 	curvesPanel.add(placePointsButton.setup("Place Points"));
+	curvesPanel.add(generateBezierCurveButton.setup("Generate Bezier curve"));
+	generateBezierCurveButton.addListener(this, &UIWindow::onGenerateBezierCurvePressed);
 	placePointsButton.addListener(this, &UIWindow::onPlacePointsPressed);
 
 	// delete panel
@@ -514,4 +516,8 @@ void UIWindow::onPlacePointsPressed() {
 }
 
 bool UIWindow::isPlacePointsMode() const { return placePointsMode; }
+void UIWindow::onGenerateBezierCurvePressed() {
+	generateBezierCurveRequested = true;
+	statusMessage = "Curves: Generate curve requested";
+}
 

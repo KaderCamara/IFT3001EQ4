@@ -60,6 +60,8 @@ public:
 
 	// CURVE AND POINTSD
 	bool isPlacePointsMode() const;
+	bool isGenerateCurveRequested() const { return generateBezierCurveRequested; }
+	void clearGenerateCurveRequest() { generateBezierCurveRequested = false; }
 
 private:
 
@@ -140,8 +142,11 @@ private:
 	void onCurveTabPressed();
 	bool showCurvesMenu = false;
 	bool placePointsMode = false;
+	bool generateBezierCurveRequested = false;
 	void onPlacePointsPressed();
+	void onGenerateBezierCurvePressed();
 	ofxButton placePointsButton;
+	ofxButton generateBezierCurveButton;
 
 	//general
 	ofTrueTypeFont font;

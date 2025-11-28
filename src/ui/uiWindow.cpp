@@ -504,10 +504,14 @@ void UIWindow::onShowBoundingBoxPressed() {
 	g_showBoundingBox = !g_showBoundingBox;
 	statusMessage = g_showBoundingBox ? "Bounding boxes ON" : "Bounding boxes OFF";
 }
+
+// CURVES MENU
 void UIWindow::onPlacePointsPressed() {
 	placePointsMode = !placePointsMode;
 	statusMessage = placePointsMode
 		? "Curves: Place points mode ON"
 		: "Curves: Place points mode OFF";
 }
+
+bool UIWindow::isPlacePointsMode() const { return placePointsMode; }
 

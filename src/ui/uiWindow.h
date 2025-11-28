@@ -58,6 +58,8 @@ public:
 	bool getShowBoundingBox() const { return showBoundingBox; }
 	bool getShowWireframe() const { return showWireframe; }
 
+	// CURVE AND POINTSD
+	bool isPlacePointsMode() const;
 
 private:
 
@@ -138,7 +140,6 @@ private:
 	void onCurveTabPressed();
 	bool showCurvesMenu = false;
 	bool placePointsMode = false;
-	bool isPlacePointsMode() const;
 	void onPlacePointsPressed();
 	ofxButton placePointsButton;
 

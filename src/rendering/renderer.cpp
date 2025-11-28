@@ -99,6 +99,21 @@ void Renderer::draw() {
 		ofPopStyle();
 	}
 
+	//--------- Draw control points for curves-----------
+	ofPushStyle();
+	ofSetColor(ofColor::red);
+	for (size_t i = 0; i < controlPoints.size(); ++i) {
+		const auto & p = controlPoints[i];
+
+		// red circle
+		ofDrawCircle(p, 4);
+
+		// point number
+		ofDrawBitmapStringHighlight(ofToString(i + 1), p.x + 6, p.y - 6);
+	}
+
+	ofPopStyle();
+
 	// Dessiner la shape en cours de création
 	if (currentShape != "none") {
 		shapeManager.draw();
@@ -409,4 +424,15 @@ void Renderer::clear3DModels() {
 			[](const Shape & s) { return s.is3D; }),
 		shapes.end());
 	sceneGraph.setShapes(shapes); //ajouter dans SceneGraph
+}
+
+// CURVES AND CONTROL POINTS
+
+void Renderer::addControlPoint(int x, int y) {
+	// We only add the point if it's inside the drawing area
+	if (!drawingArea.inside(x, y)) {
+		return;
+	}
+
+	controlPoints.push_back(glm::vec2(x, y));
 }

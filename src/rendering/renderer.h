@@ -8,6 +8,8 @@
 #include <algorithm>
 #include "cameraManager.h"
 #include "../objects/shapeManager3D.h"
+#include <vector>
+#include "glm/glm.hpp"
 
 
 class Renderer
@@ -41,6 +43,9 @@ public:
   void view3DMode();
   void viewQuadMode();
 
+  // CURVES CONTROL POINTS
+  void addControlPoint(int x, int y);
+
 private:
   ofTrueTypeFont font;
   ofRectangle drawingArea;
@@ -66,6 +71,9 @@ private:
   ofColor currentFillColor = ofColor::white;
   ofColor currentBgColor = ofColor::white;
   bool useHSBmode = false;
+
+  // CURVES CONTROL POINTS
+  std::vector<glm::vec2> controlPoints;
 
   // 3D IMPORT
   bool modelImported = false;

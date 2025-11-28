@@ -92,11 +92,20 @@ void Application::keyPressed(int key) {
 
 void Application::mousePressed(int x, int y, int button) {
 	if (uiWindow.getDrawingArea().inside(x, y)) {
-		renderer.setCurrentShape(uiWindow.getCurrentShape());
-		renderer.mousePressed(x, y, button);
-	} else {
+		// if we are in place points mode, we add control points to the curve
+		if (uiWindow.isPlacePointsMode()) {
+			renderer.addControlPoint(x, y);
+		} else {
+
+			renderer.setCurrentShape(uiWindow.getCurrentShape());
+			renderer.mousePressed(x, y, button);
+		}
+	}
+	// else we passed the event to the uiWindow
+	else {
 		uiWindow.mousePressed(x, y, button);
 	}
+
 }
 
 void Application::mouseReleased(int x, int y, int button) {

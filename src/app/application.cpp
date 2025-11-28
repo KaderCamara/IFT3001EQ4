@@ -126,3 +126,12 @@ void Application::exit()
 {
   ofLog() << "<app::exit>";
 }
+
+void Application::mouseMoved(int x, int y) {
+	// if we are in place points mode, we set the point preview
+	if (uiWindow.isPlacePointsMode() && uiWindow.getDrawingArea().inside(x, y)) {
+		renderer.setPointPreview(x, y);
+	} else {
+		renderer.clearPointPreview();
+	}
+}

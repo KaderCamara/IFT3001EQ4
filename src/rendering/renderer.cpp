@@ -99,7 +99,26 @@ void Renderer::draw() {
 		ofPopStyle();
 	}
 
-	//--------- Draw control points for curves-----------
+	//--------- Draw control points for curves-----------//
+	//--------- -----------------------------------------//
+	// Segments between control points
+	ofPushStyle();
+	ofSetColor(ofColor::red);
+	ofSetLineWidth(2);
+	for (size_t i = 0; i + 1 < controlPoints.size(); ++i) {
+		ofDrawLine(controlPoints[i], controlPoints[i + 1]);
+	}
+	ofPopStyle();
+
+	// preview point
+	if (hasPointPreview) {
+		ofPushStyle();
+		ofSetColor(ofColor::red, 100);
+		ofSetLineWidth(1);
+		const auto & lastPoint = controlPoints.empty() ? startPoint : controlPoints.back();
+		ofDrawLine(lastPoint.x, lastPoint.y, pointPreview.x, pointPreview.y);
+		ofPopStyle();
+	}
 	ofPushStyle();
 	ofSetColor(ofColor::red);
 	for (size_t i = 0; i < controlPoints.size(); ++i) {
@@ -426,7 +445,7 @@ void Renderer::clear3DModels() {
 	sceneGraph.setShapes(shapes); //ajouter dans SceneGraph
 }
 
-// CURVES AND CONTROL POINTS
+//----- CURVES AND CONTROL POINTS----------
 
 void Renderer::addControlPoint(int x, int y) {
 	// We only add the point if it's inside the drawing area
@@ -435,4 +454,23 @@ void Renderer::addControlPoint(int x, int y) {
 	}
 
 	controlPoints.push_back(glm::vec2(x, y));
+}
+void Renderer::setPointPreview(int x, int y) {
+	// no points = no preview
+	if (controlPoints.empty()) {
+		hasPointPreview = false;
+		return;
+	}
+
+	// drawing area check
+	if (!drawingArea.inside(x, y)) {
+		hasPointPreview = false;
+		return;
+	}
+
+	hasPointPreview = true;
+	pointPreview = glm::vec2(x, y);
+}
+void Renderer::clearPointPreview() {
+	hasPointPreview = false;
 }

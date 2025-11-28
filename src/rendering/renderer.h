@@ -45,6 +45,8 @@ public:
 
   // CURVES CONTROL POINTS
   void addControlPoint(int x, int y);
+  void setPointPreview(int x, int y);
+  void clearPointPreview();
 
 private:
   ofTrueTypeFont font;
@@ -74,6 +76,8 @@ private:
 
   // CURVES CONTROL POINTS
   std::vector<glm::vec2> controlPoints;
+  bool hasPointPreview = false;
+  glm::vec2 pointPreview;
 
   // 3D IMPORT
   bool modelImported = false;

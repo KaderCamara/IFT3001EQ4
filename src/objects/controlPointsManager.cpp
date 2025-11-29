@@ -34,3 +34,13 @@ void ControlPointsManager::addControlPoint(int x, int y) {
 std::vector<glm::vec2> ControlPointsManager::getControlPoints() const {
 	return controlPoints;
 }
+
+void ControlPointsManager::undoLastPoint() {
+	if (!controlPoints.empty()) {
+		controlPoints.pop_back();
+	}
+}
+
+void ControlPointsManager::clearPoints() {
+	controlPoints.clear();
+}

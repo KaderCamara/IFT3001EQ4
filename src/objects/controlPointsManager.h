@@ -11,6 +11,9 @@ public:
 	void drawPointsForCurves() const;
 	void addControlPoint(int x, int y);
 	std::vector<glm::vec2> getControlPoints() const;
+	void undoLastPoint();
+	void clearPoints();
+
 private:
 	std::vector<glm::vec2> controlPoints;
 	bool hasPointPreview = false;

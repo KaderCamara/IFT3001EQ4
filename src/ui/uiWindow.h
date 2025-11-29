@@ -67,6 +67,12 @@ public:
 	void clearClearCurvesRequest() { clearCurvesRequested = false; }
 	bool getPlacePointsModeState() const { return placePointsMode; }
 	std::string statusMessage;
+	bool isUndoPointRequested() const { return undoPointRequested; }
+	void clearUndoPointRequest() { undoPointRequested = false; }
+
+	bool isClearPointsRequested() const { return clearPointsRequested; }
+	void clearClearPointsRequest() { clearPointsRequested = false; }
+
 
 private:
 
@@ -149,12 +155,20 @@ private:
 	
 	bool generateBezierCurveRequested = false;
 	bool clearCurvesRequested = false;
+	bool undoPointRequested = false;
+	bool clearPointsRequested = false;
 	void onPlacePointsPressed();
 	void onGenerateBezierCurvePressed();
+	void onUndoPointPressed();
+	void onClearPointsPressed();
 	void onClearCurvesPressed();
 	ofxButton placePointsButton;
 	ofxButton generateBezierCurveButton;
 	ofxButton clearCurvesButton;
+	ofxButton undoPointButton;
+	ofxButton clearPointsButton;
+
+
 
 	//general
 	ofTrueTypeFont font;

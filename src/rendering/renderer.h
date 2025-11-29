@@ -52,6 +52,8 @@ public:
   void clearPointPreview();
   void generateBezierCurveFromControlPoints();
   void clearCurves();
+  void undoLastControlPoint();
+  void clearControlPoints();
 
   private:
   ofTrueTypeFont font;

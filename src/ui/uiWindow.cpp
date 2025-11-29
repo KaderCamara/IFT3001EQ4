@@ -47,9 +47,13 @@ void UIWindow::setup() {
 	curvesPanel.add(placePointsButton.setup("Place Points"));
 	curvesPanel.add(generateBezierCurveButton.setup("Generate Bezier curve"));
 	curvesPanel.add(clearCurvesButton.setup("Clear Curves"));
+	curvesPanel.add(undoPointButton.setup("Undo point"));
+	curvesPanel.add(clearPointsButton.setup("Clear points"));
 	clearCurvesButton.addListener(this, &UIWindow::onClearCurvesPressed);
 	generateBezierCurveButton.addListener(this, &UIWindow::onGenerateBezierCurvePressed);
 	placePointsButton.addListener(this, &UIWindow::onPlacePointsPressed);
+	undoPointButton.addListener(this, &UIWindow::onUndoPointPressed);
+	clearPointsButton.addListener(this, &UIWindow::onClearPointsPressed);
 
 	// delete panel
 	deletePanel.setup("Delete");
@@ -527,4 +531,14 @@ void UIWindow::onGenerateBezierCurvePressed() {
 void UIWindow::onClearCurvesPressed() {
 	clearCurvesRequested = true;
 	statusMessage = "Curves: Clear all curves requested";
+}
+
+void UIWindow::onUndoPointPressed() {
+	undoPointRequested = true;
+	statusMessage = "Curves: Undo last point";
+}
+
+void UIWindow::onClearPointsPressed() {
+	clearPointsRequested = true;
+	statusMessage = "Curves: Clear all control points";
 }

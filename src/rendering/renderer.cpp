@@ -444,3 +444,13 @@ void Renderer::generateBezierCurveFromControlPoints() {
 void Renderer::clearCurves() {
 	curveManager.clear();
 }
+
+void Renderer::undoLastControlPoint() {
+	controlPointsManager.undoLastPoint();
+}
+
+void Renderer::clearControlPoints() {
+	controlPointsManager.clearPoints();
+	// Optionnel : si tu veux aussi effacer les courbes quand tu effaces les points :
+	// clearCurves();
+}

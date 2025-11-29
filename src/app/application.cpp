@@ -42,6 +42,18 @@ void Application::update() {
 		renderer.view2DMode();
 	}
 
+	// Undo dernier point de contrôle
+	if (uiWindow.isUndoPointRequested()) {
+		renderer.undoLastControlPoint();
+		uiWindow.clearUndoPointRequest();
+	}
+
+	// Clear tous les points de contrôle
+	if (uiWindow.isClearPointsRequested()) {
+		renderer.clearControlPoints();
+		uiWindow.clearClearPointsRequest();
+	}
+
 	// 3D IMPORT
 	if (uiWindow.isImport3DModelRequested()) {
 		renderer.import3DModel();

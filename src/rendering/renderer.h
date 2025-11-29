@@ -48,8 +48,6 @@ public:
 
   // CURVES CONTROL POINTS
   void addControlPoint(int x, int y);
-  void setPointPreview(int x, int y);
-  void clearPointPreview();
   void generateBezierCurveFromControlPoints();
   void clearCurves();
   void undoLastControlPoint();

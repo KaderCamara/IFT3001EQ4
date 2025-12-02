@@ -372,49 +372,27 @@ void Renderer::applyTransformationToSelectedShape(float tx, float ty, float rot,
 	sceneGraph.updateSelectedTransform(tx, ty, rot, scale);
 }
 
+// == == == == == ACCESSEURS SCENEGRAPH == == == == ==
 
-// 3D IMPORT FUNCTIONS: HARDCODED FOR NOW
-void Renderer::import3DModel() {
-	// Ouvre le sélecteur de fichiers
-	ofFileDialogResult result = ofSystemLoadDialog("Select a 3D model (.obj, .ply, .stl)", false);
-	if (!result.bSuccess) return;
-
-	std::string path = result.getPath();
-	std::string extension = ofFilePath::getFileExt(path);
-
-	// Convertir en minuscules (version C++ standard)
-	std::transform(extension.begin(), extension.end(), extension.begin(),
-		[](unsigned char c) { return std::tolower(c); });
-
-	// Vérifie les formats pris en charge
-	if (extension != "obj" && extension != "ply" && extension != "stl" && extension != "fbx") {
-		return; // format non pris en charge
-	}
-
-	// Charger le modèle avec Assimp
-	ofxAssimpModelLoader loader;
-	if (!loader.loadModel(path)) return;
-
-	// Ajouter chaque mesh du modele dans la scene
-	int numMeshes = loader.getMeshCount();
-	for (int i = 0; i < numMeshes; i++) {
-		Shape newShape;
-		newShape.type = "3DModel";
-		newShape.is3D = true;
-		newShape.mesh3D = loader.getMesh(i);
-		sceneGraph.addShape(newShape);
-	}
-
-	// Activer directement la vue 3D
-	view3D = true;
+	void Renderer::addShapeToScene(const Shape & shape) {
+	sceneGraph.addShape(shape);
+	cameraManager.markDirty(); // Recalculer la vue si nécessaire
 }
-void Renderer::clear3DModels() {
-	auto shapes = sceneGraph.getAllShapes(); // copie
-	shapes.erase(
-		std::remove_if(shapes.begin(), shapes.end(),
-			[](const Shape & s) { return s.is3D; }),
-		shapes.end());
-	sceneGraph.setShapes(shapes); //ajouter dans SceneGraph
+
+void Renderer::addShapesToScene(const std::vector<Shape> & shapes) {
+	for (const auto & shape : shapes) {
+		sceneGraph.addShape(shape);
+	}
+	cameraManager.markDirty();
+}
+
+std::vector<Shape> & Renderer::getAllShapes() {
+	return sceneGraph.getAllShapes();
+}
+
+void Renderer::setAllShapes(const std::vector<Shape> & shapes) {
+	sceneGraph.setShapes(shapes);
+	cameraManager.markDirty();
 }
 
 //----- CURVES AND CONTROL POINTS----------

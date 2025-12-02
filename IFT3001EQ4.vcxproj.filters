@@ -82,6 +82,7 @@
     <ClCompile Include="src\objects\controlPointsManager.cpp">
       <Filter>src\objects</Filter>
     </ClCompile>
+    <ClCompile Include="src\utils\Model3DImportManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -482,6 +483,7 @@
     <ClInclude Include="src\objects\controlPointsManager.h">
       <Filter>src\objects</Filter>
     </ClInclude>
+    <ClInclude Include="src\utils\Model3DImportManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="icon.rc" />

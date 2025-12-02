@@ -55,17 +55,41 @@ void Application::update() {
 	}
 
 	// 3D IMPORT
+	// ========== REFACTORISATION 3D IMPORT ==========
+	// AVANT : renderer.import3DModel() faisait tout
+	// APRÈS : Le controller délègue au Model3DImportManager
+
 	if (uiWindow.isImport3DModelRequested()) {
-		renderer.import3DModel();
-		renderer.view3DMode();
+		// 1. Déléguer l'import au manager (MODEL)
+		std::vector<Shape> importedShapes = model3DImportManager.import3DModelWithDialog();
+
+		// 2. Ajouter les shapes au SceneGraph via les accesseurs publics du Renderer
+		if (!importedShapes.empty()) {
+			renderer.addShapesToScene(importedShapes);
+
+			// 3. Activer la vue 3D
+			renderer.view3DMode();
+
+			ofLogNotice("Application") << "Successfully imported "
+									   << importedShapes.size() << " 3D shape(s)";
+		}
+
 		uiWindow.clearImport3DModelRequest();
 	}
 
 	if (uiWindow.isClear3DModelRequested()) {
-		renderer.clear3DModels();
+		// 1. Récupérer les shapes actuelles via l'accesseur
+		std::vector<Shape> currentShapes = renderer.getAllShapes();
+
+		// 2. Filtrer via le manager (MODEL)
+		std::vector<Shape> filteredShapes = model3DImportManager.removeAll3DModels(currentShapes);
+
+		// 3. Remettre les shapes filtrées via l'accesseur
+		renderer.setAllShapes(filteredShapes);
+
 		uiWindow.clearClear3DModelRequest();
 	}
-
+	// ===============================================
 	if (uiWindow.isGenerateCurveRequested()) {
 		renderer.generateBezierCurveFromControlPoints();
 		uiWindow.clearGenerateCurveRequest();

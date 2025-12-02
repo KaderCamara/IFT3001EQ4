@@ -7,6 +7,7 @@
 #include "ofMain.h"
 #include "../rendering/renderer.h"
 #include "../ui/uiWindow.h"
+#include "../utils/Model3DImportManager.h"
 
 class Application : public ofBaseApp
 {
@@ -31,4 +32,7 @@ public:
   void dragEvent(ofDragInfo dragInfo);
 
   void exit();
+
+  private:
+  Model3DImportManager model3DImportManager;
 };

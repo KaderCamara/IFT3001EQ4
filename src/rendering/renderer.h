@@ -53,6 +53,33 @@ public:
   void undoLastControlPoint();
   void clearControlPoints();
 
+  // ========== ACCESSEURS SCENEGRAPH ==========
+
+  /**
+     * @brief Ajoute une shape au SceneGraph
+     * @param shape Shape à ajouter
+     */
+  void addShapeToScene(const Shape & shape);
+
+  /**
+     * @brief Ajoute plusieurs shapes au SceneGraph
+     * @param shapes Vector de shapes à ajouter
+     */
+  void addShapesToScene(const std::vector<Shape> & shapes);
+
+  /**
+     * @brief Récupère toutes les shapes du SceneGraph
+     * @return Référence au vector de shapes
+     */
+  std::vector<Shape> & getAllShapes();
+
+  /**
+     * @brief Remplace toutes les shapes du SceneGraph
+     * @param shapes Nouvelles shapes
+     */
+  void setAllShapes(const std::vector<Shape> & shapes);
+    
+
   private:
   ofTrueTypeFont font;
   ofRectangle drawingArea;

@@ -64,7 +64,7 @@
     <ClCompile Include="src\objects\shapeManager.cpp">
       <Filter>src\objects</Filter>
     </ClCompile>
-    <ClCompile Include="src\rendering\sceneGraph.cpp">
+    <ClCompile Include="src\objects\sceneGraph.cpp">
       <Filter>src\rendering</Filter>
     </ClCompile>
     <ClCompile Include="src\objects\shapeManager3D.cpp">
@@ -89,7 +89,7 @@
     <ClCompile Include="src\ui\panels\imagePanel.cpp" />
     <ClCompile Include="src\ui\panels\transformPanel.cpp" />
     <ClCompile Include="src\ui\panels\drawingParametersPanel.cpp" />
-    <ClCompile Include="src\app\sceneController.cpp" />
+    <ClCompile Include="src\controllers\sceneController.cpp" />
     <ClCompile Include="src\rendering\curves\bezierCurveRenderer.cpp" />
     <ClCompile Include="src\rendering\curves\controlPointsRenderer.cpp" />
     <ClCompile Include="src\rendering\curves\curvesRenderer.cpp" />
@@ -97,10 +97,12 @@
     <ClCompile Include="src\rendering\shapes\shape3DRenderer.cpp" />
     <ClCompile Include="src\rendering\scene\sceneRenderer.cpp" />
     <ClCompile Include="src\rendering\image\imageRenderer.cpp" />
-    <ClCompile Include="src\app\imageController.cpp" />
-    <ClCompile Include="src\app\curvesController.cpp" />
-    <ClCompile Include="src\app\curvesController.h" />
-    <ClCompile Include="src\app\transformController.cpp" />
+    <ClCompile Include="src\controllers\imageController.cpp" />
+    <ClCompile Include="src\controllers\curvesController.cpp" />
+    <ClCompile Include="src\controllers\curvesController.h" />
+    <ClCompile Include="src\controllers\transformController.cpp" />
+    <ClCompile Include="src\services\transformServices.cpp" />
+    <ClCompile Include="src\services\selectionService.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -480,7 +482,7 @@
     <ClInclude Include="src\objects\shapeManager.h">
       <Filter>src\objects</Filter>
     </ClInclude>
-    <ClInclude Include="src\rendering\sceneGraph.h">
+    <ClInclude Include="src\objects\sceneGraph.h">
       <Filter>src\rendering</Filter>
     </ClInclude>
     <ClInclude Include="src\objects\shapeManager3D.h">
@@ -508,7 +510,7 @@
     <ClInclude Include="src\ui\panels\imagePanel.h" />
     <ClInclude Include="src\ui\panels\transformPanel.h" />
     <ClInclude Include="src\ui\panels\drawingParametersPanel.h" />
-    <ClInclude Include="src\app\sceneController.h" />
+    <ClInclude Include="src\controllers\sceneController.h" />
     <ClInclude Include="src\rendering\curves\bezierCurveRenderer.h" />
     <ClInclude Include="src\rendering\curves\controlPointsRenderer.h" />
     <ClInclude Include="src\rendering\curves\curvesRenderer.h" />
@@ -516,8 +518,11 @@
     <ClInclude Include="src\rendering\shapes\shape3DRenderer.h" />
     <ClInclude Include="src\rendering\scene\sceneRenderer.h" />
     <ClInclude Include="src\rendering\image\imageRenderer.h" />
-    <ClInclude Include="src\app\imageController.h" />
-    <ClInclude Include="src\app\transformController.h" />
+    <ClInclude Include="src\controllers\imageController.h" />
+    <ClInclude Include="src\controllers\transformController.h" />
+    <ClInclude Include="src\rendering\renderData.h" />
+    <ClInclude Include="src\services\transformService.h" />
+    <ClInclude Include="src\services\selectionService.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="icon.rc" />

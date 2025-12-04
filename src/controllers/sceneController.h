@@ -1,27 +1,34 @@
-// SceneController.h
-// Contr�leur responsable de la logique m�tier de la sc�ne
+﻿// SceneController.h
+// Contrôleur de scène MVC PUR (CONTROLLER)
+// ✅ Coordonne les services et les models
+// ✅ Gère la logique métier
+// ❌ AUCUN rendu
+
 #pragma once
 
-#include "../objects/controlPointsManager.h"
-#include "../objects/curveManager.h"
-#include "../objects/shape.h"
+#include "../objects/SceneGraph.h"
 #include "../objects/shapeManager.h"
 #include "../rendering/camera/cameraManager.h"
+#include "../services/SelectionService.h"
+#include "../services/TransformService.h"
 #include "ofMain.h"
-#include "../rendering/sceneGraph.h"
-#include <vector>
 
 /**
  * @class SceneController
- * @brief Contr�leur g�rant la logique m�tier de la sc�ne
+ * @brief Contrôleur de scène MVC PUR (CONTROLLER)
  * 
- * Responsabilit�s (CONTROLLER - MVC) :
- * - Gestion des modes de vue (2D, 3D, Quad)
- * - Gestion des modes d'interaction (dessin, s�lection)
- * - Gestion des entr�es utilisateur (souris, clavier)
- * - Coordination entre SceneGraph, ShapeManager, CameraManager
- * - Gestion des courbes de B�zier et points de contr�le
- * - Op�rations CRUD sur les formes (Create, Read, Update, Delete)
+ * Responsabilités (CONTROLLER UNIQUEMENT) :
+ * - Coordonner les models (SceneGraph, ShapeManager, CameraManager)
+ * - Coordonner les services (SelectionService, TransformService)
+ * - Gérer les modes de vue (2D, 3D, Quad)
+ * - Gérer les modes d'interaction (dessin, sélection)
+ * - Gérer les entrées utilisateur (souris, clavier)
+ * - Déléguer la logique complexe aux services
+ * - AUCUN rendu (délégué aux Renderers)
+ * 
+ * REFACTORISATION MVC :
+ * - AVANT : SceneGraph contenait la logique de sélection et transformation ❌
+ * - APRÈS : SceneController utilise SelectionService et TransformService ✅
  */
 class SceneController {
 public:
@@ -49,12 +56,12 @@ public:
 	void setCurrentShape(const std::string & shape) { currentShape = shape; }
 	std::string getCurrentShape() const { return currentShape; }
 
-	// ========== OP�RATIONS SUR LES FORMES ==========
+	// ========== OPÉRATIONS SUR LES FORMES ==========
 
 	void saveCurrentShape();
 	void deleteSelectedShapes();
 
-	// ========== GESTION DES ENTR�ES ==========
+	// ========== GESTION DES ENTRÉES ==========
 
 	void handleMousePressed(int x, int y, int button, const ofRectangle & drawingArea);
 	void handleMouseReleased(int x, int y, int button);
@@ -63,14 +70,23 @@ public:
 
 	// ========== GESTION DES TRANSFORMATIONS ==========
 
-	void applyTransformationToSelectedShape(float tx, float ty, float rot, float scale);
+	/**
+	 * @brief Applique une transformation aux formes sélectionnées
+	 * Utilise TransformService pour la logique
+	 */
+	void applyTransformationToSelected(float tx, float ty, float rot, float scale);
 
+	/**
+	 * @brief Réinitialise les transformations des formes sélectionnées
+	 */
+	void resetTransformationsForSelected();
 
 	// ========== ACCESSEURS SCENEGRAPH ==========
 
 	void addShapeToScene(const Shape & shape);
 	void addShapesToScene(const std::vector<Shape> & shapes);
 	std::vector<Shape> & getAllShapes();
+	const std::vector<Shape> & getAllShapes() const;
 	void setAllShapes(const std::vector<Shape> & shapes);
 
 	// ========== ACCESSEURS POUR LE RENDERER ==========
@@ -85,16 +101,20 @@ public:
 	const CameraManager & getCameraManager() const { return cameraManager; }
 
 	bool isDrawing() const { return drawing; }
-	bool isShapeSelected() const { return shapeSelected; }
+	bool isShapeSelected() const { return !sceneGraph.selectedIndices.empty(); }
 	bool hasUnsavedShape() const { return unsavedShapeExists; }
 
 private:
-	// ========== MANAGERS (MODEL) ==========
-	SceneGraph sceneGraph;
-	ShapeManager shapeManager;
-	CameraManager cameraManager;
+	// ========== MODELS ==========
+	SceneGraph sceneGraph; // Données de la scène
+	ShapeManager shapeManager; // Gestion des formes 2D
+	CameraManager cameraManager; // Gestion des caméras
 
-	// ========== �TAT DU CONTR�LEUR ==========
+	// ========== SERVICES ==========
+	SelectionService selectionService; // Logique de sélection
+	TransformService transformService; // Logique de transformation
+
+	// ========== ÉTAT DU CONTRÔLEUR ==========
 
 	// Modes de vue
 	bool view2D = true;
@@ -104,14 +124,16 @@ private:
 	// Modes d'interaction
 	bool selecting = false;
 	bool drawing = false;
-	bool shapeSelected = false;
-	bool unsavedShapeExists = false;  // Track if there's an unsaved shape to preview
+	bool unsavedShapeExists = false;
 
-	// Forme en cours de cr�ation
+	// Forme en cours de création
 	std::string currentShape = "none";
 	ofPoint startPoint, endPoint;
 
-	// ========== M�THODES PRIV�ES ==========
+	// ========== MÉTHODES PRIVÉES ==========
 
+	/**
+	 * @brief Convertit toutes les formes 2D en 3D
+	 */
 	void convertShapesTo3D();
 };

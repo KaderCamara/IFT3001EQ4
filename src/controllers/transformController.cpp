@@ -24,7 +24,10 @@ void TransformController::applyTransformToSelected(float tx, float ty, float rot
 	validateAndClampTransform(tx, ty, rotation, scale);
 
 	// Appliquer via le SceneGraph
-	sceneGraph->updateSelectedTransform(tx, ty, rotation, scale);
+	transformService.applyTransformToMultiple(
+		sceneGraph->shapes, // Accès aux données
+		sceneGraph->selectedIndices, // Accès aux données
+		tx, ty, rotation, scale);
 
 	ofLogVerbose("TransformController") << "Transform applied to " << getSelectedCount()
 										<< " shape(s): T(" << tx << ", " << ty << ") R(" << rotation

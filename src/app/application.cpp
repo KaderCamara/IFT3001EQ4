@@ -1,5 +1,5 @@
-// application.cpp
-// Implémentation du controller principal
+// Application.cpp
+// L'Application (CONTROLLER principal) prépare les RenderData et les pousse au Renderer
 #include "application.h"
 
 void Application::setup() {
@@ -10,13 +10,14 @@ void Application::setup() {
 	sceneController.setup();
 	renderer.setup();
 	uiWindow.setup();
-	imageController.setup(); //
-	curvesController.setup(); //
-	transformController.setup(); //
+	imageController.setup();
+	curvesController.setup();
+	transformController.setup();
 
-	// Injection de dépendance : connecter le renderer au controller
-	renderer.setSceneController(&sceneController);
-	renderer.setCurvesController(&curvesController); //
+	// ✅ PLUS BESOIN d'injecter les Controllers dans le Renderer
+	// Le Renderer est maintenant une VIEW pure
+
+	// Configuration du TransformController
 	transformController.setSceneGraph(&sceneController.getSceneGraph());
 
 	ofLogNotice("Application") << "Setup complete - MVC architecture initialized";
@@ -79,14 +80,11 @@ void Application::update() {
 	// ========== IMPORT 3D ==========
 
 	if (uiWindow.isImport3DModelRequested()) {
-		// Importer via le manager
 		std::vector<Shape> importedShapes = model3DImportManager.import3DModelWithDialog();
 
-		// Ajouter au contrôleur de scène
 		if (!importedShapes.empty()) {
 			sceneController.addShapesToScene(importedShapes);
 			sceneController.setView3DMode();
-
 			ofLogNotice("Application") << "Successfully imported "
 									   << importedShapes.size() << " 3D shape(s)";
 		}
@@ -95,15 +93,9 @@ void Application::update() {
 	}
 
 	if (uiWindow.isClear3DModelRequested()) {
-		// Récupérer les shapes actuelles
 		std::vector<Shape> currentShapes = sceneController.getAllShapes();
-
-		// Filtrer via le manager
 		std::vector<Shape> filteredShapes = model3DImportManager.removeAll3DModels(currentShapes);
-
-		// Remettre les shapes filtrées
 		sceneController.setAllShapes(filteredShapes);
-
 		uiWindow.clearClear3DModelRequest();
 	}
 
@@ -112,42 +104,186 @@ void Application::update() {
 }
 
 void Application::draw() {
-	// Configurer le renderer avec les paramètres UI
+	// ========== CONFIGURATION DU RENDERER ==========
 	renderer.setDrawingArea(uiWindow.getDrawingArea());
 
-	renderer.applyDrawingParameters(
+	// Appliquer les paramètres visuels
+	renderer.setVisualParameters(
 		uiWindow.getLineWidth(),
 		uiWindow.getStrokeColor(),
 		uiWindow.getFillColor(),
-		uiWindow.getBackgroundColor(),
-		uiWindow.isHSBMode(),
-		uiWindow.getHue(),
-		uiWindow.getSaturation(),
-		uiWindow.getBrightness());
+		uiWindow.getBackgroundColor());
 
-	renderer.updateShapeManagerParams(
-		uiWindow.getLineWidth(),
-		uiWindow.getStrokeColor(),
-		uiWindow.getFillColor());
-
+	// Configurer les options 3D
 	renderer.set3DDisplayOptions(
 		uiWindow.isShowBoundingBoxEnabled(),
 		uiWindow.isWireframeEnabled());
 
-	// Appliquer les transformations aux formes sélectionnées
+	// ========== APPLIQUER LES TRANSFORMATIONS ==========
 	transformController.applyTransformToSelected(
 		uiWindow.getTranslateX(),
 		uiWindow.getTranslateY(),
 		uiWindow.getRotation(),
 		uiWindow.getScale());
 
-	// Dessiner la scène et l'UI
-	renderer.draw();
+	// ========== PRÉPARER LES RENDERDATA ET POUSSER AU RENDERER ==========
+	// ✅ L'Application (CONTROLLER) prépare les données
+	// ✅ Le Renderer (VIEW) reçoit et dessine
+
+	if (sceneController.isQuadView()) {
+		// Préparer les données pour le rendu Quad
+		RenderDataQuad data = prepareRenderDataQuad();
+
+		// Pousser au renderer
+		renderer.drawQuad(data);
+
+	} else if (sceneController.is3DView()) {
+		// Préparer les données pour le rendu 3D
+		RenderData3D data = prepareRenderData3D();
+
+		// Pousser au renderer
+		renderer.draw3D(data);
+
+	} else if (sceneController.is2DView()) {
+		// Préparer les données pour le rendu 2D
+		RenderData2D data = prepareRenderData2D();
+
+		// Pousser au renderer
+		renderer.draw2D(data);
+	}
+
+	// Dessiner l'UI par-dessus
 	uiWindow.draw();
 }
 
+// ========== PRÉPARATION DES RENDERDATA (CONTROLLER → VIEW) ==========
+
+RenderData2D Application::prepareRenderData2D() {
+	RenderData2D data;
+
+	// Récupérer les données du SceneController
+	const SceneGraph & sceneGraph = sceneController.getSceneGraph();
+	const ShapeManager & shapeManager = sceneController.getShapeManager();
+
+	// Formes de la scène
+	data.shapes = sceneGraph.shapes;
+	data.selectedIndices = sceneGraph.selectedIndices;
+
+	// Forme en cours de création (preview)
+	if (sceneController.getCurrentShape() != "none" && (sceneController.isDrawing() || sceneController.hasUnsavedShape())) {
+		data.currentPreview = shapeManager.getCurrentShapeToDraw();
+		data.hasPreview = true;
+	} else {
+		data.hasPreview = false;
+	}
+
+	// Courbes de Bézier
+	const ControlPointsManager & cpm = curvesController.getControlPointsManager();
+	const CurveManager & cm = curvesController.getCurveManager();
+	data.controlPoints = cpm.getControlPoints();
+	data.curves = cm.getCurves();
+
+	// Paramètres visuels
+	data.lineWidth = uiWindow.getLineWidth();
+	data.strokeColor = uiWindow.getStrokeColor();
+	data.fillColor = uiWindow.getFillColor();
+	data.backgroundColor = uiWindow.getBackgroundColor();
+
+	return data;
+}
+
+RenderData3D Application::prepareRenderData3D() {
+	RenderData3D data;
+
+	// Récupérer les formes
+	const SceneGraph & sceneGraph = sceneController.getSceneGraph();
+	data.shapes = sceneGraph.shapes;
+
+	// Récupérer les données de la caméra
+	CameraManager & cameraManager = sceneController.getCameraManager();
+
+	// Mettre à jour la caméra si nécessaire
+	if (cameraManager.needsUpdate()) {
+		cameraManager.lookAtScene(sceneGraph.shapes, false);
+	}
+
+	// Extraire les données de la caméra
+	data.camera = extractCameraData(cameraManager.getCurrentCamera());
+
+	// Options d'affichage
+	data.showBoundingBox = uiWindow.isShowBoundingBoxEnabled();
+	data.showWireframe = uiWindow.isWireframeEnabled();
+
+	// Zone de dessin
+	data.drawingArea = uiWindow.getDrawingArea();
+
+	return data;
+}
+
+RenderDataQuad Application::prepareRenderDataQuad() {
+	RenderDataQuad data;
+
+	// Récupérer les formes
+	const SceneGraph & sceneGraph = sceneController.getSceneGraph();
+	data.shapes = sceneGraph.shapes;
+
+	// Récupérer le CameraManager
+	CameraManager & cameraManager = sceneController.getCameraManager();
+
+	// Mettre à jour les caméras si nécessaire
+	if (cameraManager.needsUpdate()) {
+		cameraManager.lookAtScene(sceneGraph.shapes, true);
+	}
+
+	// Calculer les viewports pour les 4 vues
+	ofRectangle drawingArea = uiWindow.getDrawingArea();
+	int w = drawingArea.width;
+	int h = drawingArea.height;
+	int halfW = w / 2;
+	int halfH = h / 2;
+	int offsetX = drawingArea.x;
+	int offsetY = drawingArea.y;
+
+	data.viewports[0].set(offsetX, offsetY, halfW, halfH); // Top
+	data.viewports[1].set(offsetX + halfW, offsetY, halfW, halfH); // Front
+	data.viewports[2].set(offsetX, offsetY + halfH, halfW, halfH); // Side
+	data.viewports[3].set(offsetX + halfW, offsetY + halfH, halfW, halfH); // Bottom
+
+	// Extraire les données des 4 caméras
+	for (int i = 0; i < 4; ++i) {
+		int originalIndex = cameraManager.getCurrentCameraIndex();
+		cameraManager.setPerspectiveView(i);
+		data.cameras[i] = extractCameraData(cameraManager.getCurrentCamera());
+		cameraManager.setPerspectiveView(originalIndex);
+	}
+
+	// Options d'affichage
+	data.showBoundingBox = uiWindow.isShowBoundingBoxEnabled();
+	data.showWireframe = uiWindow.isWireframeEnabled();
+
+	return data;
+}
+
+CameraData Application::extractCameraData(ofEasyCam & camera) {
+	CameraData data;
+
+	// Position et orientation
+	data.position = camera.getPosition();
+	data.target = camera.getTarget().getPosition();
+	data.up = camera.getUpDir();
+
+	// Paramètres de projection
+	data.fov = camera.getFov();
+	data.nearClip = camera.getNearClip();
+	data.farClip = camera.getFarClip();
+	data.isOrtho = camera.getOrtho();
+
+	return data;
+}
+
+// ========== GESTION DES ENTRÉES ==========
+
 void Application::keyPressed(int key) {
-	// Gestion du mode placement de points (Curves)
 	if (uiWindow.getPlacePointsModeState()) {
 		if (key == 'p' || key == 'P') {
 			uiWindow.placePointsMode = false;
@@ -155,22 +291,18 @@ void Application::keyPressed(int key) {
 		}
 	}
 
-	// Déléguer au contrôleur de scène pour les touches de caméra
 	sceneController.handleKeyPressed(key);
 }
 
 void Application::mousePressed(int x, int y, int button) {
 	if (uiWindow.getDrawingArea().inside(x, y)) {
-		// Si on est en mode placement de points
 		if (uiWindow.isPlacePointsMode()) {
 			curvesController.addControlPoint(x, y, uiWindow.getDrawingArea());
 		} else {
-			// Sinon, mode dessin ou sélection normal
 			sceneController.setCurrentShape(uiWindow.getCurrentShape());
 			sceneController.handleMousePressed(x, y, button, uiWindow.getDrawingArea());
 		}
 	} else {
-		// Clic dans l'UI
 		uiWindow.mousePressed(x, y, button);
 	}
 }
@@ -186,15 +318,13 @@ void Application::mouseReleased(int x, int y, int button) {
 void Application::mouseDragged(int x, int y, int button) {
 	if (uiWindow.getDrawingArea().inside(x, y)) {
 		if (sceneController.isDrawing()) {
-			// Mettre à jour l'aperçu pendant le drag
 			sceneController.handleMouseDragged(x, y, button, uiWindow.getDrawingArea());
 		}
 	}
 }
 
 void Application::dragEvent(ofDragInfo dragInfo) {
-	// Déléguer au ImageController
-	if (imageController.loadFromDragAndDrop(dragInfo)) { // ✅
+	if (imageController.loadFromDragAndDrop(dragInfo)) {
 		ofLogNotice("Application") << "Image loaded via drag & drop";
 	}
 }

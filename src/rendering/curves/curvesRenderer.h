@@ -1,81 +1,73 @@
-// CurvesRenderer.h
-// Orchestrateur pour le rendu complet des courbes et points de contrÙle
+Ôªø// CurvesRenderer.h
+// Renderer de courbes MVC PUR (VIEW uniquement)
+// ‚úÖ AUCUNE r√©f√©rence aux Managers
+// ‚úÖ Re√ßoit uniquement des donn√©es pures
+
 #pragma once
 
-#include "../../objects/controlPointsManager.h"
-#include "../../objects/curveManager.h"
+#include "../../objects/BezierCurve.h"
 #include "BezierCurveRenderer.h"
 #include "ControlPointsRenderer.h"
 #include "ofMain.h"
+#include <vector>
 
 /**
  * @class CurvesRenderer
- * @brief Orchestrateur de rendu pour les courbes de BÈzier et points de contrÙle (VIEW)
+ * @brief Renderer de courbes de B√©zier MVC PUR (VIEW)
  * 
- * ResponsabilitÈs :
+ * Responsabilit√©s (VIEW PURE) :
+ * - Dessiner les points de contr√¥le
+ * - Dessiner les courbes de B√©zier
  * - Coordonner BezierCurveRenderer et ControlPointsRenderer
- * - Fournir une interface unifiÈe pour le Renderer principal
- * - GÈrer l'ordre de rendu (points de contrÙle puis courbes)
- * - Appliquer les styles visuels cohÈrents
+ * - AUCUNE logique m√©tier
+ * - AUCUNE r√©f√©rence aux Managers
+ * 
+ * REFACTORISATION MVC :
+ * - AVANT : R√©f√©rences √† ControlPointsManager et CurveManager ‚ùå
+ * - APR√àS : Re√ßoit uniquement des vecteurs de donn√©es pures ‚úÖ
  */
 class CurvesRenderer {
 public:
 	CurvesRenderer();
 	~CurvesRenderer() = default;
 
-	/**
-	 * @brief Dessine les points de contrÙle et les courbes de BÈzier
-	 * @param controlPointsManager Manager contenant les points de contrÙle
-	 * @param curveManager Manager contenant les courbes
-	 */
-	void render(const ControlPointsManager & controlPointsManager,
-		const CurveManager & curveManager) const;
+	// ========== M√âTHODES DE RENDU (VIEW PURE) ==========
 
 	/**
-	 * @brief Dessine uniquement les points de contrÙle
-	 * @param controlPointsManager Manager contenant les points
+	 * @brief Dessine les points de contr√¥le et les courbes
+	 * @param controlPoints Points de contr√¥le (donn√©es pures)
+	 * @param curves Courbes de B√©zier (donn√©es pures)
 	 */
-	void renderControlPointsOnly(const ControlPointsManager & controlPointsManager) const;
+	void render(
+		const std::vector<glm::vec2> & controlPoints,
+		const std::vector<BezierCurve> & curves) const;
 
 	/**
-	 * @brief Dessine uniquement les courbes de BÈzier
-	 * @param curveManager Manager contenant les courbes
+	 * @brief Dessine uniquement les points de contr√¥le
+	 * @param controlPoints Points de contr√¥le (donn√©es pures)
 	 */
-	void renderCurvesOnly(const CurveManager & curveManager) const;
+	void renderControlPointsOnly(const std::vector<glm::vec2> & controlPoints) const;
+
+	/**
+	 * @brief Dessine uniquement les courbes de B√©zier
+	 * @param curves Courbes de B√©zier (donn√©es pures)
+	 */
+	void renderCurvesOnly(const std::vector<BezierCurve> & curves) const;
 
 	// ========== CONFIGURATION DU STYLE ==========
 
-	/**
-	 * @brief Configure la couleur des points de contrÙle
-	 */
 	void setControlPointsColor(const ofColor & color) { controlPointsColor = color; }
-
-	/**
-	 * @brief Configure la couleur des courbes
-	 */
 	void setCurvesColor(const ofColor & color) { curvesColor = color; }
-
-	/**
-	 * @brief Active/dÈsactive l'affichage des numÈros de points
-	 */
 	void setShowPointNumbers(bool show) { showPointNumbers = show; }
-
-	/**
-	 * @brief Configure le rayon des points de contrÙle
-	 */
 	void setControlPointRadius(float radius) { controlPointRadius = radius; }
-
-	/**
-	 * @brief Configure l'Èpaisseur des lignes
-	 */
 	void setLineWidth(float width) { lineWidth = width; }
 
 private:
-	// Renderers spÈcialisÈs
+	// Renderers sp√©cialis√©s (VIEW)
 	BezierCurveRenderer bezierRenderer;
 	ControlPointsRenderer controlPointsRenderer;
 
-	// ParamËtres de style
+	// Param√®tres de style (configuration visuelle)
 	ofColor controlPointsColor = ofColor::red;
 	ofColor curvesColor = ofColor::blue;
 	float controlPointRadius = 4.0f;

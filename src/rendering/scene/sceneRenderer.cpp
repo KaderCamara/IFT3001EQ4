@@ -1,129 +1,161 @@
 // SceneRenderer.cpp
+// Implémentation du renderer de scène MVC PUR (VIEW uniquement)
 #include "SceneRenderer.h"
 
-void SceneRenderer::draw2D() {
-	if (!sceneController) return;
+// ========== RENDU 2D ==========
 
-	const SceneGraph & sceneGraph = sceneController->getSceneGraph();
-	const ShapeManager & shapeManager = sceneController->getShapeManager();
-	const ControlPointsManager & controlPointsManager = curvesController->getControlPointsManager();
-	const CurveManager & curveManager = curvesController->getCurveManager();
-
+void SceneRenderer::draw2D(const RenderData2D & data) {
 	// Dessiner toutes les formes de la scène
-	for (int i = 0; i < sceneGraph.shapes.size(); ++i) {
-		const auto & s = sceneGraph.shapes[i];
-		if (s.type == "none" || s.type == "x") continue;
+	for (size_t i = 0; i < data.shapes.size(); ++i) {
+		const auto & shape = data.shapes[i];
 
-		bool isSelected = std::find(sceneGraph.selectedIndices.begin(),
-							  sceneGraph.selectedIndices.end(), i)
-			!= sceneGraph.selectedIndices.end();
+		// Ignorer les formes invalides
+		if (shape.type == "none" || shape.type == "x") {
+			continue;
+		}
 
-		shape2DRenderer.drawShape2D(s, isSelected, currentLineWidth);
+		// Vérifier si la forme est sélectionnée
+		bool isSelected = std::find(
+							  data.selectedIndices.begin(),
+							  data.selectedIndices.end(),
+							  i)
+			!= data.selectedIndices.end();
+
+		// Dessiner la forme
+		shape2DRenderer.drawShape2D(shape, isSelected, data.lineWidth);
 	}
 
-	// Rendu des courbes (si disponible)
-	if (curvesRenderer) {
-		curvesRenderer->render(controlPointsManager, curveManager);
-	}
+	// Dessiner les courbes de Bézier et points de contrôle
+	curvesRenderer.render(data.controlPoints, data.curves);
 
-	// Dessiner la forme en cours de création
-	if (sceneController->getCurrentShape() != "none" && (sceneController->isDrawing() || sceneController->hasUnsavedShape())) {
-		const Shape & preview = shapeManager.getCurrentShapeToDraw();
-		shape2DRenderer.drawShape2D(preview, false, currentLineWidth);
+	// Dessiner l'aperçu de la forme en cours de création
+	if (data.hasPreview) {
+		shape2DRenderer.drawShape2D(data.currentPreview, false, data.lineWidth);
 	}
 }
 
-void SceneRenderer::draw3D() {
-	if (!sceneController) return;
+// ========== RENDU 3D ==========
 
-	CameraManager & cameraManager = sceneController->getCameraManager();
-	const SceneGraph & sceneGraph = sceneController->getSceneGraph();
+void SceneRenderer::draw3D(const RenderData3D & data) {
+	// Créer et configurer une caméra temporaire
+	ofCamera camera;
+	applyCameraData(camera, data.camera);
 
-	// Mettre à jour la caméra si nécessaire
-	if (cameraManager.needsUpdate()) {
-		cameraManager.lookAtScene(sceneGraph.shapes, false);
-	}
+	// Démarrer le rendu avec la caméra
+	camera.begin();
 
-	cameraManager.getCurrentCamera().begin();
+	// Couleur par défaut pour les formes 3D
 	ofSetColor(255);
 
-	for (const auto & s : sceneGraph.shapes) {
-		shape3DRenderer.drawShape3D(s);
+	// Dessiner toutes les formes 3D
+	for (const auto & shape : data.shapes) {
+		shape3DRenderer.drawShape3D(shape);
 	}
 
-	cameraManager.getCurrentCamera().end();
+	camera.end();
 }
 
-void SceneRenderer::drawQuadView() {
-	if (!sceneController) return;
+// ========== RENDU QUAD VIEW ==========
 
-	CameraManager & cameraManager = sceneController->getCameraManager();
-	const SceneGraph & sceneGraph = sceneController->getSceneGraph();
-
-	// Mettre à jour les caméras si nécessaire
-	if (cameraManager.needsUpdate()) {
-		cameraManager.lookAtScene(sceneGraph.shapes, true);
+void SceneRenderer::drawQuadView(const RenderDataQuad & data) {
+	// Dessiner les 4 vues de caméra
+	for (int i = 0; i < 4; ++i) {
+		drawSingleCameraView(
+			data.shapes,
+			data.cameras[i],
+			data.viewports[i],
+			data.cameraLabels[i]);
 	}
-
-	int w = drawingArea.width;
-	int h = drawingArea.height;
-	int halfW = w / 2;
-	int halfH = h / 2;
-	int offsetX = drawingArea.x;
-	int offsetY = drawingArea.y;
-
-	// Dessiner les 4 vues
-	drawQuadViewCamera(0, offsetX, offsetY, halfW, halfH, "Top View");
-	drawQuadViewCamera(1, offsetX + halfW, offsetY, halfW, halfH, "Front View");
-	drawQuadViewCamera(2, offsetX, offsetY + halfH, halfW, halfH, "Side View");
-	drawQuadViewCamera(3, offsetX + halfW, offsetY + halfH, halfW, halfH, "Bottom View");
 
 	// Restaurer le viewport complet
 	ofViewport(0, 0, ofGetWidth(), ofGetHeight());
 
-	// Séparateurs
-	drawQuadViewSeparators();
+	// Dessiner les séparateurs entre les vues
+	drawQuadViewSeparators(data);
 }
 
-void SceneRenderer::drawQuadViewCamera(int cameraIndex, int x, int y, int width, int height, const std::string & label) {
-	if (!sceneController) return;
+void SceneRenderer::drawSingleCameraView(
+	const std::vector<Shape> & shapes,
+	const CameraData & cameraData,
+	const ofRectangle & viewport,
+	const std::string & label) {
+	// Configurer le viewport pour cette vue
+	ofViewport(viewport.x, viewport.y, viewport.width, viewport.height);
 
-	CameraManager & cameraManager = sceneController->getCameraManager();
-	const SceneGraph & sceneGraph = sceneController->getSceneGraph();
+	// Créer et configurer la caméra
+	ofCamera camera;
+	applyCameraData(camera, cameraData);
 
-	ofViewport(x, y, width, height);
-
-	cameraManager.setPerspectiveView(cameraIndex);
-	cameraManager.getCurrentCamera().begin();
-
+	// Dessiner avec cette caméra
+	camera.begin();
 	ofSetColor(255);
-	for (const auto & s : sceneGraph.shapes) {
-		shape3DRenderer.drawShape3D(s);
+
+	for (const auto & shape : shapes) {
+		shape3DRenderer.drawShape3D(shape);
 	}
 
-	cameraManager.getCurrentCamera().end();
+	camera.end();
 
+	// Dessiner le label de la vue
+	ofPushStyle();
 	ofSetColor(0);
-	ofDrawBitmapString(label, x + 10, y + 20);
+	ofDrawBitmapString(label, viewport.x + 10, viewport.y + 20);
+	ofPopStyle();
 }
 
-void SceneRenderer::drawQuadViewSeparators() {
-	int w = drawingArea.width;
-	int h = drawingArea.height;
-	int halfW = w / 2;
-	int halfH = h / 2;
-	int offsetX = drawingArea.x;
-	int offsetY = drawingArea.y;
+void SceneRenderer::drawQuadViewSeparators(const RenderDataQuad & data) {
+	// Calculer les positions des séparateurs
+	float centerX = data.viewports[0].width;
+	float centerY = data.viewports[0].height;
+	float totalWidth = data.viewports[0].width + data.viewports[1].width;
+	float totalHeight = data.viewports[0].height + data.viewports[2].height;
+	float offsetX = data.viewports[0].x;
+	float offsetY = data.viewports[0].y;
 
 	ofPushStyle();
 	ofSetColor(100);
 	ofSetLineWidth(2);
-	ofDrawLine(offsetX + halfW, offsetY, offsetX + halfW, offsetY + h); // verticale
-	ofDrawLine(offsetX, offsetY + halfH, offsetX + w, offsetY + halfH); // horizontale
+
+	// Ligne verticale
+	ofDrawLine(
+		offsetX + centerX, offsetY,
+		offsetX + centerX, offsetY + totalHeight);
+
+	// Ligne horizontale
+	ofDrawLine(
+		offsetX, offsetY + centerY,
+		offsetX + totalWidth, offsetY + centerY);
+
 	ofPopStyle();
 }
 
+// ========== CONFIGURATION ==========
+
 void SceneRenderer::set3DDisplayOptions(bool showBoundingBox, bool showWireframe) {
+	showBoundingBox3D = showBoundingBox;
+	showWireframe3D = showWireframe;
+
+	// Configurer les renderers 3D
 	shape3DRenderer.setShowBoundingBox(showBoundingBox);
 	shape3DRenderer.setShowWireframe(showWireframe);
+}
+
+// ========== UTILITAIRES PRIVÉS ==========
+
+void SceneRenderer::applyCameraData(ofCamera & cam, const CameraData & data) {
+	// Position et orientation
+	cam.setPosition(data.position);
+	cam.lookAt(data.target, data.up);
+
+	// Paramètres de projection
+	cam.setNearClip(data.nearClip);
+	cam.setFarClip(data.farClip);
+	cam.setFov(data.fov);
+
+	// Mode orthographique ou perspective
+	if (data.isOrtho) {
+		cam.enableOrtho();
+	} else {
+		cam.disableOrtho();
+	}
 }

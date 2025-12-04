@@ -1,24 +1,46 @@
-// application.h
-// Classe principale de l'application (Controller principal)
+﻿// Application.h - EXEMPLE CORRIGÉ MVC PUR
+// L'Application est le CONTROLLER principal qui coordonne tout
+
 #pragma once
 
+#include "../controllers/CurvesController.h"
+#include "../controllers/ImageController.h"
+#include "../controllers/SceneController.h"
+#include "../controllers/TransformController.h"
+#include "../rendering/RenderData.h"
 #include "../rendering/Renderer.h"
-#include "../app/SceneController.h"
 #include "../ui/uiWindow.h"
 #include "../utils/Model3DImportManager.h"
 #include "ofMain.h"
-#include "../app/imageController.h"
-#include "../app/curvesController.h"
-#include "../app/transformController.h"
 
 /**
  * @class Application
  * @brief Controller principal de l'application (MVC)
  * 
- * Responsabilit�s :
- * - Coordination entre Renderer (View), SceneController (Controller m�tier) et UIWindow (View UI)
+ * Responsabilités :
+ * - Coordination entre tous les Controllers
  * - Gestion du cycle de vie de l'application
- * - Routage des �v�nements utilisateur
+ * - Routage des événements utilisateur
+ * - PRÉPARATION des RenderData pour le Renderer
+ * - AUCUN rendu direct (délégué au Renderer)
+ * 
+ * REFACTORISATION MVC FINALE :
+ * - AVANT : Renderer interrogeait les Controllers ❌
+ * - APRÈS : Application PRÉPARE les RenderData et les POUSSE au Renderer ✅
+ * 
+ * Architecture :
+ * 
+ *   Application (CONTROLLER principal)
+ *       ↓
+ *       ├─> SceneController (logique de scène)
+ *       ├─> CurvesController (logique courbes)
+ *       ├─> ImageController (logique images)
+ *       ├─> TransformController (logique transformations)
+ *       │
+ *       └─> Renderer (VIEW pure)
+ *             ├─> SceneRenderer
+ *             ├─> CurvesRenderer
+ *             └─> ImageRenderer
  */
 class Application : public ofBaseApp {
 public:
@@ -34,15 +56,45 @@ public:
 	void exit();
 
 private:
-	// ========== COMPOSANTS MVC ==========
-	Renderer renderer; // VIEW - Rendu
-	SceneController sceneController; // CONTROLLER - Logique m�tier
-	UIWindow uiWindow; // VIEW - Interface utilisateur
+	// ========== CONTROLLERS ==========
+	SceneController sceneController; // Logique de scène
+	CurvesController curvesController; // Logique courbes
+	ImageController imageController; // Logique images
+	TransformController transformController; // Logique transformations
 
-	// ========== UTILITAIRES ==========
-	Model3DImportManager model3DImportManager; // MODEL - Import 3D
+	// ========== VIEW ==========
+	Renderer renderer; // Rendu (VIEW pure)
+	UIWindow uiWindow; // Interface utilisateur (VIEW)
 
-	ImageController imageController; //Logique images
-	CurvesController curvesController; //Logique courbes
-	TransformController transformController; //Logique transformations
+	// ========== MODELS/UTILITAIRES ==========
+	Model3DImportManager model3DImportManager; // Import 3D
+
+	// ========== MÉTHODES DE PRÉPARATION DES RENDERDATA ==========
+	// ✅ L'Application (CONTROLLER) prépare les données
+	// ✅ Le Renderer (VIEW) reçoit et dessine
+
+	/**
+	 * @brief Prépare les données pour le rendu 2D
+	 * @return Structure RenderData2D prête à être passée au renderer
+	 */
+	RenderData2D prepareRenderData2D();
+
+	/**
+	 * @brief Prépare les données pour le rendu 3D
+	 * @return Structure RenderData3D prête à être passée au renderer
+	 */
+	RenderData3D prepareRenderData3D();
+
+	/**
+	 * @brief Prépare les données pour le rendu Quad
+	 * @return Structure RenderDataQuad prête à être passée au renderer
+	 */
+	RenderDataQuad prepareRenderDataQuad();
+
+	/**
+	 * @brief Convertit un CameraManager en CameraData (données pures)
+	 * @param camera Caméra OpenFrameworks
+	 * @return Données pures de la caméra
+	 */
+	CameraData extractCameraData(ofEasyCam & camera);
 };

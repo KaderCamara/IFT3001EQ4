@@ -230,11 +230,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\app\application.cpp" />
-    <ClCompile Include="src\app\curvesController.cpp" />
-    <ClCompile Include="src\app\curvesController.h" />
-    <ClCompile Include="src\app\imageController.cpp" />
-    <ClCompile Include="src\app\sceneController.cpp" />
-    <ClCompile Include="src\app\transformController.cpp" />
+    <ClCompile Include="src\controllers\curvesController.cpp" />
+    <ClCompile Include="src\controllers\curvesController.h" />
+    <ClCompile Include="src\controllers\imageController.cpp" />
+    <ClCompile Include="src\controllers\sceneController.cpp" />
+    <ClCompile Include="src\controllers\transformController.cpp" />
     <ClCompile Include="src\image\imageManager.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="..\..\..\addons\ofxAssimpModelLoader\src\ofxAssimpAnimation.cpp" />
@@ -262,11 +262,13 @@
     <ClCompile Include="src\rendering\curves\curvesRenderer.cpp" />
     <ClCompile Include="src\rendering\image\imageRenderer.cpp" />
     <ClCompile Include="src\rendering\renderer.cpp" />
-    <ClCompile Include="src\rendering\sceneGraph.cpp" />
+    <ClCompile Include="src\objects\sceneGraph.cpp" />
     <ClCompile Include="src\rendering\scene\sceneRenderer.cpp" />
     <ClCompile Include="src\rendering\shaderManager.cpp" />
     <ClCompile Include="src\rendering\shapes\shape2DRenderer.cpp" />
     <ClCompile Include="src\rendering\shapes\shape3DRenderer.cpp" />
+    <ClCompile Include="src\services\selectionService.cpp" />
+    <ClCompile Include="src\services\transformServices.cpp" />
     <ClCompile Include="src\ui\panels\curvesPanel.cpp" />
     <ClCompile Include="src\ui\panels\drawingPanel.cpp" />
     <ClCompile Include="src\ui\panels\drawingParametersPanel.cpp" />
@@ -278,9 +280,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\app\application.h" />
-    <ClInclude Include="src\app\imageController.h" />
-    <ClInclude Include="src\app\sceneController.h" />
-    <ClInclude Include="src\app\transformController.h" />
+    <ClInclude Include="src\controllers\imageController.h" />
+    <ClInclude Include="src\controllers\sceneController.h" />
+    <ClInclude Include="src\controllers\transformController.h" />
     <ClInclude Include="src\image\imageManager.h" />
     <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\src\ofxAssimpAnimation.h" />
     <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\src\ofxAssimpMeshHelper.h" />
@@ -394,12 +396,15 @@
     <ClInclude Include="src\rendering\curves\controlPointsRenderer.h" />
     <ClInclude Include="src\rendering\curves\curvesRenderer.h" />
     <ClInclude Include="src\rendering\image\imageRenderer.h" />
+    <ClInclude Include="src\rendering\renderData.h" />
     <ClInclude Include="src\rendering\renderer.h" />
-    <ClInclude Include="src\rendering\sceneGraph.h" />
+    <ClInclude Include="src\objects\sceneGraph.h" />
     <ClInclude Include="src\rendering\scene\sceneRenderer.h" />
     <ClInclude Include="src\rendering\shaderManager.h" />
     <ClInclude Include="src\rendering\shapes\shape2DRenderer.h" />
     <ClInclude Include="src\rendering\shapes\shape3DRenderer.h" />
+    <ClInclude Include="src\services\selectionService.h" />
+    <ClInclude Include="src\services\transformService.h" />
     <ClInclude Include="src\ui\panels\curvesPanel.h" />
     <ClInclude Include="src\ui\panels\drawingPanel.h" />
     <ClInclude Include="src\ui\panels\drawingParametersPanel.h" />

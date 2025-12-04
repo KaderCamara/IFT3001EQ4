@@ -2,8 +2,9 @@
 // Contrôleur responsable de la logique métier des transformations
 #pragma once
 
-#include "../rendering/sceneGraph.h"
+#include "../objects/sceneGraph.h"
 #include "ofMain.h"
+#include "../services/transformService.h"
 
 /**
  * @class TransformController
@@ -108,4 +109,6 @@ private:
 	 * @brief Clamp une valeur entre min et max
 	 */
 	float clamp(float value, float min, float max) const;
+
+	TransformService transformService;
 };

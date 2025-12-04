@@ -1,30 +1,31 @@
-// Renderer.h
-// Classe responsable UNIQUEMENT du rendu visuel
+ï»¿// Renderer.h
+// Renderer principal MVC PUR (VIEW uniquement)
+// âœ… AUCUNE rÃ©fÃ©rence aux Controllers
+// âœ… ReÃ§oit uniquement des RenderData prÃ©parÃ©es par Application
+
 #pragma once
 
-#include "../app/sceneController.h"
+#include "RenderData.h"
 #include "curves/CurvesRenderer.h"
+#include "image/ImageRenderer.h"
 #include "ofMain.h"
-#include "scene/sceneRenderer.h"
-#include "image/imageRenderer.h"
-
+#include "scene/SceneRenderer.h"
 
 /**
  * @class Renderer
- * @brief Responsable UNIQUEMENT du rendu visuel (VIEW - MVC)
+ * @brief Orchestrateur principal de rendu MVC PUR (VIEW)
  * 
- * Responsabilités (VIEW PURE) :
- * - Dessiner la scène 2D
- * - Dessiner la scène 3D
- * - Dessiner la vue quad (4 caméras)
- * - Appliquer les paramètres visuels (couleurs, lignes)
- * - Coordonner les renderers spécialisés (CurvesRenderer, etc.)
- * - Aucune logique métier
- * - Aucune gestion d'entrées
+ * ResponsabilitÃ©s (VIEW PURE) :
+ * - Coordonner les renderers spÃ©cialisÃ©s
+ * - Dessiner le background
+ * - Router vers le bon renderer selon les donnÃ©es reÃ§ues
+ * - Appliquer les paramÃ¨tres visuels globaux
+ * - AUCUNE logique mÃ©tier
+ * - AUCUNE rÃ©fÃ©rence aux Controllers
  * 
- * REFACTORISATION MVC (Phase 1 - Problème 3) :
- * - AJOUT : CurvesRenderer pour le rendu des courbes de Bézier
- * - Les courbes sont maintenant rendues via un renderer spécialisé
+ * Note : L'Application (CONTROLLER principal) est responsable de :
+ * 1. PrÃ©parer les RenderData Ã  partir des Controllers
+ * 2. Pousser les RenderData au Renderer
  */
 class Renderer {
 public:
@@ -33,75 +34,71 @@ public:
 
 	void setup();
 
-	/**
-     * @brief Injecter le contrôleur de scène
-     * @param controller Référence au SceneController
-     */
-	void setSceneController(SceneController * controller);
-
-	// ========== MÉTHODES DE RENDU ==========
+	// ========== MÃ‰THODES DE RENDU (VIEW PURE) ==========
 
 	/**
-     * @brief Dessine la scène selon le mode de vue actif
-     */
-	void draw();
-
-	// ========== CONFIGURATION DU RENDU ==========
+	 * @brief Dessine la scÃ¨ne en mode 2D
+	 * @param data DonnÃ©es pures prÃ©parÃ©es par Application
+	 */
+	void draw2D(const RenderData2D & data);
 
 	/**
-     * @brief Définit la zone de dessin
-     */
+	 * @brief Dessine la scÃ¨ne en mode 3D
+	 * @param data DonnÃ©es pures prÃ©parÃ©es par Application
+	 */
+	void draw3D(const RenderData3D & data);
+
+	/**
+	 * @brief Dessine la scÃ¨ne en vue quad (4 camÃ©ras)
+	 * @param data DonnÃ©es pures prÃ©parÃ©es par Application
+	 */
+	void drawQuad(const RenderDataQuad & data);
+
+	// ========== CONFIGURATION VISUELLE ==========
+
 	void setDrawingArea(const ofRectangle & area) { drawingArea = area; }
-
-	/**
-     * @brief Récupère la zone de dessin
-     */
 	ofRectangle getDrawingArea() const { return drawingArea; }
 
 	/**
-     * @brief Applique les paramètres de dessin (couleurs, lignes, HSB)
-     */
-	void applyDrawingParameters(float lineW, const ofColor & stroke, const ofColor & fill,
-		const ofColor & bg, bool useHSB, float hue, float saturation, float brightness);
-
-	/**
-     * @brief Met à jour les paramètres du ShapeManager
-     */
-	void updateShapeManagerParams(float lineW, ofColor stroke, ofColor fill);
-
-	/**
-	 * @brief Configure les options d'affichage 3D (boîte englobante, fil de fer)
+	 * @brief Configure les paramÃ¨tres visuels (appelÃ© par Application)
 	 */
+	void setVisualParameters(
+		float lineW,
+		const ofColor & stroke,
+		const ofColor & fill,
+		const ofColor & bg);
 
+	/**
+	 * @brief Configure les options d'affichage 3D
+	 */
 	void set3DDisplayOptions(bool showBoundingBox, bool showWireframe);
 
+	// Accesseurs
 	ImageRenderer & getImageRenderer() { return imageRenderer; }
-	void setCurvesController(CurvesController * controller);
 
 private:
-	// ========== RÉFÉRENCE AU CONTRÔLEUR ==========
-	SceneController * sceneController = nullptr;
-
-	// ========== RENDERERS SPÉCIALISÉS ==========
-	CurvesRenderer curvesRenderer; // Rendu des courbes de Bézier et points de contrôle
-	SceneRenderer sceneRenderer; // Rendu des formes 2D et 3D sur la scène
-	ImageRenderer imageRenderer; // Rendu des images (background, textures)
+	// ========== RENDERERS SPÃ‰CIALISÃ‰S (VIEW) ==========
+	SceneRenderer sceneRenderer;
+	CurvesRenderer curvesRenderer;
+	ImageRenderer imageRenderer;
 
 	// ========== ZONE DE RENDU ==========
 	ofRectangle drawingArea;
 
-	// ========== PARAMÈTRES VISUELS ==========
+	// ========== PARAMÃˆTRES VISUELS ==========
 	float currentLineWidth = 2.0f;
 	ofColor currentStrokeColor = ofColor::black;
 	ofColor currentFillColor = ofColor::white;
-	ofColor currentBgColor = ofColor::white;
-	bool useHSBmode = false;
+	ofColor currentBgColor = ofColor(180, 200, 220);
 
-	// ========== MÉTHODES PRIVÉES DE RENDU ==========
+	// Options 3D
+	bool showBoundingBox3D = false;
+	bool showWireframe3D = false;
+
+	// ========== MÃ‰THODES PRIVÃ‰ES DE RENDU ==========
 
 	/**
-     * @brief Dessine le background de la zone de dessin
-     */
-	void drawBackground();
-
+	 * @brief Dessine le background de la zone de dessin
+	 */
+	void drawBackground(const ofColor & bgColor);
 };

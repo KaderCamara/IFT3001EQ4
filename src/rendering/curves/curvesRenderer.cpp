@@ -1,27 +1,25 @@
 // CurvesRenderer.cpp
-// Implémentation de l'orchestrateur de rendu des courbes
+// Implémentation du renderer de courbes MVC PUR (VIEW uniquement)
 #include "CurvesRenderer.h"
 
 CurvesRenderer::CurvesRenderer() {
 	// Initialisation par défaut via les valeurs membres
 }
 
-void CurvesRenderer::render(const ControlPointsManager & controlPointsManager,
-	const CurveManager & curveManager) const {
+void CurvesRenderer::render(
+	const std::vector<glm::vec2> & controlPoints,
+	const std::vector<BezierCurve> & curves) const {
 	// Dessiner dans l'ordre : points de contrôle puis courbes
 	// (pour que les courbes soient au-dessus des segments de contrôle)
 
 	// 1. Dessiner les points de contrôle et leurs segments
-	renderControlPointsOnly(controlPointsManager);
+	renderControlPointsOnly(controlPoints);
 
 	// 2. Dessiner les courbes de Bézier
-	renderCurvesOnly(curveManager);
+	renderCurvesOnly(curves);
 }
 
-void CurvesRenderer::renderControlPointsOnly(const ControlPointsManager & controlPointsManager) const {
-	// Récupérer les points de contrôle
-	const std::vector<glm::vec2> & controlPoints = controlPointsManager.getControlPoints();
-
+void CurvesRenderer::renderControlPointsOnly(const std::vector<glm::vec2> & controlPoints) const {
 	// Dessiner via le renderer spécialisé
 	controlPointsRenderer.render(
 		controlPoints,
@@ -31,10 +29,7 @@ void CurvesRenderer::renderControlPointsOnly(const ControlPointsManager & contro
 		showPointNumbers);
 }
 
-void CurvesRenderer::renderCurvesOnly(const CurveManager & curveManager) const {
-	// Récupérer les courbes
-	const std::vector<BezierCurve> & curves = curveManager.getCurves();
-
+void CurvesRenderer::renderCurvesOnly(const std::vector<BezierCurve> & curves) const {
 	// Dessiner via le renderer spécialisé
 	bezierRenderer.renderMultiple(
 		curves,

@@ -1,7 +1,6 @@
-// SceneController.cpp
-// Impl�mentation du contr�leur de sc�ne
+﻿// SceneController.cpp
+// Implémentation du contrôleur de scène MVC PUR
 #include "SceneController.h"
-#include <iostream>
 
 SceneController::SceneController() {
 }
@@ -14,8 +13,8 @@ void SceneController::setup() {
 // ========== GESTION DES VUES ==========
 
 void SceneController::setView2DMode() {
-	if (view2D) return;  // Already in 2D view
-	
+	if (view2D) return; // Déjà en mode 2D
+
 	view2D = true;
 	view3D = false;
 	viewQuad = false;
@@ -25,8 +24,8 @@ void SceneController::setView2DMode() {
 }
 
 void SceneController::setView3DMode() {
-	if (view3D) return;  // Already in 3D view
-	
+	if (view3D) return; // Déjà en mode 3D
+
 	view3D = true;
 	view2D = false;
 	viewQuad = false;
@@ -39,8 +38,8 @@ void SceneController::setView3DMode() {
 }
 
 void SceneController::setViewQuadMode() {
-	if (viewQuad) return;  // Already in Quad view
-	
+	if (viewQuad) return; // Déjà en mode Quad
+
 	viewQuad = true;
 	view3D = false;
 	view2D = false;
@@ -53,9 +52,9 @@ void SceneController::setViewQuadMode() {
 }
 
 void SceneController::convertShapesTo3D() {
-	for (auto & s : sceneGraph.shapes) {
-		if (!s.is3D) {
-			shapeManager.convertTo3d(s);
+	for (auto & shape : sceneGraph.shapes) {
+		if (!shape.is3D) {
+			shapeManager.convertTo3d(shape);
 		}
 	}
 }
@@ -63,44 +62,44 @@ void SceneController::convertShapesTo3D() {
 // ========== GESTION DES MODES D'INTERACTION ==========
 
 void SceneController::enableSelectingMode() {
-	if (selecting) return;  // Already in selecting mode
-	
+	if (selecting) return; // Déjà en mode sélection
+
 	selecting = true;
 	shapeManager.deleteCurrentShapeToDraw();
 	ofLogNotice("SceneController") << "Selecting mode enabled";
 }
 
 void SceneController::disableSelectingMode() {
-	if (!selecting) return;  // Already disabled
-	
+	if (!selecting) return; // Déjà désactivé
+
 	selecting = false;
 	ofLogNotice("SceneController") << "Selecting mode disabled";
 }
 
-// ========== OP�RATIONS SUR LES FORMES ==========
+// ========== OPÉRATIONS SUR LES FORMES ==========
 
 void SceneController::saveCurrentShape() {
 	sceneGraph.addShape(shapeManager.getCurrentShape());
-	unsavedShapeExists = false;  // Clear the unsaved shape flag
+	unsavedShapeExists = false;
 	cameraManager.markDirty();
 	ofLogNotice("SceneController") << "Shape saved to scene";
 }
 
 void SceneController::deleteSelectedShapes() {
-	if (shapeSelected) {
-		sceneGraph.removeSelectedShapes();
-		shapeSelected = false;
-		cameraManager.markDirty();
-		ofLogNotice("SceneController") << "Selected shapes deleted";
-	} else {
-		ofLogWarning("SceneController") << "No shape was selected for deletion";
+	if (sceneGraph.selectedIndices.empty()) {
+		ofLogWarning("SceneController") << "No shape selected for deletion";
+		return;
 	}
+
+	sceneGraph.removeSelectedShapes();
+	cameraManager.markDirty();
+	ofLogNotice("SceneController") << "Selected shapes deleted";
 }
 
-// ========== GESTION DES ENTR�ES ==========
+// ========== GESTION DES ENTRÉES ==========
 
 void SceneController::handleMousePressed(int x, int y, int button, const ofRectangle & drawingArea) {
-	// V�rifier si on est dans la zone de dessin
+	// Vérifier si on est dans la zone de dessin
 	if (!drawingArea.inside(x, y)) {
 		return;
 	}
@@ -109,17 +108,19 @@ void SceneController::handleMousePressed(int x, int y, int button, const ofRecta
 	if (currentShape != "none") {
 		startPoint.set(x, y);
 		drawing = true;
-		unsavedShapeExists = false;  // Reset when starting new shape
+		unsavedShapeExists = false;
 		ofLogVerbose("SceneController") << "Started drawing shape at (" << x << ", " << y << ")";
 	}
 
-	// Mode s�lection
+	// Mode sélection - UTILISE SelectionService ✅
 	if (selecting) {
 		bool multiSelect = ofGetKeyPressed(OF_KEY_CONTROL) || ofGetKeyPressed(OF_KEY_COMMAND);
-		sceneGraph.selectShapeAt(x, y, multiSelect);
-		shapeSelected = !sceneGraph.selectedIndices.empty();
 
-		if (shapeSelected) {
+		// Déléguer au service de sélection
+		int clickedIndex = selectionService.findShapeAt(sceneGraph.shapes, x, y);
+		selectionService.updateSelection(sceneGraph.selectedIndices, clickedIndex, multiSelect);
+
+		if (!sceneGraph.selectedIndices.empty()) {
 			ofLogNotice("SceneController") << "Shape(s) selected: " << sceneGraph.selectedIndices.size();
 		}
 	}
@@ -130,22 +131,22 @@ void SceneController::handleMouseReleased(int x, int y, int button) {
 		endPoint.set(x, y);
 		shapeManager.drawShape(currentShape, startPoint, endPoint);
 		drawing = false;
-		unsavedShapeExists = true;  // Mark that there's an unsaved shape to preview
+		unsavedShapeExists = true;
 		ofLogVerbose("SceneController") << "Finished drawing shape at (" << x << ", " << y << ")";
 	}
 }
 
 void SceneController::handleMouseDragged(int x, int y, int button, const ofRectangle & drawingArea) {
 	if (drawing && drawingArea.inside(x, y)) {
-		// Mettre � jour le point de fin de la forme en cours
+		// Mettre à jour le point de fin de la forme en cours
 		endPoint.set(x, y);
-		// Mettre � jour la forme dans shapeManager
+		// Mettre à jour la forme dans shapeManager
 		shapeManager.drawShape(currentShape, startPoint, endPoint);
 	}
 }
 
 void SceneController::handleKeyPressed(int key) {
-	// Gestion des touches de cam�ra (uniquement si pas en vue quad)
+	// Gestion des touches de caméra (uniquement si pas en vue quad)
 	if (viewQuad) {
 		return;
 	}
@@ -174,10 +175,38 @@ void SceneController::handleKeyPressed(int key) {
 	}
 }
 
-// ========== GESTION DES TRANSFORMATIONS ==========
+// ========== GESTION DES TRANSFORMATIONS - UTILISE TransformService ✅ ==========
 
-void SceneController::applyTransformationToSelectedShape(float tx, float ty, float rot, float scale) {
-	sceneGraph.updateSelectedTransform(tx, ty, rot, scale);
+void SceneController::applyTransformationToSelected(float tx, float ty, float rot, float scale) {
+	if (sceneGraph.selectedIndices.empty()) {
+		ofLogVerbose("SceneController") << "No shapes selected for transformation";
+		return;
+	}
+
+	// Déléguer au service de transformation
+	transformService.applyTransformToMultiple(
+		sceneGraph.shapes,
+		sceneGraph.selectedIndices,
+		tx, ty, rot, scale);
+
+	ofLogVerbose("SceneController") << "Transform applied to " << sceneGraph.selectedIndices.size()
+									<< " shape(s): T(" << tx << ", " << ty << ") R(" << rot << ") S(" << scale << ")";
+}
+
+void SceneController::resetTransformationsForSelected() {
+	if (sceneGraph.selectedIndices.empty()) {
+		ofLogWarning("SceneController") << "No shapes selected to reset";
+		return;
+	}
+
+	// Réinitialiser toutes les formes sélectionnées
+	for (int index : sceneGraph.selectedIndices) {
+		if (index >= 0 && index < static_cast<int>(sceneGraph.shapes.size())) {
+			transformService.resetTransform(sceneGraph.shapes[index]);
+		}
+	}
+
+	ofLogNotice("SceneController") << "Transforms reset for " << sceneGraph.selectedIndices.size() << " shape(s)";
 }
 
 // ========== ACCESSEURS SCENEGRAPH ==========
@@ -196,6 +225,10 @@ void SceneController::addShapesToScene(const std::vector<Shape> & shapes) {
 }
 
 std::vector<Shape> & SceneController::getAllShapes() {
+	return sceneGraph.getAllShapes();
+}
+
+const std::vector<Shape> & SceneController::getAllShapes() const {
 	return sceneGraph.getAllShapes();
 }
 

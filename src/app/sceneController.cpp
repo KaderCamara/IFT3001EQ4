@@ -14,6 +14,8 @@ void SceneController::setup() {
 // ========== GESTION DES VUES ==========
 
 void SceneController::setView2DMode() {
+	if (view2D) return;  // Already in 2D view
+	
 	view2D = true;
 	view3D = false;
 	viewQuad = false;
@@ -23,6 +25,8 @@ void SceneController::setView2DMode() {
 }
 
 void SceneController::setView3DMode() {
+	if (view3D) return;  // Already in 3D view
+	
 	view3D = true;
 	view2D = false;
 	viewQuad = false;
@@ -35,6 +39,8 @@ void SceneController::setView3DMode() {
 }
 
 void SceneController::setViewQuadMode() {
+	if (viewQuad) return;  // Already in Quad view
+	
 	viewQuad = true;
 	view3D = false;
 	view2D = false;
@@ -57,12 +63,16 @@ void SceneController::convertShapesTo3D() {
 // ========== GESTION DES MODES D'INTERACTION ==========
 
 void SceneController::enableSelectingMode() {
+	if (selecting) return;  // Already in selecting mode
+	
 	selecting = true;
 	shapeManager.deleteCurrentShapeToDraw();
 	ofLogNotice("SceneController") << "Selecting mode enabled";
 }
 
 void SceneController::disableSelectingMode() {
+	if (!selecting) return;  // Already disabled
+	
 	selecting = false;
 	ofLogNotice("SceneController") << "Selecting mode disabled";
 }

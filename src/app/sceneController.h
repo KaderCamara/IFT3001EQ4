@@ -58,6 +58,7 @@ public:
 
 	void handleMousePressed(int x, int y, int button, const ofRectangle & drawingArea);
 	void handleMouseReleased(int x, int y, int button);
+	void handleMouseDragged(int x, int y, int button, const ofRectangle & drawingArea);
 	void handleKeyPressed(int key);
 
 	// ========== GESTION DES TRANSFORMATIONS ==========
@@ -85,6 +86,7 @@ public:
 
 	bool isDrawing() const { return drawing; }
 	bool isShapeSelected() const { return shapeSelected; }
+	bool hasUnsavedShape() const { return unsavedShapeExists; }
 
 private:
 	// ========== MANAGERS (MODEL) ==========
@@ -103,6 +105,7 @@ private:
 	bool selecting = false;
 	bool drawing = false;
 	bool shapeSelected = false;
+	bool unsavedShapeExists = false;  // Track if there's an unsaved shape to preview
 
 	// Forme en cours de création
 	std::string currentShape = "none";

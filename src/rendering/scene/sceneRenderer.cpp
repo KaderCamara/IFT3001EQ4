@@ -27,8 +27,9 @@ void SceneRenderer::draw2D() {
 	}
 
 	// Dessiner la forme en cours de création
-	if (sceneController->getCurrentShape() != "none" && sceneController->isDrawing()) {
+	if (sceneController->getCurrentShape() != "none" && (sceneController->isDrawing() || sceneController->hasUnsavedShape())) {
 		const Shape & preview = shapeManager.getCurrentShapeToDraw();
+		shape2DRenderer.drawShape2D(preview, false, currentLineWidth);
 	}
 }
 

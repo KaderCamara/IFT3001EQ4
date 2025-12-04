@@ -183,6 +183,15 @@ void Application::mouseReleased(int x, int y, int button) {
 	}
 }
 
+void Application::mouseDragged(int x, int y, int button) {
+	if (uiWindow.getDrawingArea().inside(x, y)) {
+		if (sceneController.isDrawing()) {
+			// Mettre à jour l'aperçu pendant le drag
+			sceneController.handleMouseDragged(x, y, button, uiWindow.getDrawingArea());
+		}
+	}
+}
+
 void Application::dragEvent(ofDragInfo dragInfo) {
 	// Déléguer au ImageController
 	if (imageController.loadFromDragAndDrop(dragInfo)) { // ✅

@@ -81,6 +81,7 @@ void SceneController::disableSelectingMode() {
 
 void SceneController::saveCurrentShape() {
 	sceneGraph.addShape(shapeManager.getCurrentShape());
+	unsavedShapeExists = false;  // Clear the unsaved shape flag
 	cameraManager.markDirty();
 	ofLogNotice("SceneController") << "Shape saved to scene";
 }
@@ -108,6 +109,7 @@ void SceneController::handleMousePressed(int x, int y, int button, const ofRecta
 	if (currentShape != "none") {
 		startPoint.set(x, y);
 		drawing = true;
+		unsavedShapeExists = false;  // Reset when starting new shape
 		ofLogVerbose("SceneController") << "Started drawing shape at (" << x << ", " << y << ")";
 	}
 
@@ -128,7 +130,17 @@ void SceneController::handleMouseReleased(int x, int y, int button) {
 		endPoint.set(x, y);
 		shapeManager.drawShape(currentShape, startPoint, endPoint);
 		drawing = false;
+		unsavedShapeExists = true;  // Mark that there's an unsaved shape to preview
 		ofLogVerbose("SceneController") << "Finished drawing shape at (" << x << ", " << y << ")";
+	}
+}
+
+void SceneController::handleMouseDragged(int x, int y, int button, const ofRectangle & drawingArea) {
+	if (drawing && drawingArea.inside(x, y)) {
+		// Mettre à jour le point de fin de la forme en cours
+		endPoint.set(x, y);
+		// Mettre à jour la forme dans shapeManager
+		shapeManager.drawShape(currentShape, startPoint, endPoint);
 	}
 }
 

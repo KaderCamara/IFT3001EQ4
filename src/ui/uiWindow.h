@@ -2,8 +2,6 @@
 // Classe orchestratrice de l'interface utilisateur
 // Gère les onglets et délègue aux panels spécialisés
 #pragma once
-
-#include "../image/imageManager.h"
 #include "ofMain.h"
 #include "ofxGui.h"
 #include "panels/CurvesPanel.h"
@@ -34,6 +32,7 @@ public:
 	void mouseReleased(int x, int y, int button);
 	void handleFileDragAndDrop(ofDragInfo dragInfo);
 
+	public:
 	// ========== ACCESSEURS GÉNÉRAUX ==========
 	ofRectangle getDrawingArea() const { return drawingArea; }
 
@@ -69,6 +68,8 @@ public:
 	bool is3DviewRequested() const { return view3DActive; }
 	bool is2DviewRequested() const { return !view3DActive && !isQuadViewRequested(); }
 	bool isQuadViewRequested() const { return view3DPanel.isQuadViewRequested(); }
+	bool isShowBoundingBoxEnabled() const { return view3DPanel.isShowBoundingBoxToggled(); } 
+	bool isWireframeEnabled() const { return view3DPanel.isShowWireframeToggled(); }
 
 	// ========== CURVES PANEL ==========
 	bool isPlacePointsMode() const { return curvesPanel.isPlacePointsMode(); }
@@ -98,9 +99,6 @@ private:
 	ImagePanel imagePanel;
 	View3DPanel view3DPanel;
 	CurvesPanel curvesPanel;
-
-	// ========== MANAGERS ==========
-	ImageManager imageManager;
 
 	// ========== ONGLETS ==========
 	struct TabButton {

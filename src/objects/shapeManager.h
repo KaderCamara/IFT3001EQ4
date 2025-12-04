@@ -6,8 +6,9 @@
 
 class ShapeManager {
 public:
+	ShapeManager() = default;
+	~ShapeManager() = default;
 	void drawShape(const std::string & type, const ofPoint & start, const ofPoint & end);
-	void draw();
 	void deleteCurrentShapeToDraw();
 
 	Shape getCurrentShape() const {
@@ -18,7 +19,7 @@ public:
 
 	void convertTo3d(Shape & shape);
 	void setDrawingParameters(float lineW, ofColor stroke, ofColor fill);
-	void drawShapePrimitive(const Shape & s);
+	const Shape & getCurrentShapeToDraw() const { return currentShapeToDraw; }
 
 private:
 	Shape currentShapeToDraw = {

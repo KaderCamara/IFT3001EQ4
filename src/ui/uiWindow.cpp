@@ -45,9 +45,6 @@ void UIWindow::draw() {
 	view3DPanel.draw(sideMenuWidth, menuBarHeight);
 	curvesPanel.draw(sideMenuWidth, menuBarHeight);
 
-	// Dessiner l'image manager
-	imageManager.draw();
-
 	// Dessiner la boîte de statut
 	drawStatusBox();
 }
@@ -84,8 +81,6 @@ void UIWindow::mouseReleased(int x, int y, int button) {
 
 void UIWindow::handleFileDragAndDrop(ofDragInfo dragInfo) {
 	if (dragInfo.files.empty()) return;
-
-	imageManager.loadFromDrag(dragInfo);
 	statusMessage = "File loaded via drag & drop";
 }
 

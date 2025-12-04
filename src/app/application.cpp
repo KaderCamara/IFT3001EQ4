@@ -1,74 +1,91 @@
-// IFT3100A25_BonjourMonde/application.cpp
-// Classe principale de l'application.
-//notre controller basically il va uniquement se charger de la communication entre renderer et uiWindow
-//de ce fait ces instances sont créés une seule fois ( un seul cycle de vie )
-
+// application.cpp
+// Implémentation du controller principal
 #include "application.h"
 
-// fonction appelée à l'initialisation de l'application
-void Application::setup()
-{
-  ofSetWindowTitle("3D app");
+void Application::setup() {
+	ofSetWindowTitle("3D app");
+	ofLog() << "<app::setup>";
 
-  ofLog() << "<app::setup>";
+	// Setup des composants
+	sceneController.setup();
+	renderer.setup();
+	uiWindow.setup();
+	imageController.setup(); //
+	curvesController.setup(); //
+	transformController.setup(); //
 
-  renderer.setup();
-  uiWindow.setup();
+	// Injection de dépendance : connecter le renderer au controller
+	renderer.setSceneController(&sceneController);
+	renderer.setCurvesController(&curvesController); //
+	transformController.setSceneGraph(&sceneController.getSceneGraph());
+
+	ofLogNotice("Application") << "Setup complete - MVC architecture initialized";
 }
 
 void Application::update() {
 	uiWindow.update();
 
+	// ========== GESTION DES FORMES ==========
+
 	if (uiWindow.isSaveShapeRequested()) {
-		renderer.setCurrentShape(uiWindow.getCurrentShape());
-		renderer.save();
+		sceneController.setCurrentShape(uiWindow.getCurrentShape());
+		sceneController.saveCurrentShape();
 	}
 
 	if (uiWindow.isDeleteShapeRequested()) {
-		renderer.deleteShape();
+		sceneController.deleteSelectedShapes();
 	}
+
+	// ========== GESTION DES MODES ==========
 
 	if (uiWindow.isSelectShapeRequested()) {
-		renderer.selectingModeOn();
+		sceneController.enableSelectingMode();
 	} else {
-		renderer.selectingModeOff();
+		sceneController.disableSelectingMode();
 	}
+
+	// ========== GESTION DES VUES ==========
 
 	if (uiWindow.isQuadViewRequested()) {
-		renderer.viewQuadMode();
+		sceneController.setViewQuadMode();
 	} else if (uiWindow.is3DviewRequested()) {
-		renderer.view3DMode();
+		sceneController.setView3DMode();
 	} else if (uiWindow.is2DviewRequested()) {
-		renderer.view2DMode();
+		sceneController.setView2DMode();
 	}
 
-	// Undo dernier point de contrôle
+	// ========== GESTION DES COURBES ==========
+
 	if (uiWindow.isUndoPointRequested()) {
-		renderer.undoLastControlPoint();
+		curvesController.undoLastControlPoint();
 		uiWindow.clearUndoPointRequest();
 	}
 
-	// Clear tous les points de contrôle
 	if (uiWindow.isClearPointsRequested()) {
-		renderer.clearControlPoints();
+		curvesController.clearControlPoints();
 		uiWindow.clearClearPointsRequest();
 	}
 
-	// 3D IMPORT
-	// ========== REFACTORISATION 3D IMPORT ==========
-	// AVANT : renderer.import3DModel() faisait tout
-	// APRÈS : Le controller délègue au Model3DImportManager
+	if (uiWindow.isGenerateCurveRequested()) {
+		curvesController.generateBezierCurve();
+		uiWindow.clearGenerateCurveRequest();
+	}
+
+	if (uiWindow.isClearCurvesRequested()) {
+		curvesController.clearCurves();
+		uiWindow.clearClearCurvesRequest();
+	}
+
+	// ========== IMPORT 3D ==========
 
 	if (uiWindow.isImport3DModelRequested()) {
-		// 1. Déléguer l'import au manager (MODEL)
+		// Importer via le manager
 		std::vector<Shape> importedShapes = model3DImportManager.import3DModelWithDialog();
 
-		// 2. Ajouter les shapes au SceneGraph via les accesseurs publics du Renderer
+		// Ajouter au contrôleur de scène
 		if (!importedShapes.empty()) {
-			renderer.addShapesToScene(importedShapes);
-
-			// 3. Activer la vue 3D
-			renderer.view3DMode();
+			sceneController.addShapesToScene(importedShapes);
+			sceneController.setView3DMode();
 
 			ofLogNotice("Application") << "Successfully imported "
 									   << importedShapes.size() << " 3D shape(s)";
@@ -78,30 +95,24 @@ void Application::update() {
 	}
 
 	if (uiWindow.isClear3DModelRequested()) {
-		// 1. Récupérer les shapes actuelles via l'accesseur
-		std::vector<Shape> currentShapes = renderer.getAllShapes();
+		// Récupérer les shapes actuelles
+		std::vector<Shape> currentShapes = sceneController.getAllShapes();
 
-		// 2. Filtrer via le manager (MODEL)
+		// Filtrer via le manager
 		std::vector<Shape> filteredShapes = model3DImportManager.removeAll3DModels(currentShapes);
 
-		// 3. Remettre les shapes filtrées via l'accesseur
-		renderer.setAllShapes(filteredShapes);
+		// Remettre les shapes filtrées
+		sceneController.setAllShapes(filteredShapes);
 
 		uiWindow.clearClear3DModelRequest();
 	}
-	// ===============================================
-	if (uiWindow.isGenerateCurveRequested()) {
-		renderer.generateBezierCurveFromControlPoints();
-		uiWindow.clearGenerateCurveRequest();
-	}
-	if (uiWindow.isClearCurvesRequested()) {
-		renderer.clearCurves();
-		uiWindow.clearClearCurvesRequest();
-	}
+
+	// Clear des requêtes UI
 	uiWindow.clearRequests();
 }
 
 void Application::draw() {
+	// Configurer le renderer avec les paramètres UI
 	renderer.setDrawingArea(uiWindow.getDrawingArea());
 
 	renderer.applyDrawingParameters(
@@ -113,70 +124,72 @@ void Application::draw() {
 		uiWindow.getHue(),
 		uiWindow.getSaturation(),
 		uiWindow.getBrightness());
+
 	renderer.updateShapeManagerParams(
 		uiWindow.getLineWidth(),
 		uiWindow.getStrokeColor(),
 		uiWindow.getFillColor());
-	uiWindow.getBackgroundColor();
 
-	renderer.applyTransformationToSelectedShape(
+	renderer.set3DDisplayOptions(
+		uiWindow.isShowBoundingBoxEnabled(),
+		uiWindow.isWireframeEnabled());
+
+	// Appliquer les transformations aux formes sélectionnées
+	transformController.applyTransformToSelected(
 		uiWindow.getTranslateX(),
 		uiWindow.getTranslateY(),
 		uiWindow.getRotation(),
 		uiWindow.getScale());
 
-  renderer.draw();
-  uiWindow.draw();
+	// Dessiner la scène et l'UI
+	renderer.draw();
+	uiWindow.draw();
 }
 
-
 void Application::keyPressed(int key) {
+	// Gestion du mode placement de points (Curves)
 	if (uiWindow.getPlacePointsModeState()) {
-		// if we are in place points mode, when entering P key
 		if (key == 'p' || key == 'P') {
-			// we unable place points mode
-			uiWindow.placePointsMode= false;
+			uiWindow.placePointsMode = false;
 			uiWindow.statusMessage = "Place Points Mode disabled.\n";
 		}
 	}
-		
-	//renderer.keyPressed(key);
+
+	// Déléguer au contrôleur de scène pour les touches de caméra
+	sceneController.handleKeyPressed(key);
 }
 
 void Application::mousePressed(int x, int y, int button) {
 	if (uiWindow.getDrawingArea().inside(x, y)) {
-		// if we are in place points mode, we add control points to the curve
+		// Si on est en mode placement de points
 		if (uiWindow.isPlacePointsMode()) {
-			renderer.addControlPoint(x, y);
+			curvesController.addControlPoint(x, y, uiWindow.getDrawingArea());
 		} else {
-
-			renderer.setCurrentShape(uiWindow.getCurrentShape());
-			renderer.mousePressed(x, y, button);
+			// Sinon, mode dessin ou sélection normal
+			sceneController.setCurrentShape(uiWindow.getCurrentShape());
+			sceneController.handleMousePressed(x, y, button, uiWindow.getDrawingArea());
 		}
-	}
-	// else we passed the event to the uiWindow
-	else {
+	} else {
+		// Clic dans l'UI
 		uiWindow.mousePressed(x, y, button);
 	}
-
 }
 
 void Application::mouseReleased(int x, int y, int button) {
 	if (uiWindow.getDrawingArea().inside(x, y)) {
-		renderer.mouseReleased(x, y, button);
+		sceneController.handleMouseReleased(x, y, button);
 	} else {
 		uiWindow.mouseReleased(x, y, button);
 	}
 }
 
-
-
 void Application::dragEvent(ofDragInfo dragInfo) {
-	uiWindow.handleFileDragAndDrop(dragInfo);
+	// Déléguer au ImageController
+	if (imageController.loadFromDragAndDrop(dragInfo)) { // ✅
+		ofLogNotice("Application") << "Image loaded via drag & drop";
+	}
 }
 
-void Application::exit()
-{
-  ofLog() << "<app::exit>";
+void Application::exit() {
+	ofLog() << "<app::exit>";
 }
-

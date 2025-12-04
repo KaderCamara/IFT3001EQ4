@@ -2,10 +2,6 @@
 // Implémentation du panel de vue 3D
 #include "View3DPanel.h"
 
-// Déclarations externes (gérées par renderer)
-extern bool g_showBoundingBox;
-extern bool g_showWireframe;
-
 View3DPanel::View3DPanel() {
 }
 
@@ -48,13 +44,11 @@ void View3DPanel::reset() {
 
 void View3DPanel::onShowBoundingBoxPressed() {
 	showBoundingBox = !showBoundingBox;
-	g_showBoundingBox = showBoundingBox;
 	ofLogNotice("View3DPanel") << "Bounding boxes: " << (showBoundingBox ? "ON" : "OFF");
 }
 
 void View3DPanel::onWireframePressed() {
 	showWireframe = !showWireframe;
-	g_showWireframe = showWireframe;
 	ofLogNotice("View3DPanel") << "Wireframe: " << (showWireframe ? "ON" : "OFF");
 }
 

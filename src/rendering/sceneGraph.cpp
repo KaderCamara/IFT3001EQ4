@@ -5,11 +5,24 @@ void SceneGraph::addShape(const Shape & shape) {
 }
 
 void SceneGraph::removeShape(int index) {
-	if (selectedIndex >= 0) {
-		shapes.erase(shapes.begin() + selectedIndex);
-		selectedIndex = -1;
+	if (index >= 0 && index < (int)shapes.size()) {
+		// Supprimer la shape
+		shapes.erase(shapes.begin() + index);
+
+		// Mettre à jour la sélection :
+		// - retirer l'index supprimé,
+		// - décrémenter ceux qui sont après
+		for (auto & i : selectedIndices) {
+			if (i > index) {
+				i--;
+			}
+		}
+		selectedIndices.erase(
+			std::remove(selectedIndices.begin(), selectedIndices.end(), index),
+			selectedIndices.end());
 	}
 }
+
 
 Shape * SceneGraph::getShape(int index) {
 	if (index >= 0 && index < shapes.size()) {
@@ -20,7 +33,7 @@ Shape * SceneGraph::getShape(int index) {
 
 void SceneGraph::clear() {
 	shapes.clear();
-	selectedIndex = -1;
+	selectedIndices.clear();
 }
 
 void SceneGraph::selectShapeAt(float x, float y, bool addToSelection) {
@@ -115,70 +128,17 @@ std::vector<Shape> & SceneGraph::getAllShapes() {
 	return shapes;
 }
 
-void SceneGraph::draw() {
-	for (int i = 0; i < shapes.size(); ++i) {
-		Shape & s = shapes[i];
-		bool isSelected = std::find(selectedIndices.begin(), selectedIndices.end(), i) != selectedIndices.end();
 
-		if (!s.is3D) {
-			ofPushStyle();
-
-			if (isSelected) {
-				ofNoFill();
-				ofSetColor(ofColor::yellow);
-				ofSetLineWidth(3);
-			} else {
-				ofFill();
-				ofSetColor(s.color);
-				ofSetLineWidth(1);
-			}
-
-			if (s.type == "point")
-				ofDrawCircle(s.start, 3 * s.scale);
-			else if (s.type == "line")
-				ofDrawLine(s.start, s.end);
-			else if (s.type == "triangle")
-				ofDrawTriangle(s.start, ofPoint(s.end.x, s.start.y), s.end);
-			else if (s.type == "square") {
-				float side = std::abs(s.end.x - s.start.x) * s.scale;
-				ofDrawRectangle(s.start.x, s.start.y, side, side);
-			} else if (s.type == "rectangle") {
-				float w = (s.end.x - s.start.x) * s.scale;
-				float h = (s.end.y - s.start.y) * s.scale;
-				ofDrawRectangle(s.start.x, s.start.y, w, h);
-			} else if (s.type == "circle") {
-				float radius = ofDist(s.start.x, s.start.y, s.end.x, s.end.y) * s.scale;
-				ofDrawCircle(s.start, radius);
-			}
-
-			if (isSelected) {
-				ofNoFill();
-				ofSetColor(ofColor::yellow);
-				ofSetLineWidth(2);
-				if (s.type == "square" || s.type == "rectangle") {
-					float w = (s.end.x - s.start.x) * s.scale;
-					float h = (s.end.y - s.start.y) * s.scale;
-					ofDrawRectangle(s.start.x, s.start.y, w, h);
-				} else if (s.type == "circle") {
-					float radius = ofDist(s.start.x, s.start.y, s.end.x, s.end.y) * s.scale;
-					ofDrawCircle(s.start, radius);
-				}
-			}
-
-			ofPopStyle();
+// JORDAN: transformation FUNCTIONS
+void SceneGraph::updateSelectedTransform(float tx, float ty, float rot, float scale) {
+	for (int i : selectedIndices) {
+		if (i >= 0 && i < (int)shapes.size()) {
+			shapes[i].translation.set(tx, ty);
+			shapes[i].rotation = rot;
+			shapes[i].scale = scale;
 		}
 	}
 }
-
-
-// JORDAN: transformation FUNCTIONS
-	void SceneGraph::updateSelectedTransform(float tx, float ty, float rot, float scale) {
-		if (selectedIndex >= 0 && selectedIndex < shapes.size()) {
-			shapes[selectedIndex].translation.set(tx, ty);
-			shapes[selectedIndex].rotation = rot;
-			shapes[selectedIndex].scale = scale;
-		}
-	}
 
 // 3D IMPORT FUNCTIONS
 	void SceneGraph::setShapes(const std::vector<Shape> & newShapes) {

@@ -6,14 +6,25 @@
 /**
  * @file BezierCurve.h
  * @brief Representation of a Bezier curve built from control points.
+ * 
+ * REFACTORISATION MVC :
+ * - AVANT : BezierCurve::draw() mélangeait MODEL + VIEW
+ * - APRÈS : BezierCurve = MODEL pur (données uniquement)
+ * - Le rendu est délégué à BezierCurveRenderer (VIEW)
  */
 
 /**
  * @class BezierCurve
- * @brief Computes and stores a Bezier curve defined by control points.
+ * @brief Computes and stores a Bezier curve defined by control points (MODEL)
  *
  * The class holds the control points and a sampled set of curve points
  * (samples) computed by the recompute() method.
+ * 
+ * Responsabilités (MODEL) :
+ * - Stocker les points de contrôle
+ * - Calculer les points échantillonnés de la courbe
+ * - Fournir des accesseurs pour les données
+ * - AUCUN rendu (délégué à BezierCurveRenderer)
  */
 class BezierCurve {
 public:
@@ -44,6 +55,15 @@ public:
 	const std::vector<glm::vec2> & getControlPoints() const { return controlPoints; }
 
 	/**
+	 * @brief Get the sampled curve points (échantillonnage de la courbe).
+	 *
+	 * @return A const reference to the internal curve points vector.
+	 * 
+	 * @note Ces points sont utilisés par BezierCurveRenderer pour le rendu
+	 */
+	const std::vector<glm::vec2> & getCurvePoints() const { return curvePoints; }
+
+	/**
 	 * @brief Recompute the sampled points of the curve.
 	 *
 	 * This generates `segments` samples along the curve and stores them in
@@ -53,10 +73,10 @@ public:
 	 */
 	void recompute(int segments = 100);
 
-	/**
-	 * @brief Draw the computed Bezier curve (using the sampled points).
-	 */
-	void draw() const;
+	// ========== SUPPRIMÉ : draw() ==========
+	// AVANT : void draw() const;
+	// APRÈS : Le rendu est délégué à BezierCurveRenderer
+	// Utilisation : BezierCurveRenderer renderer; renderer.render(curve);
 
 private:
 	/// Control points that define the Bezier curve.

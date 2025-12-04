@@ -1,20 +1,31 @@
-# pragma once
+#pragma once
 
+#include "glm/glm.hpp"
 #include "ofMain.h"
 #include <vector>
-#include "glm/glm.hpp"
 
 /**
  * @file controlPointsManager.h
  * @brief Management of control points used for drawing curves.
+ * 
+ * REFACTORISATION MVC :
+ * - AVANT : ControlPointsManager::drawPointsForCurves() mélangeait MODEL + VIEW
+ * - APRÈS : ControlPointsManager = MODEL pur (données + logique métier uniquement)
+ * - Le rendu est délégué à ControlPointsRenderer (VIEW)
  */
 
 /**
  * @class ControlPointsManager
- * @brief Manages a set of control points used to draw curves.
+ * @brief Manages a set of control points used to draw curves (MODEL)
  *
- * This class stores control points and provides helpers to draw them,
- * add new points, undo the last point, and clear all points.
+ * This class stores control points and provides operations to add, remove,
+ * and query control points.
+ * 
+ * Responsabilités (MODEL) :
+ * - Stocker les points de contrôle
+ * - Ajouter/supprimer des points
+ * - Fournir des accesseurs pour les données
+ * - AUCUN rendu (délégué à ControlPointsRenderer)
  */
 class ControlPointsManager {
 public:
@@ -22,17 +33,17 @@ public:
 	 * @brief Default constructor.
 	 */
 	ControlPointsManager() = default;
+
 	/**
 	 * @brief Default destructor.
 	 */
 	~ControlPointsManager() = default;
 
-	/**
-	 * @brief Draws the control points and the segments between them.
-	 *
-	 * This method does not modify the internal state of the class.
-	 */
-	void drawPointsForCurves() const;
+	// ========== SUPPRIMÉ : drawPointsForCurves() const ==========
+	// AVANT : void drawPointsForCurves() const;
+	// APRÈS : Le rendu est délégué à ControlPointsRenderer
+	// Utilisation : ControlPointsRenderer renderer;
+	//               renderer.render(manager.getControlPoints());
 
 	/**
 	 * @brief Adds a control point at integer coordinates (x, y).
@@ -76,5 +87,4 @@ private:
 
 	/// Optional start point (currently unused).
 	glm::vec2 startPoint;
-
 };

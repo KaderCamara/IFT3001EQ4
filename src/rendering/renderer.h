@@ -1,117 +1,107 @@
-// IFT3100A25_BonjourMonde/renderer.h
-// Classe responsable du rendu de l'application.  dessins etc
+// Renderer.h
+// Classe responsable UNIQUEMENT du rendu visuel
 #pragma once
+
+#include "../app/sceneController.h"
+#include "curves/CurvesRenderer.h"
 #include "ofMain.h"
-#include "../objects/shapeManager.h"
-#include "sceneGraph.h"
-#include "ofxAssimpModelLoader.h"
-#include <algorithm>
-#include "cameraManager.h"
-#include "../objects/shapeManager3D.h"
-#include <vector>
-#include "glm/glm.hpp"
-#include "../objects/curveManager.h"
-#include "../objects/controlPointsManager.h"
+#include "scene/sceneRenderer.h"
+#include "image/imageRenderer.h"
 
 
-class Renderer
-{
+/**
+ * @class Renderer
+ * @brief Responsable UNIQUEMENT du rendu visuel (VIEW - MVC)
+ * 
+ * Responsabilités (VIEW PURE) :
+ * - Dessiner la scène 2D
+ * - Dessiner la scène 3D
+ * - Dessiner la vue quad (4 caméras)
+ * - Appliquer les paramètres visuels (couleurs, lignes)
+ * - Coordonner les renderers spécialisés (CurvesRenderer, etc.)
+ * - Aucune logique métier
+ * - Aucune gestion d'entrées
+ * 
+ * REFACTORISATION MVC (Phase 1 - Problème 3) :
+ * - AJOUT : CurvesRenderer pour le rendu des courbes de Bézier
+ * - Les courbes sont maintenant rendues via un renderer spécialisé
+ */
+class Renderer {
 public:
-	ofRectangle getDrawingArea() const { return drawingArea; };
-  void setup();
-  void draw();
-  
-  void setDrawingArea(const ofRectangle & area) { drawingArea = area; };
-  void setCurrentShape(const std::string & shape) { currentShape = shape; }
-  void mousePressed(int x, int y, int button);
-  void mouseReleased(int x, int y, int button);
-  void keyPressed(int key);
-  void draw3D();
-  void setShowBoundingBox(bool state) { showBoundingBox = state; }
+	Renderer();
+	~Renderer() = default;
 
-  // MODIFICATIONS JORDAN
-  void view2DMode();
-  bool is3DView() const { return view3D; }
-  void applyDrawingParameters(float lineW, const ofColor & stroke, const ofColor & fill, const ofColor & bg, bool useHSB, float hue, float saturation, float brightness);
-  void updateShapeManagerParams(float lineW, ofColor stroke, ofColor fill);
-  void applyTransformationToSelectedShape(float tx, float ty, float rot, float scale);
-  void import3DModel();
-  void clear3DModels();
+	void setup();
 
-  //mini-controller
-  void save();
-  void deleteShape();
-  void selectingModeOn();
-  void selectingModeOff();
-  void view3DMode();
-  void viewQuadMode();
-
-  // CURVES CONTROL POINTS
-  void addControlPoint(int x, int y);
-  void generateBezierCurveFromControlPoints();
-  void clearCurves();
-  void undoLastControlPoint();
-  void clearControlPoints();
-
-  // ========== ACCESSEURS SCENEGRAPH ==========
-
-  /**
-     * @brief Ajoute une shape au SceneGraph
-     * @param shape Shape à ajouter
+	/**
+     * @brief Injecter le contrôleur de scène
+     * @param controller Référence au SceneController
      */
-  void addShapeToScene(const Shape & shape);
+	void setSceneController(SceneController * controller);
 
-  /**
-     * @brief Ajoute plusieurs shapes au SceneGraph
-     * @param shapes Vector de shapes à ajouter
+	// ========== MÉTHODES DE RENDU ==========
+
+	/**
+     * @brief Dessine la scène selon le mode de vue actif
      */
-  void addShapesToScene(const std::vector<Shape> & shapes);
+	void draw();
 
-  /**
-     * @brief Récupère toutes les shapes du SceneGraph
-     * @return Référence au vector de shapes
+	// ========== CONFIGURATION DU RENDU ==========
+
+	/**
+     * @brief Définit la zone de dessin
      */
-  std::vector<Shape> & getAllShapes();
+	void setDrawingArea(const ofRectangle & area) { drawingArea = area; }
 
-  /**
-     * @brief Remplace toutes les shapes du SceneGraph
-     * @param shapes Nouvelles shapes
+	/**
+     * @brief Récupère la zone de dessin
      */
-  void setAllShapes(const std::vector<Shape> & shapes);
-    
+	ofRectangle getDrawingArea() const { return drawingArea; }
 
-  private:
-  ofTrueTypeFont font;
-  ofRectangle drawingArea;
-  ofRectangle getMeshBoundingBox(const ofMesh & mesh);
-  std::string currentShape = "none";
-  bool drawing = false;
-  bool selecting = false;
-  ShapeManager shapeManager;
-  CameraManager cameraManager;
-  SceneGraph sceneGraph;
-  ofPoint startPoint, endPoint;
-  bool shapeSelected = false;
-  bool showBoundingBox = false;
-  int shapeSelectedIndex = -1;
-  bool view3D = false;
-  bool view2D = true;
-  bool viewQuad = false;
-  void drawQuadView();
-  float camDistance = 600.0f;
-  // --- Parameters from UI ---
-  float currentLineWidth = 2.0f;
-  ofColor currentStrokeColor = ofColor::black;
-  ofColor currentFillColor = ofColor::white;
-  ofColor currentBgColor = ofColor::white;
-  bool useHSBmode = false;
+	/**
+     * @brief Applique les paramètres de dessin (couleurs, lignes, HSB)
+     */
+	void applyDrawingParameters(float lineW, const ofColor & stroke, const ofColor & fill,
+		const ofColor & bg, bool useHSB, float hue, float saturation, float brightness);
 
-  // CURVES CONTROL POINTS
-  //bool hasPointPreview = false;
-  glm::vec2 pointPreview;
-  CurveManager curveManager;
-  ControlPointsManager controlPointsManager;
+	/**
+     * @brief Met à jour les paramètres du ShapeManager
+     */
+	void updateShapeManagerParams(float lineW, ofColor stroke, ofColor fill);
 
-  // 3D IMPORT
-  bool modelImported = false;
+	/**
+	 * @brief Configure les options d'affichage 3D (boîte englobante, fil de fer)
+	 */
+
+	void set3DDisplayOptions(bool showBoundingBox, bool showWireframe);
+
+	ImageRenderer & getImageRenderer() { return imageRenderer; }
+	void setCurvesController(CurvesController * controller);
+
+private:
+	// ========== RÉFÉRENCE AU CONTRÔLEUR ==========
+	SceneController * sceneController = nullptr;
+
+	// ========== RENDERERS SPÉCIALISÉS ==========
+	CurvesRenderer curvesRenderer; // Rendu des courbes de Bézier et points de contrôle
+	SceneRenderer sceneRenderer; // Rendu des formes 2D et 3D sur la scène
+	ImageRenderer imageRenderer; // Rendu des images (background, textures)
+
+	// ========== ZONE DE RENDU ==========
+	ofRectangle drawingArea;
+
+	// ========== PARAMÈTRES VISUELS ==========
+	float currentLineWidth = 2.0f;
+	ofColor currentStrokeColor = ofColor::black;
+	ofColor currentFillColor = ofColor::white;
+	ofColor currentBgColor = ofColor::white;
+	bool useHSBmode = false;
+
+	// ========== MÉTHODES PRIVÉES DE RENDU ==========
+
+	/**
+     * @brief Dessine le background de la zone de dessin
+     */
+	void drawBackground();
+
 };

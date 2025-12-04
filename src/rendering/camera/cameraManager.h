@@ -1,7 +1,7 @@
-// CameraManager.h
+﻿// CameraManager.h
 //fichier qui gere les cameras etc
 #pragma once
-#include "../objects/shape.h"
+#include "../../objects/shape.h"
 #include "ofMain.h"
 #include <vector>
 

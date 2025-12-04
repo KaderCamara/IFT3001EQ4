@@ -1,38 +1,47 @@
-// IFT3100A25_BonjourMonde/application.h
-// Classe principale de l'application.
-//notre controller basically
-
+// application.h
+// Classe principale de l'application (Controller principal)
 #pragma once
 
-#include "ofMain.h"
-#include "../rendering/renderer.h"
+#include "../rendering/Renderer.h"
+#include "../app/SceneController.h"
 #include "../ui/uiWindow.h"
 #include "../utils/Model3DImportManager.h"
+#include "ofMain.h"
+#include "../app/imageController.h"
+#include "../app/curvesController.h"
+#include "../app/transformController.h"
 
-class Application : public ofBaseApp
-{
+/**
+ * @class Application
+ * @brief Controller principal de l'application (MVC)
+ * 
+ * Responsabilités :
+ * - Coordination entre Renderer (View), SceneController (Controller métier) et UIWindow (View UI)
+ * - Gestion du cycle de vie de l'application
+ * - Routage des événements utilisateur
+ */
+class Application : public ofBaseApp {
 public:
+	void setup();
+	void update();
+	void draw();
 
-  Renderer renderer;
+	void mousePressed(int x, int y, int button);
+	void mouseReleased(int x, int y, int button);
+	void keyPressed(int key);
+	void dragEvent(ofDragInfo dragInfo);
+	void exit();
 
-  UIWindow uiWindow;
+private:
+	// ========== COMPOSANTS MVC ==========
+	Renderer renderer; // VIEW - Rendu
+	SceneController sceneController; // CONTROLLER - Logique métier
+	UIWindow uiWindow; // VIEW - Interface utilisateur
 
-  void setup();
+	// ========== UTILITAIRES ==========
+	Model3DImportManager model3DImportManager; // MODEL - Import 3D
 
-  void draw();
-
-  void update();
-
-  void mousePressed(int x, int y, int button);
-
-  void mouseReleased(int x, int y, int button);
-
-  void keyPressed(int key);
-
-  void dragEvent(ofDragInfo dragInfo);
-
-  void exit();
-
-  private:
-  Model3DImportManager model3DImportManager;
+	ImageController imageController; //Logique images
+	CurvesController curvesController; //Logique courbes
+	TransformController transformController; //Logique transformations
 };

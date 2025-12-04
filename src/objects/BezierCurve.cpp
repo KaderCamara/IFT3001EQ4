@@ -2,7 +2,11 @@
 
 /**
  * @file BezierCurve.cpp
- * @brief Implementation of BezierCurve: sampling and drawing a Bezier curve.
+ * @brief Implementation of BezierCurve: sampling a Bezier curve.
+ * 
+ * REFACTORISATION MVC :
+ * - SUPPRIMÉ : draw() (maintenant dans BezierCurveRenderer)
+ * - CONSERVÉ : Toute la logique de calcul (MODEL)
  */
 
 BezierCurve::BezierCurve(const std::vector<glm::vec2> & controlPts) {
@@ -49,18 +53,18 @@ void BezierCurve::recompute(int segments) {
 	}
 }
 
-void BezierCurve::draw() const {
-	// Need at least two sampled points to draw a segment
-	if (curvePoints.size() < 2) {
-		return;
-	}
-
-	// Draw the sampled polyline representing the curve
-	ofPushStyle();
-	ofSetColor(ofColor::blue); // curve color
-	ofSetLineWidth(2);
-	for (size_t i = 0; i + 1 < curvePoints.size(); ++i) {
-		ofDrawLine(curvePoints[i], curvePoints[i + 1]);
-	}
-	ofPopStyle();
-}
+// ========== SUPPRIMÉ : draw() const ==========
+// AVANT :
+// void BezierCurve::draw() const {
+//     if (curvePoints.size() < 2) return;
+//     ofPushStyle();
+//     ofSetColor(ofColor::blue);
+//     ofSetLineWidth(2);
+//     for (size_t i = 0; i + 1 < curvePoints.size(); ++i) {
+//         ofDrawLine(curvePoints[i], curvePoints[i + 1]);
+//     }
+//     ofPopStyle();
+// }
+//
+// APRÈS : Le rendu est délégué à BezierCurveRenderer::render()
+// ================================================

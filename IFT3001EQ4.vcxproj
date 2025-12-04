@@ -255,6 +255,12 @@
     <ClCompile Include="src\rendering\renderer.cpp" />
     <ClCompile Include="src\rendering\sceneGraph.cpp" />
     <ClCompile Include="src\rendering\shaderManager.cpp" />
+    <ClCompile Include="src\ui\panels\curvesPanel.cpp" />
+    <ClCompile Include="src\ui\panels\drawingPanel.cpp" />
+    <ClCompile Include="src\ui\panels\drawingParametersPanel.cpp" />
+    <ClCompile Include="src\ui\panels\imagePanel.cpp" />
+    <ClCompile Include="src\ui\panels\transformPanel.cpp" />
+    <ClCompile Include="src\ui\panels\view3DPanel.cpp" />
     <ClCompile Include="src\ui\uiWindow.cpp" />
     <ClCompile Include="src\utils\Model3DImportManager.cpp" />
   </ItemGroup>
@@ -372,6 +378,12 @@
     <ClInclude Include="src\rendering\renderer.h" />
     <ClInclude Include="src\rendering\sceneGraph.h" />
     <ClInclude Include="src\rendering\shaderManager.h" />
+    <ClInclude Include="src\ui\panels\curvesPanel.h" />
+    <ClInclude Include="src\ui\panels\drawingPanel.h" />
+    <ClInclude Include="src\ui\panels\drawingParametersPanel.h" />
+    <ClInclude Include="src\ui\panels\imagePanel.h" />
+    <ClInclude Include="src\ui\panels\transformPanel.h" />
+    <ClInclude Include="src\ui\panels\view3DPanel.h" />
     <ClInclude Include="src\ui\uiWindow.h" />
     <ClInclude Include="src\utils\Model3DImportManager.h" />
   </ItemGroup>

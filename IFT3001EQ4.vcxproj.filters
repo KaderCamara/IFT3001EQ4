@@ -83,6 +83,12 @@
       <Filter>src\objects</Filter>
     </ClCompile>
     <ClCompile Include="src\utils\Model3DImportManager.cpp" />
+    <ClCompile Include="src\ui\panels\drawingPanel.cpp" />
+    <ClCompile Include="src\ui\panels\curvesPanel.cpp" />
+    <ClCompile Include="src\ui\panels\view3DPanel.cpp" />
+    <ClCompile Include="src\ui\panels\imagePanel.cpp" />
+    <ClCompile Include="src\ui\panels\transformPanel.cpp" />
+    <ClCompile Include="src\ui\panels\drawingParametersPanel.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -484,6 +490,12 @@
       <Filter>src\objects</Filter>
     </ClInclude>
     <ClInclude Include="src\utils\Model3DImportManager.h" />
+    <ClInclude Include="src\ui\panels\drawingPanel.h" />
+    <ClInclude Include="src\ui\panels\curvesPanel.h" />
+    <ClInclude Include="src\ui\panels\view3DPanel.h" />
+    <ClInclude Include="src\ui\panels\imagePanel.h" />
+    <ClInclude Include="src\ui\panels\transformPanel.h" />
+    <ClInclude Include="src\ui\panels\drawingParametersPanel.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="icon.rc" />

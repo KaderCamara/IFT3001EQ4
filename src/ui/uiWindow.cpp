@@ -8,6 +8,10 @@ void UIWindow::setup() {
 	imagePanel.setup();
 	view3DPanel.setup();
 	curvesPanel.setup();
+	cameraPanel.setup();
+
+	// Hide camera panel by default
+	cameraPanel.hide();
 
 	// Setup de la zone de statut
 	statusBox.set(10, menuBarHeight + 10, 250, 40);
@@ -18,6 +22,7 @@ void UIWindow::setup() {
 void UIWindow::update() {
 	// Update des panels
 	drawingPanel.update();
+	cameraPanel.update();
 
 	// Sync du mode place points (temporaire pour compatibilité)
 	placePointsMode = curvesPanel.isPlacePointsMode();
@@ -39,10 +44,26 @@ void UIWindow::draw() {
 	// Calculer la largeur du menu latéral
 	float sideMenuWidth = ofGetWidth() / 6;
 
+	// Positionner les panels qui s'affichent dans la colonne latérale (gauche)
+	float sideX = 0; // flush to left edge
+	float sideY = menuBarHeight;
+
 	// Dessiner les panels actifs
 	drawingPanel.draw(sideMenuWidth, menuBarHeight);
 	imagePanel.draw(sideMenuWidth, menuBarHeight);
 	view3DPanel.draw(sideMenuWidth, menuBarHeight);
+
+	// Draw camera panel on the left when 3D view active
+	if (view3DActive) {
+		// anchor flush to left; set width to sidebar width
+		cameraPanel.setPosition(sideX, sideY);
+		cameraPanel.setWidth(sideMenuWidth);
+		cameraPanel.show();
+		cameraPanel.draw();
+	} else {
+		cameraPanel.hide();
+	}
+
 	curvesPanel.draw(sideMenuWidth, menuBarHeight);
 
 	// Dessiner la boîte de statut
@@ -107,6 +128,7 @@ void UIWindow::activateImageTab() {
 	drawingPanel.hide();
 	view3DPanel.hide();
 	curvesPanel.hide();
+	cameraPanel.hide();
 
 	view3DActive = false;
 
@@ -124,6 +146,7 @@ void UIWindow::activateDrawTab() {
 	drawingPanel.show();
 	view3DPanel.hide();
 	curvesPanel.hide();
+	cameraPanel.hide();
 
 	view3DActive = false;
 
@@ -141,6 +164,7 @@ void UIWindow::activateView3DTab() {
 	drawingPanel.hide();
 	view3DPanel.show();
 	curvesPanel.hide();
+	cameraPanel.show();
 
 	view3DActive = true;
 
@@ -158,6 +182,7 @@ void UIWindow::activateCurvesTab() {
 	drawingPanel.hide();
 	view3DPanel.hide();
 	curvesPanel.show();
+	cameraPanel.hide();
 
 	view3DActive = false;
 

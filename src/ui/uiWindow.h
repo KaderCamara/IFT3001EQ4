@@ -8,6 +8,7 @@
 #include "panels/DrawingPanel.h"
 #include "panels/ImagePanel.h"
 #include "panels/View3DPanel.h"
+#include "panels/3dEdition/CameraPanel.h"
 
 /**
  * @class UIWindow
@@ -99,6 +100,7 @@ private:
 	ImagePanel imagePanel;
 	View3DPanel view3DPanel;
 	CurvesPanel curvesPanel;
+	CameraPanel cameraPanel;
 
 	// ========== ONGLETS ==========
 	struct TabButton {

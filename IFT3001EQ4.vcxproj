@@ -269,6 +269,7 @@
     <ClCompile Include="src\rendering\shapes\shape3DRenderer.cpp" />
     <ClCompile Include="src\services\selectionService.cpp" />
     <ClCompile Include="src\services\transformServices.cpp" />
+    <ClCompile Include="src\ui\panels\3dEdition\cameraPanel.cpp" />
     <ClCompile Include="src\ui\panels\curvesPanel.cpp" />
     <ClCompile Include="src\ui\panels\drawingPanel.cpp" />
     <ClCompile Include="src\ui\panels\drawingParametersPanel.cpp" />
@@ -405,6 +406,7 @@
     <ClInclude Include="src\rendering\shapes\shape3DRenderer.h" />
     <ClInclude Include="src\services\selectionService.h" />
     <ClInclude Include="src\services\transformService.h" />
+    <ClInclude Include="src\ui\panels\3dEdition\cameraPanel.h" />
     <ClInclude Include="src\ui\panels\curvesPanel.h" />
     <ClInclude Include="src\ui\panels\drawingPanel.h" />
     <ClInclude Include="src\ui\panels\drawingParametersPanel.h" />

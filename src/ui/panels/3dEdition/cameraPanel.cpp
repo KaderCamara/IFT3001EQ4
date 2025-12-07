@@ -10,9 +10,10 @@ CameraPanel::~CameraPanel() {
 void CameraPanel::setup() {
     cameraPanel.setup("Camera Management");
     // make panel non-draggable so it's fixed in the UI
-    cameraPanel.setDraggable(false);
-    // remove visible name/title so it can sit flush against window edge
-    cameraPanel.setName("");
+    // ofxPanel does not expose setDraggable; keep panel fixed by not providing drag logic
+    // cameraPanel.setDraggable(false); // removed: not a member of ofxPanel
+    // restore visible name/title so it shows "Camera Management"
+    cameraPanel.setName("Camera Management");
     // remove border/background so it blends with the app background
     cameraPanel.setBorderColor(ofColor(0,0));
     cameraPanel.setBackgroundColor(ofColor(0,0,0,0));
@@ -228,6 +229,7 @@ std::string CameraPanel::getActiveCameraLabel() const {
     int idx = activeCameraIndex.get();
     if (idx < 0) idx = 0;
     if (idx >= (int)cameraNames.size()) idx = cameraNames.size()-1;
+    if (idx >= (int)cameraNames.size()-1) idx = cameraNames.size()-1;
     return cameraNames[idx];
 }
 

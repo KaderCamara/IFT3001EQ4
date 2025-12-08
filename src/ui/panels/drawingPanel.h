@@ -10,7 +10,7 @@
 /**
  * @class DrawingPanel
  * @brief Panel UI pour le dessin de formes primitives
- * 
+ *
  * Responsabilités :
  * - Boutons de sélection de formes (point, ligne, triangle, carré, rectangle, cercle)
  * - Mode sélection/interaction
@@ -34,6 +34,11 @@ public:
 	bool isSaveShapeRequested() const { return saveShapeRequested; }
 	bool isDeleteShapeRequested() const { return deleteShapeRequested; }
 	bool isSelectionMode() const { return selectionMode; }
+	bool isPlacePointsMode() const { return placePointsMode; }
+	bool isGenerateCurveRequested() const { return generateCurveRequested; }
+	bool isClearCurvesRequested() const { return clearCurvesRequested; }
+	bool isUndoPointRequested() const { return undoPointRequested; }
+	bool isClearPointsRequested() const { return clearPointsRequested; }
 
 	// Paramètres de dessin (délégués au DrawingParametersPanel)
 	float getLineWidth() const { return drawingParamsPanel.getLineWidth(); }
@@ -65,6 +70,9 @@ public:
 	// Clear des requêtes
 	void clearRequests();
 
+	// Contrôle du mode courbes
+	void setPlacePointsMode(bool mode) { placePointsMode = mode; }
+
 private:
 	// État du panel
 	bool isActive = false;
@@ -72,6 +80,11 @@ private:
 	bool saveShapeRequested = false;
 	bool deleteShapeRequested = false;
 	bool selectionMode = false;
+	bool placePointsMode = false;
+	bool generateCurveRequested = false;
+	bool clearCurvesRequested = false;
+	bool undoPointRequested = false;
+	bool clearPointsRequested = false;
 
 	// Panels dédiés (composition)
 	DrawingParametersPanel drawingParamsPanel;
@@ -80,6 +93,7 @@ private:
 	// Panels ofxGui
 	ofxPanel drawMenuPanel;
 	ofxPanel deletePanel;
+	ofxPanel curvesPanel;
 
 	// Boutons de dessin
 	ofxButton drawPointButton;
@@ -93,6 +107,11 @@ private:
 	ofxButton selectionButton;
 	ofxButton exportSequenceButton;
 	ofxButton exportImageButton;
+	ofxButton placePointsButton;
+	ofxButton generateBezierCurveButton;
+	ofxButton clearCurvesButton;
+	ofxButton undoPointButton;
+	ofxButton clearPointsButton;
 
 	// Export
 	bool exportSequenceActive = false;
@@ -111,4 +130,9 @@ private:
 	void onSelectionPressed();
 	void onExportSequencePressed();
 	void onExportImagePressed();
+	void onPlacePointsPressed();
+	void onGenerateCurvePressed();
+	void onClearCurvesPressed();
+	void onUndoPointPressed();
+	void onClearPointsPressed();
 };

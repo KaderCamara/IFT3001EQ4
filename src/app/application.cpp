@@ -153,7 +153,11 @@ void Application::draw() {
 	}
 
 	// Dessiner l'UI par-dessus
+	// Make sure 3D depth testing doesn't hide UI elements
+	ofDisableDepthTest();
 	uiWindow.draw();
+	// restore depth test in case other code expects it
+	ofEnableDepthTest();
 }
 
 // ========== PRÉPARATION DES RENDERDATA (CONTROLLER → VIEW) ==========
@@ -284,9 +288,9 @@ CameraData Application::extractCameraData(ofEasyCam & camera) {
 // ========== GESTION DES ENTRÉES ==========
 
 void Application::keyPressed(int key) {
-	if (uiWindow.getPlacePointsModeState()) {
+	if (uiWindow.isPlacePointsMode()) {
 		if (key == 'p' || key == 'P') {
-			uiWindow.placePointsMode = false;
+			uiWindow.disablePlacePointsMode();
 			uiWindow.statusMessage = "Place Points Mode disabled.\n";
 		}
 	}

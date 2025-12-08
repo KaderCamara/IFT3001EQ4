@@ -4,18 +4,17 @@
 #pragma once
 #include "ofMain.h"
 #include "ofxGui.h"
-#include "panels/CurvesPanel.h"
 #include "panels/DrawingPanel.h"
 #include "panels/ImagePanel.h"
 #include "panels/View3DPanel.h"
-#include "panels/3dEdition/CameraPanel.h"
+#include "panels/InfoPanel.h"
 
 /**
  * @class UIWindow
  * @brief Orchestrateur principal de l'interface utilisateur
- * 
+ *
  * Responsabilités :
- * - Gérer les onglets (Image, Draw, 3D View, Curves)
+ * - Gérer les onglets (Image, 2D Edition, 3D Edition)
  * - Déléguer aux panels spécialisés
  * - Gérer la zone de dessin
  * - Afficher les messages de statut
@@ -33,7 +32,7 @@ public:
 	void mouseReleased(int x, int y, int button);
 	void handleFileDragAndDrop(ofDragInfo dragInfo);
 
-	public:
+public:
 	// ========== ACCESSEURS GÉNÉRAUX ==========
 	ofRectangle getDrawingArea() const { return drawingArea; }
 
@@ -62,28 +61,28 @@ public:
 	bool isClearImageRequested() const { return imagePanel.isClearImageRequested(); }
 	bool isImport3DModelRequested() const { return imagePanel.isImport3DModelRequested(); }
 	bool isClear3DModelRequested() const { return imagePanel.isClear3DModelRequested(); }
-	void clearImport3DModelRequest() { imagePanel.clearRequests(); }
-	void clearClear3DModelRequest() { imagePanel.clearRequests(); }
+	// Forward clearing requests for image panel
+	void clearImport3DModelRequest();
+	void clearClear3DModelRequest();
 
 	// ========== VIEW3D PANEL ==========
 	bool is3DviewRequested() const { return view3DActive; }
 	bool is2DviewRequested() const { return !view3DActive && !isQuadViewRequested(); }
 	bool isQuadViewRequested() const { return view3DPanel.isQuadViewRequested(); }
-	bool isShowBoundingBoxEnabled() const { return view3DPanel.isShowBoundingBoxToggled(); } 
+	bool isShowBoundingBoxEnabled() const { return view3DPanel.isShowBoundingBoxToggled(); }
 	bool isWireframeEnabled() const { return view3DPanel.isShowWireframeToggled(); }
 
-	// ========== CURVES PANEL ==========
-	bool isPlacePointsMode() const { return curvesPanel.isPlacePointsMode(); }
-	bool isGenerateCurveRequested() const { return curvesPanel.isGenerateCurveRequested(); }
-	bool isClearCurvesRequested() const { return curvesPanel.isClearCurvesRequested(); }
-	bool isUndoPointRequested() const { return curvesPanel.isUndoPointRequested(); }
-	bool isClearPointsRequested() const { return curvesPanel.isClearPointsRequested(); }
-	bool getPlacePointsModeState() const { return curvesPanel.isPlacePointsMode(); }
+	// ========== CURVES (INTEGRATED IN DRAWING) ==========
+	bool isPlacePointsMode() const { return drawingPanel.isPlacePointsMode(); }
+	bool isGenerateCurveRequested() const { return drawingPanel.isGenerateCurveRequested(); }
+	bool isClearCurvesRequested() const { return drawingPanel.isClearCurvesRequested(); }
+	bool isUndoPointRequested() const { return drawingPanel.isUndoPointRequested(); }
+	bool isClearPointsRequested() const { return drawingPanel.isClearPointsRequested(); }
 
-	void clearGenerateCurveRequest() { curvesPanel.clearRequests(); }
-	void clearClearCurvesRequest() { curvesPanel.clearRequests(); }
-	void clearUndoPointRequest() { curvesPanel.clearRequests(); }
-	void clearClearPointsRequest() { curvesPanel.clearRequests(); }
+	void clearGenerateCurveRequest() { drawingPanel.clearRequests(); }
+	void clearClearCurvesRequest() { drawingPanel.clearRequests(); }
+	void clearUndoPointRequest() { drawingPanel.clearRequests(); }
+	void clearClearPointsRequest() { drawingPanel.clearRequests(); }
 
 	// ========== CONTRÔLE DES REQUÊTES ==========
 	void clearRequests();
@@ -91,16 +90,14 @@ public:
 	// Status message public pour compatibilité
 	std::string statusMessage;
 
-	// Place points mode public pour compatibilité (sera supprimé après refacto complète)
-	bool placePointsMode = false;
+	void disablePlacePointsMode() { drawingPanel.setPlacePointsMode(false); }
 
 private:
 	// ========== PANELS ==========
 	DrawingPanel drawingPanel;
 	ImagePanel imagePanel;
 	View3DPanel view3DPanel;
-	CurvesPanel curvesPanel;
-	CameraPanel cameraPanel;
+	InfoPanel infoPanel;
 
 	// ========== ONGLETS ==========
 	struct TabButton {
@@ -111,9 +108,8 @@ private:
 	};
 
 	TabButton imageTab = { "Image", ofRectangle(0, 0, 100, 50) };
-	TabButton drawTab = { "Draw", ofRectangle(100, 0, 100, 50) };
-	TabButton view3DTab = { "3D view", ofRectangle(200, 0, 100, 50) };
-	TabButton curvesTab = { "Curves", ofRectangle(300, 0, 100, 50) };
+	TabButton drawTab = { "2D EDITION", ofRectangle(100, 0, 140, 50) };
+	TabButton view3DTab = { "3D EDITION", ofRectangle(240, 0, 140, 50) };
 
 	// ========== ZONES UI ==========
 	ofRectangle drawingArea;
@@ -130,5 +126,4 @@ private:
 	void activateImageTab();
 	void activateDrawTab();
 	void activateView3DTab();
-	void activateCurvesTab();
 };

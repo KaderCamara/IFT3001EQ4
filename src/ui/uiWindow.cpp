@@ -7,11 +7,7 @@ void UIWindow::setup() {
 	drawingPanel.setup();
 	imagePanel.setup();
 	view3DPanel.setup();
-	curvesPanel.setup();
-	cameraPanel.setup();
-
-	// Hide camera panel by default
-	cameraPanel.hide();
+	infoPanel.setup();
 
 	// Setup de la zone de statut
 	statusBox.set(10, menuBarHeight + 10, 250, 40);
@@ -22,10 +18,14 @@ void UIWindow::setup() {
 void UIWindow::update() {
 	// Update des panels
 	drawingPanel.update();
-	cameraPanel.update();
-
-	// Sync du mode place points (temporaire pour compatibilité)
-	placePointsMode = curvesPanel.isPlacePointsMode();
+	// update info panel with current state
+	infoPanel.update(
+		(imageTab.active ? "Image" : (drawTab.active ? "2D" : "3D")),
+		view3DActive && !view3DPanel.isQuadViewRequested(),
+		view3DPanel.isQuadViewRequested(),
+		drawingArea,
+		statusMessage
+	);
 }
 
 void UIWindow::draw() {
@@ -44,34 +44,20 @@ void UIWindow::draw() {
 	// Calculer la largeur du menu latéral
 	float sideMenuWidth = ofGetWidth() / 6;
 
-	// Positionner les panels qui s'affichent dans la colonne latérale (gauche)
-	float sideX = 0; // flush to left edge
-	float sideY = menuBarHeight;
-
 	// Dessiner les panels actifs
 	drawingPanel.draw(sideMenuWidth, menuBarHeight);
 	imagePanel.draw(sideMenuWidth, menuBarHeight);
 	view3DPanel.draw(sideMenuWidth, menuBarHeight);
 
-	// Draw camera panel on the left when 3D view active
-	if (view3DActive) {
-		// anchor flush to left; set width to sidebar width
-		cameraPanel.setPosition(sideX, sideY);
-		cameraPanel.setWidth(sideMenuWidth);
-		cameraPanel.show();
-		cameraPanel.draw();
-	} else {
-		cameraPanel.hide();
-	}
-
-	curvesPanel.draw(sideMenuWidth, menuBarHeight);
+	// draw info panel at bottom
+	infoPanel.draw(menuBarHeight);
 
 	// Dessiner la boîte de statut
 	drawStatusBox();
 }
 
 void UIWindow::drawTabs() {
-	for (auto & tab : { imageTab, drawTab, view3DTab, curvesTab }) {
+	for (auto & tab : { imageTab, drawTab, view3DTab }) {
 		ofPushStyle();
 		ofSetColor(tab.active ? 100 : 150);
 		ofDrawRectangle(tab.bounds);
@@ -112,8 +98,6 @@ void UIWindow::handleTabClick(int x, int y) {
 		activateDrawTab();
 	} else if (view3DTab.bounds.inside(x, y)) {
 		activateView3DTab();
-	} else if (curvesTab.bounds.inside(x, y)) {
-		activateCurvesTab();
 	}
 }
 
@@ -122,13 +106,10 @@ void UIWindow::activateImageTab() {
 	imageTab.active = true;
 	drawTab.active = false;
 	view3DTab.active = false;
-	curvesTab.active = false;
 
 	imagePanel.show();
 	drawingPanel.hide();
 	view3DPanel.hide();
-	curvesPanel.hide();
-	cameraPanel.hide();
 
 	view3DActive = false;
 
@@ -140,17 +121,14 @@ void UIWindow::activateDrawTab() {
 	imageTab.active = false;
 	drawTab.active = true;
 	view3DTab.active = false;
-	curvesTab.active = false;
 
 	imagePanel.hide();
 	drawingPanel.show();
 	view3DPanel.hide();
-	curvesPanel.hide();
-	cameraPanel.hide();
 
 	view3DActive = false;
 
-	ofLogNotice("UIWindow") << "Draw tab activated";
+	ofLogNotice("UIWindow") << "2D Edition tab activated";
 }
 
 void UIWindow::activateView3DTab() {
@@ -158,40 +136,27 @@ void UIWindow::activateView3DTab() {
 	imageTab.active = false;
 	drawTab.active = false;
 	view3DTab.active = true;
-	curvesTab.active = false;
 
 	imagePanel.hide();
 	drawingPanel.hide();
 	view3DPanel.show();
-	curvesPanel.hide();
-	cameraPanel.show();
 
 	view3DActive = true;
 
-	ofLogNotice("UIWindow") << "3D View tab activated";
-}
-
-void UIWindow::activateCurvesTab() {
-	// Désactiver tous les autres
-	imageTab.active = false;
-	drawTab.active = false;
-	view3DTab.active = false;
-	curvesTab.active = true;
-
-	imagePanel.hide();
-	drawingPanel.hide();
-	view3DPanel.hide();
-	curvesPanel.show();
-	cameraPanel.hide();
-
-	view3DActive = false;
-
-	ofLogNotice("UIWindow") << "Curves tab activated";
+	ofLogNotice("UIWindow") << "3D Edition tab activated";
 }
 
 void UIWindow::clearRequests() {
 	drawingPanel.clearRequests();
 	imagePanel.clearRequests();
 	view3DPanel.clearRequests();
-	curvesPanel.clearRequests();
+}
+
+// Forwarders for image panel specific clear requests
+void UIWindow::clearImport3DModelRequest() {
+	imagePanel.clearRequests();
+}
+
+void UIWindow::clearClear3DModelRequest() {
+	imagePanel.clearRequests();
 }

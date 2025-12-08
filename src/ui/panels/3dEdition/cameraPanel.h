@@ -2,113 +2,133 @@
 
 #include "ofMain.h"
 #include "ofxGui.h"
-#include <vector>
 #include <functional>
 #include <string>
+#include <vector>
 
 // Panneau de gestion des caméras 3D
 class CameraPanel {
 public:
-    CameraPanel();
-    ~CameraPanel();
+	CameraPanel();
+	~CameraPanel();
 
-    // Initialisation et rendu
-    void setup();
-    void update();
-    void draw();
+	// Initialisation et rendu
+	void setup();
+	void update();
+	void draw();
 
-    // Positionnement / taille (pour fixer le panneau dans la colonne latérale)
-    void setPosition(float x, float y);
-    void setWidth(float w);
+	// Positionnement / taille (pour fixer le panneau dans la colonne latérale)
+	void setPosition(float x, float y);
+	void setWidth(float w);
 
-    // Gestion des caméras
-    void setCameraNames(const std::vector<std::string>& names);
-    void setActiveCameraIndex(int idx);
-    int getActiveCameraIndex() const;
+	// Gestion des caméras
+	void setCameraNames(const std::vector<std::string> & names);
+	void setActiveCameraIndex(int idx);
+	int getActiveCameraIndex() const;
 
-    // Affichage / contrôle du panneau
-    void show();
-    void hide();
-    void toggle();
-    bool isVisible() const;
+	// Affichage / contrôle du panneau
+	void show();
+	void hide();
+	void toggle();
+	bool isVisible() const;
 
-    // Callbacks que l'application doit connecter
-    std::function<void()> onAddCamera = nullptr;
-    std::function<void(int)> onDeleteCamera = nullptr; // index
-    std::function<void(int)> onActiveCameraChanged = nullptr;
-    std::function<void()> onFocusSelection = nullptr;
-    std::function<void()> onResetCamera = nullptr;
-    std::function<void()> onProjectionChanged = nullptr;
+	// Accesseurs des options d'affichage
+	bool isWireframeEnabled() const { return showWireframe; }
+	bool isBoundingBoxEnabled() const { return showBoundingBoxes; }
+	bool isGridEnabled() const { return showGrid; }
+	bool isAxesEnabled() const { return showAxes; }
+
+	// Callbacks que l'application doit connecter
+	std::function<void()> onAddCamera = nullptr;
+	std::function<void(int)> onDeleteCamera = nullptr; // index
+	std::function<void(int)> onActiveCameraChanged = nullptr;
+	std::function<void()> onFocusSelection = nullptr;
+	std::function<void()> onResetCamera = nullptr;
+	std::function<void()> onProjectionChanged = nullptr;
 
 private:
-    // GUI root
-    ofxPanel cameraPanel;
+	// GUI root
+	ofxPanel cameraPanel;
 
-    // Top: active camera + add / delete
-    ofxLabel lblActiveCamera; // affiche "Active Camera: Name"
-    ofParameter<std::string> activeCameraName; // used by ofxLabel
-    ofxButton btnPrevCamera;
-    ofxButton btnNextCamera;
-    ofxButton btnAddCamera;
-    ofxButton btnDeleteCamera;
+	// Top: active camera + add / delete
+	ofxLabel lblActiveCamera; // affiche "Active Camera: Name"
+	ofParameter<std::string> activeCameraName; // used by ofxLabel
+	ofxButton btnPrevCamera;
+	ofxButton btnNextCamera;
+	ofxButton btnAddCamera;
+	ofxButton btnDeleteCamera;
 
-    // Projection controls
-    ofxLabel lblProjection;
-    ofxToggle togglePerspective;
-    ofxFloatSlider fovSlider;
-    ofxToggle toggleOrthographic;
-    ofxFloatSlider orthoScaleSlider;
+	// Projection controls
+	ofxLabel lblProjection;
+	ofxToggle togglePerspective;
+	ofxFloatSlider fovSlider;
+	ofxToggle toggleOrthographic;
+	ofxFloatSlider orthoScaleSlider;
 
-    // Clipping planes
-    ofxFloatSlider nearPlaneSlider;
-    ofxFloatSlider farPlaneSlider;
+	// Clipping planes
+	ofxFloatSlider nearPlaneSlider;
+	ofxFloatSlider farPlaneSlider;
 
-    // Transform (position + rotation)
-    ofxLabel lblTransform;
-    ofxFloatSlider posX, posY, posZ;
-    ofxFloatSlider rotPitch, rotYaw, rotRoll;
+	// Transform (position + rotation)
+	ofxLabel lblTransform;
+	ofxFloatSlider posX, posY, posZ;
+	ofxFloatSlider rotPitch, rotYaw, rotRoll;
 
-    // Navigation
-    ofxLabel lblNavigation;
-    ofxToggle toggleOrbitMode;
-    ofxFloatSlider mouseSensitivitySlider;
-    ofxFloatSlider zoomSpeedSlider;
+	// Navigation
+	ofxLabel lblNavigation;
+	ofxToggle toggleOrbitMode;
+	ofxFloatSlider mouseSensitivitySlider;
+	ofxFloatSlider zoomSpeedSlider;
 
-    // Display toggles
-    ofxLabel lblDisplay;
-    ofxToggle toggleGrid;
-    ofxToggle toggleAxes;
-    ofxToggle toggleWireframe;
-    ofxToggle toggleBoundingBoxes;
+	// Display toggles
+	ofxLabel lblDisplay;
+	ofxToggle toggleGrid;
+	ofxToggle toggleAxes;
+	ofxToggle toggleWireframe;
+	ofxToggle toggleBoundingBoxes;
+	ofxLabel lblShortcuts;
+	ofxLabel lblShortcuts2;
 
-    // Shortcuts
-    ofxButton btnFocusSelection;
-    ofxButton btnResetCamera;
+	// Shortcuts
+	ofxButton btnFocusSelection;
+	ofxButton btnResetCamera;
 
-    // Internal state
-    std::vector<std::string> cameraNames;
-    ofParameter<int> activeCameraIndex{"ActiveCameraIndex", 0, 0, 100};
-    bool visible = true;
+	// Internal state
+	std::vector<std::string> cameraNames;
+	ofParameter<int> activeCameraIndex { "ActiveCameraIndex", 0, 0, 100 };
+	bool visible = true;
 
-    // Stored layout to enforce fixed placement
-    float enforcedX = 0.f;
-    float enforcedY = 0.f;
-    float enforcedWidth = 200.f;
+	// Display flags mirrored from toggles to allow const access
+	bool showGrid = true;
+	bool showAxes = true;
+	bool showWireframe = false;
+	bool showBoundingBoxes = false;
 
-    // Listeners / handlers internes
-    void attachListeners();
-    void detachListeners();
+	// Stored layout to enforce fixed placement
+	float enforcedX = 0.f;
+	float enforcedY = 0.f;
+	float enforcedWidth = 200.f;
 
-    void onBtnAddCamera();
-    void onBtnDeleteCamera();
-    void onBtnPrevCamera();
-    void onBtnNextCamera();
-    void onActiveCameraIndexChanged(int & newIndex);
-    void onTogglePerspectiveChanged(bool & val);
-    void onToggleOrthoChanged(bool & val);
-    void onBtnFocusSelection();
-    void onBtnResetCamera();
+	// Listeners / handlers internes
+	void attachListeners();
+	void detachListeners();
 
-    std::string getActiveCameraLabel() const;
-    void refreshActiveCameraLabel();
+	void onBtnAddCamera();
+	void onBtnDeleteCamera();
+	void onBtnPrevCamera();
+	void onBtnNextCamera();
+	void onActiveCameraIndexChanged(int & newIndex);
+	void onTogglePerspectiveChanged(bool & val);
+	void onToggleOrthoChanged(bool & val);
+	void onBtnFocusSelection();
+	void onBtnResetCamera();
+
+	// handlers for display toggles
+	void onToggleGridChanged(bool & val);
+	void onToggleAxesChanged(bool & val);
+	void onToggleWireframeChanged(bool & val);
+	void onToggleBoundingBoxesChanged(bool & val);
+
+	std::string getActiveCameraLabel() const;
+	void refreshActiveCameraLabel();
 };

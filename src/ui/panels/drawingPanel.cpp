@@ -7,7 +7,7 @@ DrawingPanel::DrawingPanel() {
 
 void DrawingPanel::setup() {
 	// Setup du menu principal de dessin
-	drawMenuPanel.setup("Draw Menu");
+	drawMenuPanel.setup("2D EDITION");
 	drawMenuPanel.add(drawPointButton.setup("Draw a point"));
 	drawMenuPanel.add(drawLineButton.setup("Draw a line"));
 	drawMenuPanel.add(drawTriangleButton.setup("Draw a triangle | 3D view"));
@@ -36,6 +36,20 @@ void DrawingPanel::setup() {
 	deletePanel.add(deleteShapeButton.setup("Delete the shape"));
 	deleteShapeButton.addListener(this, &DrawingPanel::onDeleteShapePressed);
 
+	// Panel courbes intégré
+	curvesPanel.setup("Curve Tools");
+	curvesPanel.add(placePointsButton.setup("Place Points"));
+	curvesPanel.add(generateBezierCurveButton.setup("Generate Bezier curve"));
+	curvesPanel.add(clearCurvesButton.setup("Clear Curves"));
+	curvesPanel.add(undoPointButton.setup("Undo point"));
+	curvesPanel.add(clearPointsButton.setup("Clear points"));
+
+	placePointsButton.addListener(this, &DrawingPanel::onPlacePointsPressed);
+	generateBezierCurveButton.addListener(this, &DrawingPanel::onGenerateCurvePressed);
+	clearCurvesButton.addListener(this, &DrawingPanel::onClearCurvesPressed);
+	undoPointButton.addListener(this, &DrawingPanel::onUndoPointPressed);
+	clearPointsButton.addListener(this, &DrawingPanel::onClearPointsPressed);
+
 	// Setup des panels dédiés
 	drawingParamsPanel.setup();
 	transformPanel.setup();
@@ -53,9 +67,15 @@ void DrawingPanel::draw(float sideMenuWidth, float menuBarHeight) {
 	drawMenuPanel.setSize(sideMenuWidth, ofGetHeight() - menuBarHeight);
 	drawMenuPanel.draw();
 
+	// Panel de courbes placé sous le menu principal
+	float curvesY = menuBarHeight + drawMenuPanel.getHeight();
+	curvesPanel.setPosition(ofGetWidth() - sideMenuWidth, curvesY);
+	curvesPanel.setSize(sideMenuWidth, curvesPanel.getHeight());
+	curvesPanel.draw();
+
 	// Panel de suppression (si en mode sélection)
 	if (selectionMode) {
-		deletePanel.setPosition(ofGetWidth() - sideMenuWidth, menuBarHeight + drawMenuPanel.getHeight());
+		deletePanel.setPosition(ofGetWidth() - sideMenuWidth, curvesY + curvesPanel.getHeight());
 		deletePanel.draw();
 	}
 
@@ -83,6 +103,11 @@ void DrawingPanel::reset() {
 	selectionMode = false;
 	saveShapeRequested = false;
 	deleteShapeRequested = false;
+	placePointsMode = false;
+	generateCurveRequested = false;
+	clearCurvesRequested = false;
+	undoPointRequested = false;
+	clearPointsRequested = false;
 
 	ofLogNotice("DrawingPanel") << "Panel reset - ready for new interaction";
 }
@@ -90,6 +115,10 @@ void DrawingPanel::reset() {
 void DrawingPanel::clearRequests() {
 	saveShapeRequested = false;
 	deleteShapeRequested = false;
+	generateCurveRequested = false;
+	clearCurvesRequested = false;
+	undoPointRequested = false;
+	clearPointsRequested = false;
 }
 
 // ========== CALLBACKS ==========
@@ -146,4 +175,29 @@ void DrawingPanel::onExportSequencePressed() {
 void DrawingPanel::onExportImagePressed() {
 	// TODO: Implémenter export image
 	ofLogNotice("DrawingPanel") << "Export image requested";
+}
+
+void DrawingPanel::onPlacePointsPressed() {
+	placePointsMode = !placePointsMode;
+	ofLogNotice("DrawingPanel") << "Place points mode: " << (placePointsMode ? "ON" : "OFF");
+}
+
+void DrawingPanel::onGenerateCurvePressed() {
+	generateCurveRequested = true;
+	ofLogNotice("DrawingPanel") << "Generate Bezier curve requested";
+}
+
+void DrawingPanel::onClearCurvesPressed() {
+	clearCurvesRequested = true;
+	ofLogNotice("DrawingPanel") << "Clear curves requested";
+}
+
+void DrawingPanel::onUndoPointPressed() {
+	undoPointRequested = true;
+	ofLogNotice("DrawingPanel") << "Undo point requested";
+}
+
+void DrawingPanel::onClearPointsPressed() {
+	clearPointsRequested = true;
+	ofLogNotice("DrawingPanel") << "Clear points requested";
 }

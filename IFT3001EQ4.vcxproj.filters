@@ -104,6 +104,7 @@
     <ClCompile Include="src\services\transformServices.cpp" />
     <ClCompile Include="src\services\selectionService.cpp" />
     <ClCompile Include="src\ui\panels\3dEdition\cameraPanel.cpp" />
+    <ClCompile Include="src\ui\panels\infoPanel.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -525,6 +526,7 @@
     <ClInclude Include="src\services\transformService.h" />
     <ClInclude Include="src\services\selectionService.h" />
     <ClInclude Include="src\ui\panels\3dEdition\cameraPanel.h" />
+    <ClInclude Include="src\ui\panels\infoPanel.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="icon.rc" />

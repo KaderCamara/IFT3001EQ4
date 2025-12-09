@@ -1,5 +1,5 @@
-// uiWindow.cpp
-// Implémentation de l'orchestrateur UI
+ï»¿// uiWindow.cpp
+// ImplÃ©mentation de l'orchestrateur UI
 #include "uiWindow.h"
 
 void UIWindow::setup() {
@@ -8,6 +8,14 @@ void UIWindow::setup() {
 	imagePanel.setup();
 	view3DPanel.setup();
 	infoPanel.setup();
+
+	// Options du menu dÃ©roulant pour la 2D
+	drawDropdownOptions.push_back({ "Draw", TwoDMode::Draw, ofRectangle() });
+	drawDropdownOptions.push_back({ "Curves tools", TwoDMode::CurvesTools, ofRectangle() });
+	current2DMode = TwoDMode::Draw;
+
+	// Make Image tab active by default to avoid showing Draw panel on startup
+	activateImageTab();
 
 	// Setup de la zone de statut
 	statusBox.set(10, menuBarHeight + 10, 250, 40);
@@ -29,7 +37,7 @@ void UIWindow::update() {
 }
 
 void UIWindow::draw() {
-	// Calculer la largeur du menu latéral
+	// Calculer la largeur du menu latÃ©ral
 	float sideMenuWidth = ofGetWidth() / 6;
 	float leftPanelWidth = sideMenuWidth; // width reserved for the left camera panel when in 3D view or left tools in 2D
 	float rightPanelWidth = 0.0f; // width reserved for right sidebar in 2D
@@ -44,7 +52,7 @@ void UIWindow::draw() {
 	// bottom inset reserved for info panel
 	float bottomInset = infoPanel.getHeight();
 
-	// Mise à jour de la zone de dessin
+	// Mise Ã  jour de la zone de dessin
 	if (view3DActive) {
 		// Reserve left and right side panels from the drawing area so the 3D view is centered
 		float left = leftPanelWidth;
@@ -70,6 +78,7 @@ void UIWindow::draw() {
 	ofPopStyle();
 
 	// Dessiner les onglets
+	updateDropdownOptionBounds();
 	drawTabs();
 
 	// Draw left vertical delimiter when left column is active (2D editing or 3D with camera panel)
@@ -117,26 +126,101 @@ void UIWindow::draw() {
 		ofPopStyle();
 	}
 
-	// Dessiner les panels actifs
-	drawingPanel.draw(sideMenuWidth, menuBarHeight);
+	if (current2DMode == TwoDMode::Draw) {
+		drawingPanel.drawDrawPanel(sideMenuWidth, menuBarHeight);
+	} else if (current2DMode == TwoDMode::CurvesTools) {
+		drawingPanel.drawCurvesToolsPanel(sideMenuWidth, menuBarHeight);
+	}
 	imagePanel.draw(sideMenuWidth, menuBarHeight);
 	view3DPanel.draw(sideMenuWidth, menuBarHeight);
-
 	// draw info panel at bottom
 	infoPanel.draw(menuBarHeight);
 
-	// Dessiner la boîte de statut
+	// Dessiner la boÃ®te de statut
 	drawStatusBox();
+
+	// Draw dropdown options overlay last so it appears above sidebars and panels
+	drawDrawDropdownOverlay();
 }
 
 void UIWindow::drawTabs() {
-	for (auto & tab : { imageTab, drawTab, view3DTab }) {
+	auto drawTabButton = [](TabButton & tab) {
 		ofPushStyle();
 		ofSetColor(tab.active ? 100 : 150);
 		ofDrawRectangle(tab.bounds);
 		ofSetColor(255);
 		ofDrawBitmapString(tab.label, tab.bounds.x + 10, tab.bounds.y + 30);
 		ofPopStyle();
+	};
+
+	drawTabButton(imageTab);
+	drawDrawDropdown();
+	drawTabButton(view3DTab);
+}
+
+void UIWindow::drawDrawDropdown() {
+	// Draw the draw tab button with current mode indicated on the same line
+	ofPushStyle();
+	ofSetColor(drawTab.active ? 100 : 150);
+	ofDrawRectangle(drawTab.bounds);
+	ofSetColor(255);
+	// Use ASCII arrows to avoid font/encoding issues
+	std::string arrow = drawDropdownOpen ? "^" : "v";
+	std::string baseLabel = drawTab.label + " - " + getCurrent2DModeLabel() + " " + arrow;
+	// Draw centered vertically within the tab
+	ofDrawBitmapString(baseLabel, drawTab.bounds.x + 10, drawTab.bounds.y + drawTab.bounds.height / 2 + 6);
+	ofPopStyle();
+
+	// Do not draw options here â€” they will be drawn as an overlay above sidebars
+}
+
+// Draw dropdown options on top of sidebars (overlay)
+void UIWindow::drawDrawDropdownOverlay() {
+	if (!drawDropdownOpen) return;
+
+	// ensure option bounds are up to date
+	updateDropdownOptionBounds();
+
+	// Draw a background panel behind options to ensure readability over sidebars
+	float left = drawTab.bounds.x;
+	float top = drawTab.bounds.y + drawTab.bounds.height;
+	float width = drawTab.bounds.width;
+	float height = drawDropdownOptions.size() * drawTab.bounds.height;
+
+	ofPushStyle();
+	// semi-transparent dark background for the full options area
+	ofSetColor(20, 20, 25, 220);
+	ofDrawRectangle(left, top, width, height);
+	ofPopStyle();
+
+	// Draw each option on top
+	for (auto & option : drawDropdownOptions) {
+		ofPushStyle();
+		bool selected = option.mode == current2DMode;
+		ofSetColor(selected ? 120 : 90);
+		ofDrawRectangle(option.bounds);
+		ofSetColor(255);
+		ofDrawBitmapString(option.label, option.bounds.x + 10, option.bounds.y + option.bounds.height / 2 + 6);
+		ofPopStyle();
+	}
+}
+
+void UIWindow::updateDropdownOptionBounds() {
+	float optionHeight = drawTab.bounds.height;
+	float startY = drawTab.bounds.y + drawTab.bounds.height;
+	for (std::size_t i = 0; i < drawDropdownOptions.size(); ++i) {
+		drawDropdownOptions[i].bounds.set(drawTab.bounds.x, startY + optionHeight * static_cast<float>(i), drawTab.bounds.width, optionHeight);
+	}
+}
+
+std::string UIWindow::getCurrent2DModeLabel() const {
+	switch (current2DMode) {
+	case TwoDMode::Draw:
+		return "Draw";
+	case TwoDMode::CurvesTools:
+		return "Curves tools";
+	default:
+		return "Unknown";
 	}
 }
 
@@ -156,7 +240,7 @@ void UIWindow::mousePressed(int x, int y, int button) {
 }
 
 void UIWindow::mouseReleased(int x, int y, int button) {
-	// Logique de mouse released si nécessaire
+	// Logique de mouse released si nÃ©cessaire
 }
 
 void UIWindow::handleFileDragAndDrop(ofDragInfo dragInfo) {
@@ -165,17 +249,40 @@ void UIWindow::handleFileDragAndDrop(ofDragInfo dragInfo) {
 }
 
 void UIWindow::handleTabClick(int x, int y) {
+	if (drawDropdownOpen && handleDrawDropdownClick(x, y)) {
+		return;
+	}
+
 	if (imageTab.bounds.inside(x, y)) {
+		drawDropdownOpen = false;
 		activateImageTab();
 	} else if (drawTab.bounds.inside(x, y)) {
+		drawDropdownOpen = !drawDropdownOpen;
 		activateDrawTab();
 	} else if (view3DTab.bounds.inside(x, y)) {
+		drawDropdownOpen = false;
 		activateView3DTab();
+	} else {
+		drawDropdownOpen = false;
 	}
 }
 
+bool UIWindow::handleDrawDropdownClick(int x, int y) {
+	if (!drawDropdownOpen) return false;
+
+	for (auto & option : drawDropdownOptions) {
+		if (option.bounds.inside(static_cast<float>(x), static_cast<float>(y))) {
+			current2DMode = option.mode;
+			drawDropdownOpen = false;
+			activateDrawTab();
+			return true;
+		}
+	}
+	return false;
+}
+
 void UIWindow::activateImageTab() {
-	// Désactiver tous les autres
+	// DÃ©sactiver tous les autres
 	imageTab.active = true;
 	drawTab.active = false;
 	view3DTab.active = false;
@@ -185,12 +292,13 @@ void UIWindow::activateImageTab() {
 	view3DPanel.hide();
 
 	view3DActive = false;
+	drawDropdownOpen = false;
 
 	ofLogNotice("UIWindow") << "Image tab activated";
 }
 
 void UIWindow::activateDrawTab() {
-	// Désactiver tous les autres
+	// DÃ©sactiver tous les autres
 	imageTab.active = false;
 	drawTab.active = true;
 	view3DTab.active = false;
@@ -200,12 +308,13 @@ void UIWindow::activateDrawTab() {
 	view3DPanel.hide();
 
 	view3DActive = false;
+	// keep drawDropdownOpen value so clicking the tab can open the dropdown
 
 	ofLogNotice("UIWindow") << "2D Edition tab activated";
 }
 
 void UIWindow::activateView3DTab() {
-	// Désactiver tous les autres
+	// DÃ©sactiver tous les autres
 	imageTab.active = false;
 	drawTab.active = false;
 	view3DTab.active = true;
@@ -213,6 +322,7 @@ void UIWindow::activateView3DTab() {
 	imagePanel.hide();
 	drawingPanel.hide();
 	view3DPanel.show();
+	drawDropdownOpen = false;
 
 	view3DActive = true;
 

@@ -6,8 +6,9 @@
 #include "ofxGui.h"
 #include "panels/DrawingPanel.h"
 #include "panels/ImagePanel.h"
-#include "panels/View3DPanel.h"
 #include "panels/InfoPanel.h"
+#include "panels/View3DPanel.h"
+#include <vector>
 
 /**
  * @class UIWindow
@@ -99,6 +100,23 @@ private:
 	View3DPanel view3DPanel;
 	InfoPanel infoPanel;
 
+	enum class TwoDMode {
+		Draw,
+		CurvesTools
+	};
+
+	TwoDMode current2DMode = TwoDMode::Draw;
+
+	// Dropdown option for 2D mode
+	struct DropdownOption {
+		std::string label;
+		TwoDMode mode;
+		ofRectangle bounds;
+	};
+
+	std::vector<DropdownOption> drawDropdownOptions;
+	bool drawDropdownOpen = false;
+
 	// ========== ONGLETS ==========
 	struct TabButton {
 		std::string label;
@@ -121,8 +139,14 @@ private:
 
 	// ========== MÉTHODES PRIVÉES ==========
 	void drawTabs();
+	void drawDrawDropdown();
+	// Draw dropdown options on top of sidebars (overlay)
+	void drawDrawDropdownOverlay();
 	void drawStatusBox();
 	void handleTabClick(int x, int y);
+	bool handleDrawDropdownClick(int x, int y);
+	void updateDropdownOptionBounds();
+	std::string getCurrent2DModeLabel() const;
 	void activateImageTab();
 	void activateDrawTab();
 	void activateView3DTab();

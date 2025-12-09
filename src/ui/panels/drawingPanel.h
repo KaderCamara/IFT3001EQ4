@@ -19,6 +19,8 @@ public:
 	void setup();
 	void update();
 	void draw(float sideMenuWidth, float menuBarHeight);
+	void drawDrawPanel(float sideMenuWidth, float menuBarHeight);
+	void drawCurvesToolsPanel(float sideMenuWidth, float menuBarHeight);
 
 	// State accessors
 	std::string getCurrentShape() const { return currentShape; }
@@ -114,6 +116,7 @@ private:
 	void setCurrentShape(const std::string & shapeName);
 	void enableSelectionMode();
 	void handleExportSequence();
+	void drawLeftColumn(float sideMenuWidth, float menuBarHeight);
 
 	// Callbacks
 	void onDrawPointPressed();

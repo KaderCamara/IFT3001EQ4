@@ -14,6 +14,7 @@ void Renderer::setup() {
 // ========== MÉTHODES DE RENDU (VIEW PURE) ==========
 
 void Renderer::draw2D(const RenderData2D & data) {
+	ofDisableDepthTest();
 	// Dessiner le background
 	drawBackground(data.backgroundColor);
 
@@ -27,6 +28,7 @@ void Renderer::draw2D(const RenderData2D & data) {
 }
 
 void Renderer::draw3D(const RenderData3D & data) {
+	ofDisableDepthTest();
 	// Dessiner le background
 	drawBackground(ofColor(180, 200, 220)); // Background par défaut 3D
 
@@ -38,6 +40,7 @@ void Renderer::draw3D(const RenderData3D & data) {
 }
 
 void Renderer::drawQuad(const RenderDataQuad & data) {
+	ofDisableDepthTest();
 	// Dessiner le background
 	drawBackground(ofColor(180, 200, 220)); // Background par défaut Quad
 

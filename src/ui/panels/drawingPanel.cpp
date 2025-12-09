@@ -65,9 +65,13 @@ void DrawingPanel::update() {
 }
 
 void DrawingPanel::draw(float sideMenuWidth, float menuBarHeight) {
+	drawDrawPanel(sideMenuWidth, menuBarHeight);
+}
+
+void DrawingPanel::drawDrawPanel(float sideMenuWidth, float menuBarHeight) {
 	if (!isActive) return;
 
-	// Right side: main draw menu (keeps previous behavior)
+	// Right side: main draw menu
 	float rightX = ofGetWidth() - sideMenuWidth;
 	float rightY = menuBarHeight;
 	drawMenuPanel.setPosition(rightX, rightY);
@@ -78,18 +82,30 @@ void DrawingPanel::draw(float sideMenuWidth, float menuBarHeight) {
 	float paramsY = menuBarHeight + drawMenuPanel.getHeight() + 10.0f;
 	drawingParamsPanel.draw(rightX, paramsY, sideMenuWidth);
 
-	// Curves panel positioned below the drawing parameters on the right
-	float curvesY = paramsY + drawingParamsPanel.getHeight() + 10.0f;
-	curvesPanel.setPosition(rightX, curvesY);
-	curvesPanel.setSize(sideMenuWidth, curvesPanel.getHeight());
-	curvesPanel.draw();
-
-	// Delete panel shown when in selection mode (right under curves)
+	// Delete panel shown when in selection mode (right under parameters)
 	if (selectionMode) {
-		deletePanel.setPosition(rightX, curvesY + curvesPanel.getHeight());
+		float deleteY = paramsY + drawingParamsPanel.getHeight() + 10.0f;
+		deletePanel.setPosition(rightX, deleteY);
 		deletePanel.draw();
 	}
 
+	drawLeftColumn(sideMenuWidth, menuBarHeight);
+}
+
+void DrawingPanel::drawCurvesToolsPanel(float sideMenuWidth, float menuBarHeight) {
+	if (!isActive) return;
+
+	// Right side: curves tools only
+	float rightX = ofGetWidth() - sideMenuWidth;
+	float rightY = menuBarHeight;
+	curvesPanel.setPosition(rightX, rightY);
+	curvesPanel.setSize(sideMenuWidth, curvesPanel.getHeight());
+	curvesPanel.draw();
+
+	drawLeftColumn(sideMenuWidth, menuBarHeight);
+}
+
+void DrawingPanel::drawLeftColumn(float sideMenuWidth, float menuBarHeight) {
 	// Left side: pin vector tools to the left edge
 	float leftX = 0.0f; // flush to left edge
 	float leftWidth = sideMenuWidth; // match sidebar width
@@ -110,7 +126,7 @@ void DrawingPanel::draw(float sideMenuWidth, float menuBarHeight) {
 	} else {
 		transformPanel.hide();
 	}
-}
+	}
 
 void DrawingPanel::reset() {
 	// Réinitialiser l'état du panel lors du changement d'onglet
@@ -145,31 +161,37 @@ void DrawingPanel::hide() {
 void DrawingPanel::onDrawPointPressed() {
 	currentShape = "point";
 	selectionMode = false;
+	setPlacePointsMode(false);
 }
 
 void DrawingPanel::onDrawLinePressed() {
 	currentShape = "line";
 	selectionMode = false;
+	setPlacePointsMode(false);
 }
 
 void DrawingPanel::onDrawTrianglePressed() {
 	currentShape = "triangle";
 	selectionMode = false;
+	setPlacePointsMode(false);
 }
 
 void DrawingPanel::onDrawSquarePressed() {
 	currentShape = "square";
 	selectionMode = false;
+	setPlacePointsMode(false);
 }
 
 void DrawingPanel::onDrawRectanglePressed() {
 	currentShape = "rectangle";
 	selectionMode = false;
+	setPlacePointsMode(false);
 }
 
 void DrawingPanel::onDrawCirclePressed() {
 	currentShape = "circle";
 	selectionMode = false;
+	setPlacePointsMode(false);
 }
 
 void DrawingPanel::onSaveShapePressed() {
@@ -184,6 +206,7 @@ void DrawingPanel::onDeleteShapePressed() {
 void DrawingPanel::onSelectionPressed() {
 	selectionMode = true;
 	currentShape = "none";
+	setPlacePointsMode(false);
 }
 
 void DrawingPanel::onExportSequencePressed() {

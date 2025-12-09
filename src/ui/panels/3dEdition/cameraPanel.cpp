@@ -118,6 +118,10 @@ void CameraPanel::setWidth(float w) {
 	cameraPanel.setWidthElements(enforcedWidth);
 }
 
+float CameraPanel::getHeight() {
+	return cameraPanel.getHeight();
+}
+
 void CameraPanel::update() {
 	// Hook to synchronize camera parameters if needed
 }

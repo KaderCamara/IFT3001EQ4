@@ -3,19 +3,21 @@
 #pragma once
 
 #include "../panels/3dEdition/cameraPanel.h"
+#include "../panels/3dEdition/lightingPanel.h"
+#include "../panels/3dEdition/sceneHierarchyPanel.h"
 #include "ofMain.h"
 #include "ofxGui.h"
 
-/**
+	/**
  * @class View3DPanel
- * @brief Panel UI pour les contrôles de la vue 3D
+ * @brief Panel UI pour les controles de la vue 3D
  *
- * Responsabilités :
+ * Responsabilites :
  * - Basculer entre les modes de vue (2D, 3D, Quad)
- * - Contrôles de caméra
+ * - Controles de camera
  * - Options d'affichage (wireframe, bounding boxes)
  */
-class View3DPanel {
+	class View3DPanel {
 public:
 	View3DPanel();
 	~View3DPanel() = default;
@@ -23,13 +25,13 @@ public:
 	void setup();
 	void draw(float sideMenuWidth, float menuBarHeight);
 
-	// Accesseurs d'état
+	// Accesseurs d'etat
 	bool isVisible() const { return isActive; }
 	bool isShowBoundingBoxToggled() const { return cameraPanel.isBoundingBoxEnabled(); }
 	bool isShowWireframeToggled() const { return cameraPanel.isWireframeEnabled(); }
 	bool isQuadViewRequested() const { return quadViewRequested; }
 
-	// Contrôle du panel
+	// Controle du panel
 	void show() { isActive = true; }
 	void hide() { isActive = false; }
 	void toggle() { isActive = !isActive; }
@@ -37,11 +39,11 @@ public:
 	// Reset state
 	void reset();
 
-	// Clear des requêtes
+	// Clear des requetes
 	void clearRequests();
 
 private:
-	// État du panel
+	// Etat du panel
 	bool isActive = false;
 	bool quadViewRequested = false;
 
@@ -53,6 +55,8 @@ private:
 	ofxLabel viewTitle;
 
 	CameraPanel cameraPanel;
+	SceneHierarchyPanel sceneHierarchyPanel;
+	LightingPanel lightingPanel;
 
 	// Callbacks
 	void onQuadViewPressed();

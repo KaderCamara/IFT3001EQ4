@@ -6,7 +6,7 @@
 #include <string>
 #include <vector>
 
-// Panneau de gestion des caméras 3D
+// Panneau de gestion des cameras 3D
 class CameraPanel {
 public:
 	CameraPanel();
@@ -17,16 +17,17 @@ public:
 	void update();
 	void draw();
 
-	// Positionnement / taille (pour fixer le panneau dans la colonne latérale)
+	// Positionnement / taille (pour fixer le panneau dans la colonne laterale)
 	void setPosition(float x, float y);
 	void setWidth(float w);
+	float getHeight();
 
-	// Gestion des caméras
+	// Gestion des cameras
 	void setCameraNames(const std::vector<std::string> & names);
 	void setActiveCameraIndex(int idx);
 	int getActiveCameraIndex() const;
 
-	// Affichage / contrôle du panneau
+	// Affichage / controle du panneau
 	void show();
 	void hide();
 	void toggle();

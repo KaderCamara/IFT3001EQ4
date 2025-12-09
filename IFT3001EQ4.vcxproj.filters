@@ -105,6 +105,8 @@
     <ClCompile Include="src\services\selectionService.cpp" />
     <ClCompile Include="src\ui\panels\3dEdition\cameraPanel.cpp" />
     <ClCompile Include="src\ui\panels\infoPanel.cpp" />
+    <ClCompile Include="src\ui\panels\3dEdition\lightingPanel.cpp" />
+    <ClCompile Include="src\ui\panels\3dEdition\sceneHierarchyPanel.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -527,6 +529,8 @@
     <ClInclude Include="src\services\selectionService.h" />
     <ClInclude Include="src\ui\panels\3dEdition\cameraPanel.h" />
     <ClInclude Include="src\ui\panels\infoPanel.h" />
+    <ClInclude Include="src\ui\panels\3dEdition\lightingPanel.h" />
+    <ClInclude Include="src\ui\panels\3dEdition\sceneHierarchyPanel.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="icon.rc" />

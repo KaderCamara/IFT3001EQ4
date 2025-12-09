@@ -1,5 +1,5 @@
 ﻿// DrawingPanel.cpp
-// Impl�mentation du panel de dessin
+// Implémentation du panel de dessin
 #include "DrawingPanel.h"
 
 DrawingPanel::DrawingPanel() {
@@ -7,7 +7,7 @@ DrawingPanel::DrawingPanel() {
 
 void DrawingPanel::setup() {
 	// Setup du menu principal de dessin
-	drawMenuPanel.setup("2D EDITION");
+	drawMenuPanel.setup("Drawing tool");
 	drawMenuPanel.enableHeader();
 	drawMenuPanel.minimize();
 	drawMenuPanel.add(drawPointButton.setup("Draw a point"));
@@ -40,7 +40,7 @@ void DrawingPanel::setup() {
 	deletePanel.add(deleteShapeButton.setup("Delete the shape"));
 	deleteShapeButton.addListener(this, &DrawingPanel::onDeleteShapePressed);
 
-	// Panel courbes int�gr�
+	// Panel courbes intégrés
 	curvesPanel.setup("Curve Tools");
 	curvesPanel.add(placePointsButton.setup("Place Points"));
 	curvesPanel.add(generateBezierCurveButton.setup("Generate Bezier curve"));
@@ -54,14 +54,14 @@ void DrawingPanel::setup() {
 	undoPointButton.addListener(this, &DrawingPanel::onUndoPointPressed);
 	clearPointsButton.addListener(this, &DrawingPanel::onClearPointsPressed);
 
-	// Setup des panels d�di�s
+	// Setup des panels dédiés
 	drawingParamsPanel.setup();
 	transformPanel.setup();
 	vectorEditionPanel.setup();
 }
 
 void DrawingPanel::update() {
-	// Logique d'update si n�cessaire (export s�quence, etc.)
+	// Logique d'update si nécessaire (export séquence, etc.)
 }
 
 void DrawingPanel::draw(float sideMenuWidth, float menuBarHeight) {
@@ -74,8 +74,12 @@ void DrawingPanel::draw(float sideMenuWidth, float menuBarHeight) {
 	drawMenuPanel.setSize(sideMenuWidth, ofGetHeight() - menuBarHeight);
 	drawMenuPanel.draw();
 
-	// Curves panel positioned below the main menu on the right
-	float curvesY = menuBarHeight + drawMenuPanel.getHeight();
+	// Place drawing parameters under the Drawing tool panel (right column)
+	float paramsY = menuBarHeight + drawMenuPanel.getHeight() + 10.0f;
+	drawingParamsPanel.draw(rightX, paramsY, sideMenuWidth);
+
+	// Curves panel positioned below the drawing parameters on the right
+	float curvesY = paramsY + drawingParamsPanel.getHeight() + 10.0f;
 	curvesPanel.setPosition(rightX, curvesY);
 	curvesPanel.setSize(sideMenuWidth, curvesPanel.getHeight());
 	curvesPanel.draw();
@@ -86,16 +90,12 @@ void DrawingPanel::draw(float sideMenuWidth, float menuBarHeight) {
 		deletePanel.draw();
 	}
 
-	// Left side: pin drawing parameters and vector tools to the left edge
+	// Left side: pin vector tools to the left edge
 	float leftX = 0.0f; // flush to left edge
 	float leftWidth = sideMenuWidth; // match sidebar width
 	float nextY = menuBarHeight;
 
-	// Drawing parameters at top-left
-	drawingParamsPanel.draw(leftX, nextY, leftWidth);
-	nextY += drawingParamsPanel.getHeight() + 10.0f; // Use dynamic height so vector tools moves down when drawing parameters expands/collapses
-
-	// Vector tools right under it
+	// Vector tools at top-left
 	vectorEditionPanel.setPosition(leftX, nextY);
 	vectorEditionPanel.setWidth(leftWidth);
 	vectorEditionPanel.draw();
@@ -113,7 +113,7 @@ void DrawingPanel::draw(float sideMenuWidth, float menuBarHeight) {
 }
 
 void DrawingPanel::reset() {
-	// R�initialiser l'�tat du panel lors du changement d'onglet
+	// Réinitialiser l'état du panel lors du changement d'onglet
 	currentShape = "none";
 	selectionMode = false;
 	saveShapeRequested = false;
@@ -187,12 +187,12 @@ void DrawingPanel::onSelectionPressed() {
 }
 
 void DrawingPanel::onExportSequencePressed() {
-	// TODO: Impl�menter export s�quence
+	// TODO: Implémenter export séquence
 	ofLogNotice("DrawingPanel") << "Export sequence requested";
 }
 
 void DrawingPanel::onExportImagePressed() {
-	// TODO: Impl�menter export image
+	// TODO: Implémenter export image
 	ofLogNotice("DrawingPanel") << "Export image requested";
 }
 

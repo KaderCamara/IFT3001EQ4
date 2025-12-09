@@ -37,8 +37,9 @@ void InfoPanel::draw(float menuBarHeight) {
 
 void InfoPanel::drawBackground(float yPosition) {
 	ofPushStyle();
-	ofColor startColor(30, 30, 35, 220);
-	ofColor endColor(20, 20, 25, 230);
+	// Use opaque colors (no transparency)
+	ofColor startColor(30, 30, 35, 255);
+	ofColor endColor(20, 20, 25, 255);
 
 	// Dégrader simple de haut en bas
 	ofMesh gradientMesh;
@@ -58,7 +59,8 @@ void InfoPanel::drawBackground(float yPosition) {
 
 void InfoPanel::drawContent(float yPosition) {
 	ofPushStyle();
-	ofSetColor(220);
+	// Set text color to green
+	ofSetColor(0, 200, 0);
 
 	float padding = 16.0f;
 	float lineHeight = 18.0f;

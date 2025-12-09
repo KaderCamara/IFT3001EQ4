@@ -41,6 +41,9 @@ void UIWindow::draw() {
 	if (view3DActive) rightActive = true;
 	if (rightActive) rightPanelWidth = sideMenuWidth;
 
+	// bottom inset reserved for info panel
+	float bottomInset = infoPanel.getHeight();
+
 	// Mise à jour de la zone de dessin
 	if (view3DActive) {
 		// Reserve left and right side panels from the drawing area so the 3D view is centered
@@ -48,16 +51,16 @@ void UIWindow::draw() {
 		float right = sideMenuWidth;
 		float w = ofGetWidth() - left - right;
 		if (w < 0) w = ofGetWidth();
-		drawingArea.set(left, menuBarHeight, w, ofGetHeight() - menuBarHeight);
+		drawingArea.set(left, menuBarHeight, w, ofGetHeight() - menuBarHeight - bottomInset);
 	} else if (leftActive || rightActive) {
 		// Reserve space for left and/or right sidebars in 2D mode
 		float left = leftActive ? leftPanelWidth : 0.0f;
 		float right = rightActive ? rightPanelWidth : 0.0f;
 		float w = ofGetWidth() - left - right;
 		if (w < 0) w = ofGetWidth();
-		drawingArea.set(left, menuBarHeight, w, ofGetHeight() - menuBarHeight);
+		drawingArea.set(left, menuBarHeight, w, ofGetHeight() - menuBarHeight - bottomInset);
 	} else {
-		drawingArea.set(0, menuBarHeight, ofGetWidth(), ofGetHeight() - menuBarHeight);
+		drawingArea.set(0, menuBarHeight, ofGetWidth(), ofGetHeight() - menuBarHeight - bottomInset);
 	}
 
 	// Fond de la barre de menu
@@ -75,12 +78,12 @@ void UIWindow::draw() {
 		// semi-transparent fill for the left column
 		ofSetColor(30, 30, 35, 180);
 		ofFill();
-		ofDrawRectangle(0, menuBarHeight, leftPanelWidth, ofGetHeight() - menuBarHeight);
+		ofDrawRectangle(0, menuBarHeight, leftPanelWidth, ofGetHeight() - menuBarHeight - bottomInset);
 		// outline
 		ofNoFill();
 		ofSetColor(180, 200, 255);
 		ofSetLineWidth(2);
-		ofDrawRectangle(0, menuBarHeight, leftPanelWidth, ofGetHeight() - menuBarHeight);
+		ofDrawRectangle(0, menuBarHeight, leftPanelWidth, ofGetHeight() - menuBarHeight - bottomInset);
 		ofPopStyle();
 	}
 
@@ -91,12 +94,12 @@ void UIWindow::draw() {
 		// semi-transparent fill for the right column
 		ofSetColor(30, 30, 35, 180);
 		ofFill();
-		ofDrawRectangle(rx, menuBarHeight, rightPanelWidth, ofGetHeight() - menuBarHeight);
+		ofDrawRectangle(rx, menuBarHeight, rightPanelWidth, ofGetHeight() - menuBarHeight - bottomInset);
 		// outline
 		ofNoFill();
 		ofSetColor(180, 200, 255);
 		ofSetLineWidth(2);
-		ofDrawRectangle(rx, menuBarHeight, rightPanelWidth, ofGetHeight() - menuBarHeight);
+		ofDrawRectangle(rx, menuBarHeight, rightPanelWidth, ofGetHeight() - menuBarHeight - bottomInset);
 		ofPopStyle();
 	}
 

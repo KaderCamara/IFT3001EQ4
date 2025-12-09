@@ -72,6 +72,7 @@ void Renderer::draw3D(const RenderData3D & data) {
 	ensureFboMatches(view3DFbo, view3DDrawingArea, true);
 
 	view3DFbo.begin();
+	ofClear(0, 0, 0, 0);
 	ofPushView();
 	ofViewport(0, 0, view3DDrawingArea.width, view3DDrawingArea.height);
 	ofEnableDepthTest();

@@ -8,6 +8,8 @@ CurvesPanel::CurvesPanel() {
 void CurvesPanel::setup() {
 	// Setup du menu courbes
 	curvesPanel.setup("Curves Menu");
+	curvesPanel.enableHeader();
+	curvesPanel.minimize();
 	curvesPanel.add(placePointsButton.setup("Place Points"));
 	curvesPanel.add(generateBezierCurveButton.setup("Generate Bezier curve"));
 	curvesPanel.add(clearCurvesButton.setup("Clear Curves"));

@@ -29,8 +29,36 @@ void UIWindow::update() {
 }
 
 void UIWindow::draw() {
+	// Calculer la largeur du menu latéral
+	float sideMenuWidth = ofGetWidth() / 6;
+	float leftPanelWidth = sideMenuWidth; // width reserved for the left camera panel when in 3D view or left tools in 2D
+	float rightPanelWidth = 0.0f; // width reserved for right sidebar in 2D
+
+	// Determine whether left and right columns are active
+	bool leftActive = (drawTab.active && drawingPanel.isVisible()) || (view3DActive && view3DPanel.isVisible());
+	bool rightActive = (drawTab.active && drawingPanel.isVisible());
+	// Also show the right sidebar background in 3D so it matches 2D darkness
+	if (view3DActive) rightActive = true;
+	if (rightActive) rightPanelWidth = sideMenuWidth;
+
 	// Mise à jour de la zone de dessin
-	drawingArea.set(0, menuBarHeight, ofGetWidth(), ofGetHeight() - menuBarHeight);
+	if (view3DActive) {
+		// Reserve left and right side panels from the drawing area so the 3D view is centered
+		float left = leftPanelWidth;
+		float right = sideMenuWidth;
+		float w = ofGetWidth() - left - right;
+		if (w < 0) w = ofGetWidth();
+		drawingArea.set(left, menuBarHeight, w, ofGetHeight() - menuBarHeight);
+	} else if (leftActive || rightActive) {
+		// Reserve space for left and/or right sidebars in 2D mode
+		float left = leftActive ? leftPanelWidth : 0.0f;
+		float right = rightActive ? rightPanelWidth : 0.0f;
+		float w = ofGetWidth() - left - right;
+		if (w < 0) w = ofGetWidth();
+		drawingArea.set(left, menuBarHeight, w, ofGetHeight() - menuBarHeight);
+	} else {
+		drawingArea.set(0, menuBarHeight, ofGetWidth(), ofGetHeight() - menuBarHeight);
+	}
 
 	// Fond de la barre de menu
 	ofPushStyle();
@@ -41,8 +69,50 @@ void UIWindow::draw() {
 	// Dessiner les onglets
 	drawTabs();
 
-	// Calculer la largeur du menu latéral
-	float sideMenuWidth = ofGetWidth() / 6;
+	// Draw left vertical delimiter when left column is active (2D editing or 3D with camera panel)
+	if (leftActive) {
+		ofPushStyle();
+		// semi-transparent fill for the left column
+		ofSetColor(30, 30, 35, 180);
+		ofFill();
+		ofDrawRectangle(0, menuBarHeight, leftPanelWidth, ofGetHeight() - menuBarHeight);
+		// outline
+		ofNoFill();
+		ofSetColor(180, 200, 255);
+		ofSetLineWidth(2);
+		ofDrawRectangle(0, menuBarHeight, leftPanelWidth, ofGetHeight() - menuBarHeight);
+		ofPopStyle();
+	}
+
+	// Draw right vertical delimiter when right sidebar is active (2D editing or 3D view)
+	if (rightActive) {
+		float rx = ofGetWidth() - rightPanelWidth;
+		ofPushStyle();
+		// semi-transparent fill for the right column
+		ofSetColor(30, 30, 35, 180);
+		ofFill();
+		ofDrawRectangle(rx, menuBarHeight, rightPanelWidth, ofGetHeight() - menuBarHeight);
+		// outline
+		ofNoFill();
+		ofSetColor(180, 200, 255);
+		ofSetLineWidth(2);
+		ofDrawRectangle(rx, menuBarHeight, rightPanelWidth, ofGetHeight() - menuBarHeight);
+		ofPopStyle();
+	}
+
+	// Delimiter for 3D view: draw a visible border where the 3D view will be rendered
+	// Only show when the 3D panel is active and visible
+	if (view3DActive && view3DPanel.isVisible()) {
+		ofPushStyle();
+		ofNoFill();
+		ofSetColor(180, 200, 255);
+		ofSetLineWidth(3);
+		ofDrawRectangle(drawingArea.x + 2, drawingArea.y + 2, drawingArea.width - 4, drawingArea.height - 4);
+		// label
+		ofSetColor(200);
+		ofDrawBitmapString("3D VIEW", drawingArea.x + 10, drawingArea.y + 20);
+		ofPopStyle();
+	}
 
 	// Dessiner les panels actifs
 	drawingPanel.draw(sideMenuWidth, menuBarHeight);

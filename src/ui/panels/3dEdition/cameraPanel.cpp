@@ -12,6 +12,9 @@ void CameraPanel::setup() {
 	cameraPanel.setName("Camera Management");
 	cameraPanel.setBorderColor(ofColor(0, 0));
 	cameraPanel.setBackgroundColor(ofColor(0, 0, 0, 0));
+	// Make panel collapsible (dropdown)
+	cameraPanel.enableHeader();
+	cameraPanel.minimize();
 
 	// Top: active camera display and navigation
 	activeCameraName.set("Camera0");

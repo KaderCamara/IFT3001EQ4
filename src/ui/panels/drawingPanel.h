@@ -1,23 +1,15 @@
-// DrawingPanel.h
-// Panel responsable de la gestion du dessin de formes 2D/3D
-#pragma once
+ï»¿#pragma once
 
 #include "DrawingParametersPanel.h"
 #include "TransformPanel.h"
+#include "VectorEditionPanel.h"
 #include "ofMain.h"
 #include "ofxGui.h"
+#include <string>
 
 /**
  * @class DrawingPanel
- * @brief Panel UI pour le dessin de formes primitives
- *
- * Responsabilités :
- * - Boutons de sélection de formes (point, ligne, triangle, carré, rectangle, cercle)
- * - Mode sélection/interaction
- * - Sauvegarde et suppression de formes
- * - Export d'images et séquences
- * - Délègue les paramètres de dessin à DrawingParametersPanel
- * - Délègue les transformations à TransformPanel
+ * @brief UI panel responsible for managing all 2D drawing interactions.
  */
 class DrawingPanel {
 public:
@@ -28,7 +20,7 @@ public:
 	void update();
 	void draw(float sideMenuWidth, float menuBarHeight);
 
-	// Accesseurs d'état
+	// State accessors
 	std::string getCurrentShape() const { return currentShape; }
 	bool isVisible() const { return isActive; }
 	bool isSaveShapeRequested() const { return saveShapeRequested; }
@@ -40,7 +32,7 @@ public:
 	bool isUndoPointRequested() const { return undoPointRequested; }
 	bool isClearPointsRequested() const { return clearPointsRequested; }
 
-	// Paramètres de dessin (délégués au DrawingParametersPanel)
+	// Drawing parameters
 	float getLineWidth() const { return drawingParamsPanel.getLineWidth(); }
 	ofColor getStrokeColor() const { return drawingParamsPanel.getStrokeColor(); }
 	ofColor getFillColor() const { return drawingParamsPanel.getFillColor(); }
@@ -50,31 +42,26 @@ public:
 	float getSaturation() const { return drawingParamsPanel.getSaturation(); }
 	float getBrightness() const { return drawingParamsPanel.getBrightness(); }
 
-	// Paramètres de transformation (délégués au TransformPanel)
+	// Transformation parameters
 	float getTranslateX() const { return transformPanel.getTranslateX(); }
 	float getTranslateY() const { return transformPanel.getTranslateY(); }
 	float getRotation() const { return transformPanel.getRotation(); }
 	float getScale() const { return transformPanel.getScale(); }
 
-	// Contrôle du panel
+	// Panel visibility
 	void show() { isActive = true; }
-	void hide() {
-		isActive = false;
-		reset();
-	} // Réinitialise lors du masquage
+	void hide();
 	void toggle() { isActive = !isActive; }
 
-	// Réinitialisation de l'état
+	// State management
 	void reset();
-
-	// Clear des requêtes
 	void clearRequests();
 
-	// Contrôle du mode courbes
+	// Curve mode control
 	void setPlacePointsMode(bool mode) { placePointsMode = mode; }
 
 private:
-	// État du panel
+	// State flags
 	bool isActive = false;
 	std::string currentShape = "none";
 	bool saveShapeRequested = false;
@@ -86,16 +73,17 @@ private:
 	bool undoPointRequested = false;
 	bool clearPointsRequested = false;
 
-	// Panels dédiés (composition)
+	// Sub-panels
 	DrawingParametersPanel drawingParamsPanel;
 	TransformPanel transformPanel;
+	VectorEditionPanel vectorEditionPanel;
 
-	// Panels ofxGui
+	// ofxGui panels
 	ofxPanel drawMenuPanel;
 	ofxPanel deletePanel;
 	ofxPanel curvesPanel;
 
-	// Boutons de dessin
+	// Drawing buttons
 	ofxButton drawPointButton;
 	ofxButton drawLineButton;
 	ofxButton drawTriangleButton;
@@ -113,10 +101,19 @@ private:
 	ofxButton undoPointButton;
 	ofxButton clearPointsButton;
 
-	// Export
+	// Export helpers
 	bool exportSequenceActive = false;
 	int exportFrameCount = 0;
 	std::string exportFolder = "export";
+
+	// Layout helpers
+	float leftMargin = 10.0f;
+	float verticalSpacing = 10.0f;
+
+	// Internal helpers
+	void setCurrentShape(const std::string & shapeName);
+	void enableSelectionMode();
+	void handleExportSequence();
 
 	// Callbacks
 	void onDrawPointPressed();

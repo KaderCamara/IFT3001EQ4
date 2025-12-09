@@ -37,6 +37,9 @@ public:
 	void hide() { isVisible = false; }
 	bool isActive() const { return isVisible; }
 
+	// New: get current panel height
+	float getHeight() const;
+
 private:
 	bool isVisible = true; // Toujours visible quand le panel parent est actif
 

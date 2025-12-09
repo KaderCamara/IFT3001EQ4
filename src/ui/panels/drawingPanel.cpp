@@ -1,5 +1,5 @@
-// DrawingPanel.cpp
-// Implémentation du panel de dessin
+ï»¿// DrawingPanel.cpp
+// Implï¿½mentation du panel de dessin
 #include "DrawingPanel.h"
 
 DrawingPanel::DrawingPanel() {
@@ -8,6 +8,8 @@ DrawingPanel::DrawingPanel() {
 void DrawingPanel::setup() {
 	// Setup du menu principal de dessin
 	drawMenuPanel.setup("2D EDITION");
+	drawMenuPanel.enableHeader();
+	drawMenuPanel.minimize();
 	drawMenuPanel.add(drawPointButton.setup("Draw a point"));
 	drawMenuPanel.add(drawLineButton.setup("Draw a line"));
 	drawMenuPanel.add(drawTriangleButton.setup("Draw a triangle | 3D view"));
@@ -33,10 +35,12 @@ void DrawingPanel::setup() {
 
 	// Panel de suppression
 	deletePanel.setup("Delete");
+	deletePanel.enableHeader();
+	deletePanel.minimize();
 	deletePanel.add(deleteShapeButton.setup("Delete the shape"));
 	deleteShapeButton.addListener(this, &DrawingPanel::onDeleteShapePressed);
 
-	// Panel courbes intégré
+	// Panel courbes intï¿½grï¿½
 	curvesPanel.setup("Curve Tools");
 	curvesPanel.add(placePointsButton.setup("Place Points"));
 	curvesPanel.add(generateBezierCurveButton.setup("Generate Bezier curve"));
@@ -50,55 +54,66 @@ void DrawingPanel::setup() {
 	undoPointButton.addListener(this, &DrawingPanel::onUndoPointPressed);
 	clearPointsButton.addListener(this, &DrawingPanel::onClearPointsPressed);
 
-	// Setup des panels dédiés
+	// Setup des panels dï¿½diï¿½s
 	drawingParamsPanel.setup();
 	transformPanel.setup();
+	vectorEditionPanel.setup();
 }
 
 void DrawingPanel::update() {
-	// Logique d'update si nécessaire (export séquence, etc.)
+	// Logique d'update si nï¿½cessaire (export sï¿½quence, etc.)
 }
 
 void DrawingPanel::draw(float sideMenuWidth, float menuBarHeight) {
 	if (!isActive) return;
 
-	// Positionner et dessiner le menu principal
-	drawMenuPanel.setPosition(ofGetWidth() - sideMenuWidth, menuBarHeight);
+	// Right side: main draw menu (keeps previous behavior)
+	float rightX = ofGetWidth() - sideMenuWidth;
+	float rightY = menuBarHeight;
+	drawMenuPanel.setPosition(rightX, rightY);
 	drawMenuPanel.setSize(sideMenuWidth, ofGetHeight() - menuBarHeight);
 	drawMenuPanel.draw();
 
-	// Panel de courbes placé sous le menu principal
+	// Curves panel positioned below the main menu on the right
 	float curvesY = menuBarHeight + drawMenuPanel.getHeight();
-	curvesPanel.setPosition(ofGetWidth() - sideMenuWidth, curvesY);
+	curvesPanel.setPosition(rightX, curvesY);
 	curvesPanel.setSize(sideMenuWidth, curvesPanel.getHeight());
 	curvesPanel.draw();
 
-	// Panel de suppression (si en mode sélection)
+	// Delete panel shown when in selection mode (right under curves)
 	if (selectionMode) {
-		deletePanel.setPosition(ofGetWidth() - sideMenuWidth, curvesY + curvesPanel.getHeight());
+		deletePanel.setPosition(rightX, curvesY + curvesPanel.getHeight());
 		deletePanel.draw();
 	}
 
-	// Paramètres de dessin (à gauche)
-	float panelWidth = ofGetWidth() / 6;
-	float prochainY = menuBarHeight;
+	// Left side: pin drawing parameters and vector tools to the left edge
+	float leftX = 0.0f; // flush to left edge
+	float leftWidth = sideMenuWidth; // match sidebar width
+	float nextY = menuBarHeight;
 
-	drawingParamsPanel.draw(10, prochainY, panelWidth - 20);
-	prochainY += 200 + 10; // Hauteur du panel + marge
+	// Drawing parameters at top-left
+	drawingParamsPanel.draw(leftX, nextY, leftWidth);
+	nextY += drawingParamsPanel.getHeight() + 10.0f; // Use dynamic height so vector tools moves down when drawing parameters expands/collapses
 
-	// Panel de transformation (si en mode sélection)
+	// Vector tools right under it
+	vectorEditionPanel.setPosition(leftX, nextY);
+	vectorEditionPanel.setWidth(leftWidth);
+	vectorEditionPanel.draw();
+	nextY += vectorEditionPanel.getHeight() + 10.0f;
+
+	// Transform panel appears under the left column when in selection mode
 	if (selectionMode) {
 		float windowWidth = ofGetWidth();
 		float windowHeight = ofGetHeight() - menuBarHeight;
 		transformPanel.show();
-		transformPanel.draw(10, prochainY, panelWidth - 20, windowWidth, windowHeight);
+		transformPanel.draw(leftX, nextY, leftWidth, windowWidth, windowHeight);
 	} else {
 		transformPanel.hide();
 	}
 }
 
 void DrawingPanel::reset() {
-	// Réinitialiser l'état du panel lors du changement d'onglet
+	// Rï¿½initialiser l'ï¿½tat du panel lors du changement d'onglet
 	currentShape = "none";
 	selectionMode = false;
 	saveShapeRequested = false;
@@ -119,6 +134,10 @@ void DrawingPanel::clearRequests() {
 	clearCurvesRequested = false;
 	undoPointRequested = false;
 	clearPointsRequested = false;
+}
+
+void DrawingPanel::hide() {
+	isActive = false;
 }
 
 // ========== CALLBACKS ==========
@@ -168,12 +187,12 @@ void DrawingPanel::onSelectionPressed() {
 }
 
 void DrawingPanel::onExportSequencePressed() {
-	// TODO: Implémenter export séquence
+	// TODO: Implï¿½menter export sï¿½quence
 	ofLogNotice("DrawingPanel") << "Export sequence requested";
 }
 
 void DrawingPanel::onExportImagePressed() {
-	// TODO: Implémenter export image
+	// TODO: Implï¿½menter export image
 	ofLogNotice("DrawingPanel") << "Export image requested";
 }
 

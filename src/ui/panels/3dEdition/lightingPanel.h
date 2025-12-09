@@ -3,8 +3,8 @@
 #include "ofMain.h"
 #include "ofxGui.h"
 
-	// Panneau pour configurer l'environnement lumineux 3D
-	class LightingPanel {
+// Panneau pour configurer l'environnement lumineux 3D
+class LightingPanel {
 public:
 	LightingPanel();
 	~LightingPanel();
@@ -18,8 +18,13 @@ public:
 	float getHeight();
 
 	void show();
-	void hide();
+	void hide();	
 	bool isVisible() const;
+
+	bool isPBREnabled() const { return static_cast<ofParameter<bool>&>(const_cast<ofxToggle&>(togglePBR).getParameter()).get(); }
+	float getMetallic() const { return static_cast<ofParameter<float>&>(const_cast<ofxFloatSlider&>(metallicity).getParameter()).get(); }
+	float getRoughness() const { return static_cast<ofParameter<float>&>(const_cast<ofxFloatSlider&>(roughness).getParameter()).get(); }
+	float getIOR() const { return static_cast<ofParameter<float>&>(const_cast<ofxFloatSlider&>(ior).getParameter()).get(); }
 
 private:
 	ofxPanel lightingPanel;
@@ -30,6 +35,18 @@ private:
 	ofxToggle toggleShadows;
 	ofxToggle toggleAmbientOcclusion;
 	ofxToggle toggleBloom;
+
+	// Modele d'illumination classique
+	ofxLabel lblClassic;
+	ofxToggle toggleLambert;
+	ofxToggle toggleGouraud;
+	ofxToggle togglePhong;
+	ofxToggle toggleBlinnPhong;
+	ofxIntSlider materialCount;
+	ofxToggle togglePointType;
+	ofxToggle toggleDirectionalType;
+	ofxToggle toggleSpotType;
+	ofxToggle toggleAreaType;
 
 	ofxLabel lblSunLight;
 	ofxToggle toggleSunLight;
@@ -43,6 +60,15 @@ private:
 	ofxToggle toggleSpotLight;
 	ofxFloatSlider spotIntensity;
 	ofxFloatSlider spotAngle;
+
+	// Illumination moderne / PBR
+	ofxLabel lblModern;
+	ofxToggle togglePBR;
+	ofxFloatSlider metallicity;
+	ofxFloatSlider roughness;
+	ofxToggle toggleMicrofacets;
+	ofxToggle toggleEnvLighting;
+	ofxFloatSlider ior;
 
 	ofxLabel lblColorControls;
 	ofxFloatSlider exposureSlider;

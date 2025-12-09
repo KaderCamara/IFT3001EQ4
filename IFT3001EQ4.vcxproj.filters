@@ -106,7 +106,12 @@
     <ClCompile Include="src\ui\panels\3dEdition\cameraPanel.cpp" />
     <ClCompile Include="src\ui\panels\infoPanel.cpp" />
     <ClCompile Include="src\ui\panels\3dEdition\lightingPanel.cpp" />
-    <ClCompile Include="src\ui\panels\3dEdition\sceneHierarchyPanel.cpp" />
+    <ClCompile Include="src\ui\panels\3dEdition\geometry3DPanel.cpp" />
+    <ClCompile Include="src\ui\panels\3dEdition\rayTracingPanel.cpp" />
+    <ClCompile Include="src\ui\panels\3dEdition\texture3DPanel.cpp" />
+    <ClCompile Include="src\ui\panels\3dEdition\topologyPanel.cpp" />
+    <ClCompile Include="src\ui\panels\3dEdition\transformation3DPanel.cpp" />
+    <ClCompile Include="src\ui\panels\vectorEditionPanel.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -530,7 +535,12 @@
     <ClInclude Include="src\ui\panels\3dEdition\cameraPanel.h" />
     <ClInclude Include="src\ui\panels\infoPanel.h" />
     <ClInclude Include="src\ui\panels\3dEdition\lightingPanel.h" />
-    <ClInclude Include="src\ui\panels\3dEdition\sceneHierarchyPanel.h" />
+    <ClInclude Include="src\ui\panels\3dEdition\geometry3DPanel.h" />
+    <ClInclude Include="src\ui\panels\3dEdition\rayTracingPanel.h" />
+    <ClInclude Include="src\ui\panels\3dEdition\texture3DPanel.h" />
+    <ClInclude Include="src\ui\panels\3dEdition\topologyPanel.h" />
+    <ClInclude Include="src\ui\panels\3dEdition\transformation3DPanel.h" />
+    <ClInclude Include="src\ui\panels\vectorEditionPanel.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="icon.rc" />

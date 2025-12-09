@@ -7,6 +7,9 @@ TransformPanel::TransformPanel() {
 
 void TransformPanel::setup() {
 	panel.setup("Transformations");
+	// Make collapsible dropdown to save space
+	panel.enableHeader();
+	panel.minimize();
 	panel.add(translateX.set("Translate X", 0.0, -2000, 2000));
 	panel.add(translateY.set("Translate Y", 0.0, -2000, 2000));
 	panel.add(rotation.set("Rotation", 0.0, -720, 720));

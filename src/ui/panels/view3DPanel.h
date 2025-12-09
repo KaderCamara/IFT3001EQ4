@@ -6,6 +6,7 @@
 #include "../panels/3dEdition/geometry3DPanel.h"
 #include "../panels/3dEdition/lightingPanel.h"
 #include "../panels/3dEdition/rayTracingPanel.h"
+#include "../panels/3dEdition/sceneAssetsPanel.h"
 #include "../panels/3dEdition/texture3DPanel.h"
 #include "../panels/3dEdition/topologyPanel.h"
 #include "../panels/3dEdition/transformation3DPanel.h"
@@ -31,9 +32,18 @@ public:
 
 	// Accesseurs d'etat
 	bool isVisible() const { return isActive; }
-	bool isShowBoundingBoxToggled() const { return cameraPanel.isBoundingBoxEnabled(); }
-	bool isShowWireframeToggled() const { return cameraPanel.isWireframeEnabled(); }
+	bool isShowBoundingBoxToggled() const { return sceneAssetsPanel.isBoundingBoxEnabled(); }
+	bool isShowWireframeToggled() const { return sceneAssetsPanel.isWireframeEnabled(); }
 	bool isQuadViewRequested() const { return quadViewRequested; }
+	bool isGridEnabled() const { return sceneAssetsPanel.isGridEnabled(); }
+	bool isAxesEnabled() const { return sceneAssetsPanel.isAxesEnabled(); }
+	bool isNormalsEnabled() const { return sceneAssetsPanel.isNormalsEnabled(); }
+	bool isLightingEnabled() const { return sceneAssetsPanel.isLightingEnabled(); }
+	float getLightIntensity() const { return sceneAssetsPanel.getLightIntensity(); }
+	ofColor getLightColor() const { return sceneAssetsPanel.getLightColor(); }
+
+	bool isImport3DModelRequested() const { return sceneAssetsPanel.isImportRequested(); }
+	bool isClear3DModelRequested() const { return sceneAssetsPanel.isClearRequested(); }
 
 	// Controle du panel
 	void show() { isActive = true; }
@@ -47,18 +57,40 @@ public:
 	void clearRequests();
 
 private:
+	enum class Section {
+		SceneAssets,
+		Camera,
+		Transformation,
+		Geometry,
+		Topology,
+		Texture,
+		RayTracing,
+		Lighting
+	};
+
 	// Etat du panel
 	bool isActive = false;
 	bool quadViewRequested = false;
+	Section activeSection = Section::SceneAssets;
 
 	// Panel ofxGui
 	ofxPanel view3DPanel;
+	ofxPanel navigationPanel;
+	ofxButton sceneAssetsButton;
+	ofxButton cameraButton;
+	ofxButton transformButton;
+	ofxButton geometryButton;
+	ofxButton topologyButton;
+	ofxButton textureButton;
+	ofxButton rayTracingButton;
+	ofxButton lightingButton;
 
 	// Boutons et labels
 	ofxButton quadViewButton;
 	ofxLabel viewTitle;
 
 	CameraPanel cameraPanel;
+	SceneAssetsPanel sceneAssetsPanel;
 	Transformation3DPanel transformationPanel;
 	Geometry3DPanel geometryPanel;
 	Texture3DPanel texturePanel;
@@ -68,4 +100,13 @@ private:
 
 	// Callbacks
 	void onQuadViewPressed();
+	void onSectionButtonPressed(Section section);
+	void onSceneAssetsButton();
+	void onCameraButton();
+	void onTransformButton();
+	void onGeometryButton();
+	void onTopologyButton();
+	void onTextureButton();
+	void onRayTracingButton();
+	void onLightingButton();
 };

@@ -25,6 +25,7 @@ public:
 
 	void setShowBoundingBox(bool show) { showBoundingBox = show; };
 	void setShowWireframe(bool show) { showWireframe = show; };
+	void setShowNormals(bool show) { showNormals = show; };
 
 private:
 	/**
@@ -34,4 +35,5 @@ private:
 
 	bool showBoundingBox = false;
 	bool showWireframe = false;
+	bool showNormals = false;
 };

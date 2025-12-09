@@ -71,6 +71,14 @@ struct RenderData3D {
 	// Options d'affichage
 	bool showBoundingBox = false;
 	bool showWireframe = false;
+	bool showGrid = true;
+	bool showAxes = true;
+	bool showNormals = false;
+
+	// Options de shading / lighting
+	bool enableLighting = false;
+	float lightIntensity = 1.0f;
+	ofColor lightColor = ofColor::white;
 
 	// Zone de dessin
 	ofRectangle drawingArea;

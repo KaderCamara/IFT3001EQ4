@@ -88,15 +88,12 @@ void Application::update() {
 			ofLogNotice("Application") << "Successfully imported "
 									   << importedShapes.size() << " 3D shape(s)";
 		}
-
-		uiWindow.clearImport3DModelRequest();
 	}
 
 	if (uiWindow.isClear3DModelRequested()) {
 		std::vector<Shape> currentShapes = sceneController.getAllShapes();
 		std::vector<Shape> filteredShapes = model3DImportManager.removeAll3DModels(currentShapes);
 		sceneController.setAllShapes(filteredShapes);
-		uiWindow.clearClear3DModelRequest();
 	}
 
 	// Clear des requêtes UI
@@ -118,7 +115,8 @@ void Application::draw() {
 	// Configurer les options 3D
 	renderer.set3DDisplayOptions(
 		uiWindow.isShowBoundingBoxEnabled(),
-		uiWindow.isWireframeEnabled());
+		uiWindow.isWireframeEnabled(),
+		uiWindow.isNormalsEnabled());
 
 	// ========== APPLIQUER LES TRANSFORMATIONS ==========
 	transformController.applyTransformToSelected(
@@ -218,20 +216,18 @@ RenderData3D Application::prepareRenderData3D() {
 	const SceneGraph & sceneGraph = sceneController.getSceneGraph();
 	data.shapes = sceneGraph.shapes;
 
-	// Récupérer les données de la caméra
-	CameraManager & cameraManager = sceneController.getCameraManager();
-
-	// Mettre à jour la caméra si nécessaire
-	if (cameraManager.needsUpdate()) {
-		cameraManager.lookAtScene(sceneGraph.shapes, false);
-	}
-
-	// Extraire les données de la caméra
-	data.camera = extractCameraData(cameraManager.getCurrentCamera());
+	// Extraire les données de la caméra dédiée au viewport 3D
+	data.camera = extractCameraData(threeDViewportCamera);
 
 	// Options d'affichage
 	data.showBoundingBox = uiWindow.isShowBoundingBoxEnabled();
 	data.showWireframe = uiWindow.isWireframeEnabled();
+	data.showGrid = uiWindow.isGridEnabled();
+	data.showAxes = uiWindow.isAxesEnabled();
+	data.showNormals = uiWindow.isNormalsEnabled();
+	data.enableLighting = uiWindow.isLightingEnabled();
+	data.lightIntensity = uiWindow.getLightingIntensity();
+	data.lightColor = uiWindow.getLightingColor();
 
 	// Zone de dessin
 	data.drawingArea = uiWindow.getDrawingArea();
@@ -300,6 +296,48 @@ CameraData Application::extractCameraData(ofEasyCam & camera) {
 	return data;
 }
 
+void Application::setup3DViewport() {
+	threeDViewportCamera.disableMouseInput();
+	threeDViewportCamera.setNearClip(0.1f);
+	threeDViewportCamera.setFarClip(5000.0f);
+	threeDViewportCamera.setFov(60.0f);
+	threeDViewportCamera.setPosition(0, 0, 600);
+	threeDViewportCamera.lookAt({ 0, 0, 0 });
+}
+
+void Application::handle3DMousePressed(int x, int y, int button) {
+	last3DMouse = { static_cast<float>(x), static_cast<float>(y) };
+	if (button == OF_MOUSE_BUTTON_LEFT) {
+		isOrbiting3D = true;
+	} else if (button == OF_MOUSE_BUTTON_RIGHT) {
+		isPanning3D = true;
+	}
+}
+
+void Application::handle3DMouseDragged(int x, int y, int button) {
+	(void)button;
+	glm::vec2 current(static_cast<float>(x), static_cast<float>(y));
+	glm::vec2 delta = current - last3DMouse;
+
+	if (isOrbiting3D) {
+		const auto target = threeDViewportCamera.getTarget().getPosition();
+		float distance = threeDViewportCamera.getDistance();
+		threeDViewportCamera.orbitDeg(delta.x * orbitSpeed, delta.y * orbitSpeed, distance, target);
+	}
+
+	if (isPanning3D) {
+		threeDViewportCamera.truck(-delta.x * panSpeed);
+		threeDViewportCamera.boom(delta.y * panSpeed);
+	}
+
+	last3DMouse = current;
+}
+
+void Application::handle3DMouseReleased() {
+	isOrbiting3D = false;
+	isPanning3D = false;
+}
+
 // ========== GESTION DES ENTRÉES ==========
 
 void Application::keyPressed(int key) {
@@ -315,20 +353,24 @@ void Application::keyPressed(int key) {
 void Application::mousePressed(int x, int y, int button) {
 
 if (uiWindow.isDrawModeActive() && uiWindow.getDrawDrawingArea().inside(x, y)) {
-	sceneController.setCurrentShape(uiWindow.getCurrentShape());
-	sceneController.handleMousePressed(x, y, button, uiWindow.getDrawDrawingArea());
-} else if (uiWindow.isCurvesModeActive() && uiWindow.getCurvesDrawingArea().inside(x, y)) {
-	if (uiWindow.isPlacePointsMode()) {
-		curvesController.addControlPoint(x, y, uiWindow.getCurvesDrawingArea());
+		sceneController.setCurrentShape(uiWindow.getCurrentShape());
+		sceneController.handleMousePressed(x, y, button, uiWindow.getDrawDrawingArea());
+	} else if (uiWindow.isCurvesModeActive() && uiWindow.getCurvesDrawingArea().inside(x, y)) {
+		if (uiWindow.isPlacePointsMode()) {
+			curvesController.addControlPoint(x, y, uiWindow.getCurvesDrawingArea());
+		}
+	} else if (uiWindow.is3DTabActive() && uiWindow.getDrawingArea().inside(x, y)) {
+		handle3DMousePressed(x, y, button);
+	} else {
+		uiWindow.mousePressed(x, y, button);
 	}
-} else {
-	uiWindow.mousePressed(x, y, button);
-}
 }
 
 void Application::mouseReleased(int x, int y, int button) {
 	if (uiWindow.isDrawModeActive() && uiWindow.getDrawDrawingArea().inside(x, y)) {
 		sceneController.handleMouseReleased(x, y, button);
+	} else if (uiWindow.is3DTabActive() && uiWindow.getDrawingArea().inside(x, y)) {
+		handle3DMouseReleased();
 	} else {
 		uiWindow.mouseReleased(x, y, button);
 	}
@@ -339,6 +381,8 @@ void Application::mouseDragged(int x, int y, int button) {
 		if (sceneController.isDrawing()) {
 			sceneController.handleMouseDragged(x, y, button, uiWindow.getDrawDrawingArea());
 		}
+	} else if (uiWindow.is3DTabActive() && uiWindow.getDrawingArea().inside(x, y)) {
+		handle3DMouseDragged(x, y, button);
 	}
 }
 

@@ -353,12 +353,3 @@ void UIWindow::clearRequests() {
 	imagePanel.clearRequests();
 	view3DPanel.clearRequests();
 }
-
-// Forwarders for image panel specific clear requests
-void UIWindow::clearImport3DModelRequest() {
-	imagePanel.clearRequests();
-}
-
-void UIWindow::clearClear3DModelRequest() {
-	imagePanel.clearRequests();
-}

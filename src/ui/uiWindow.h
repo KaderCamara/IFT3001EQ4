@@ -1,6 +1,6 @@
 // uiWindow.h
 // Classe orchestratrice de l'interface utilisateur
-// Gère les onglets et délègue aux panels spécialisés
+// Gre les onglets et dlgue aux panels spcialiss
 #pragma once
 #include "ofMain.h"
 #include "ofxGui.h"
@@ -10,18 +10,18 @@
 #include "panels/View3DPanel.h"
 #include <vector>
 
-/**
+	/**
  * @class UIWindow
  * @brief Orchestrateur principal de l'interface utilisateur
  *
- * Responsabilités :
- * - Gérer les onglets (Image, 2D Edition, 3D Edition)
- * - Déléguer aux panels spécialisés
- * - Gérer la zone de dessin
+ * Responsabilits :
+ * - Grer les onglets (Image, 2D Edition, 3D Edition)
+ * - Dlguer aux panels spcialiss
+ * - Grer la zone de dessin
  * - Afficher les messages de statut
- * - Gérer le drag & drop de fichiers
+ * - Grer le drag & drop de fichiers
  */
-class UIWindow {
+	class UIWindow {
 public:
 	UIWindow() = default;
 	~UIWindow() = default;
@@ -34,7 +34,7 @@ public:
 	void handleFileDragAndDrop(ofDragInfo dragInfo);
 
 public:
-	// ========== ACCESSEURS GÉNÉRAUX ==========
+	// ========== ACCESSEURS GNRAUX ==========
 	ofRectangle getDrawingArea() const { return drawingArea; }
 	ofRectangle getDrawDrawingArea() const { return drawDrawingArea; }
 	ofRectangle getCurvesDrawingArea() const { return curvesDrawingArea; }
@@ -62,18 +62,23 @@ public:
 	// ========== IMAGE PANEL ==========
 	bool isImportImageRequested() const { return imagePanel.isImportImageRequested(); }
 	bool isClearImageRequested() const { return imagePanel.isClearImageRequested(); }
-	bool isImport3DModelRequested() const { return imagePanel.isImport3DModelRequested(); }
-	bool isClear3DModelRequested() const { return imagePanel.isClear3DModelRequested(); }
-	// Forward clearing requests for image panel
-	void clearImport3DModelRequest();
-	void clearClear3DModelRequest();
 
 	// ========== VIEW3D PANEL ==========
+	bool isImport3DModelRequested() const { return view3DPanel.isImport3DModelRequested(); }
+	bool isClear3DModelRequested() const { return view3DPanel.isClear3DModelRequested(); }
 	bool is3DviewRequested() const { return view3DActive; }
 	bool is2DviewRequested() const { return !view3DActive && !isQuadViewRequested(); }
 	bool isQuadViewRequested() const { return view3DPanel.isQuadViewRequested(); }
 	bool isShowBoundingBoxEnabled() const { return view3DPanel.isShowBoundingBoxToggled(); }
 	bool isWireframeEnabled() const { return view3DPanel.isShowWireframeToggled(); }
+	bool isGridEnabled() const { return view3DPanel.isGridEnabled(); }
+	bool isAxesEnabled() const { return view3DPanel.isAxesEnabled(); }
+	bool isNormalsEnabled() const { return view3DPanel.isNormalsEnabled(); }
+	bool isLightingEnabled() const { return view3DPanel.isLightingEnabled(); }
+	float getLightingIntensity() const { return view3DPanel.getLightIntensity(); }
+	ofColor getLightingColor() const { return view3DPanel.getLightColor(); }
+
+	bool is3DTabActive() const { return view3DActive; }
 
 	// ========== CURVES (INTEGRATED IN DRAWING) ==========
 	bool isPlacePointsMode() const { return drawingPanel.isPlacePointsMode(); }
@@ -82,7 +87,7 @@ public:
 	bool isUndoPointRequested() const { return drawingPanel.isUndoPointRequested(); }
 	bool isClearPointsRequested() const { return drawingPanel.isClearPointsRequested(); }
 
-	 bool isDrawModeActive() const { return current2DMode == TwoDMode::Draw; }
+	bool isDrawModeActive() const { return current2DMode == TwoDMode::Draw; }
 	bool isCurvesModeActive() const { return current2DMode == TwoDMode::CurvesTools; }
 
 	void clearGenerateCurveRequest() { drawingPanel.clearRequests(); }
@@ -90,10 +95,10 @@ public:
 	void clearUndoPointRequest() { drawingPanel.clearRequests(); }
 	void clearClearPointsRequest() { drawingPanel.clearRequests(); }
 
-	// ========== CONTRÔLE DES REQUÊTES ==========
+	// ========== CONTRLE DES REQUTES ==========
 	void clearRequests();
 
-	// Status message public pour compatibilité
+	// Status message public pour compatibilit
 	std::string statusMessage;
 
 	void disablePlacePointsMode() { drawingPanel.setPlacePointsMode(false); }
@@ -141,10 +146,10 @@ private:
 	ofRectangle curvesDrawingArea;
 	float menuBarHeight = 50;
 
-	// ========== ÉTAT GLOBAL ==========
+	// ========== TAT GLOBAL ==========
 	bool view3DActive = false;
 
-	// ========== MÉTHODES PRIVÉES ==========
+	// ========== MTHODES PRIVES ==========
 	void drawTabs();
 	void drawDrawDropdown();
 	// Draw dropdown options on top of sidebars (overlay)

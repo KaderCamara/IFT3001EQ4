@@ -76,7 +76,7 @@ public:
 	/**
 	 * @brief Configure les options d'affichage 3D
 	 */
-	void set3DDisplayOptions(bool showBoundingBox, bool showWireframe);
+	void set3DDisplayOptions(bool showBoundingBox, bool showWireframe, bool showNormals);
 
 	// Accesseurs
 	ImageRenderer & getImageRenderer() { return imageRenderer; }
@@ -90,6 +90,7 @@ private:
 	// ========== ZONE DE RENDU ==========
 	ofRectangle drawDrawingArea;
 	ofRectangle curvesDrawingArea; // Zone spécifique pour les courbes
+	ofRectangle view3DDrawingArea;
 
 	// ========== PARAMÈTRES VISUELS ==========
 	float currentLineWidth = 2.0f;
@@ -112,7 +113,9 @@ private:
 	 * @brief Assure que le FBO correspond à la taille de la zone donnée
 	 */
 	void ensureFboMatches(ofFbo & fbo, const ofRectangle & area);
+	void ensureFboMatches(ofFbo & fbo, const ofRectangle & area, bool useDepth);
 
 	ofFbo drawFbo;
 	ofFbo curvesFbo;
+	ofFbo view3DFbo;
 };

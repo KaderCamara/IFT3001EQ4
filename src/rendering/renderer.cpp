@@ -68,15 +68,29 @@ void Renderer::drawCurvesCanvas(const RenderDataCurves2D & data) {
 }
 
 void Renderer::draw3D(const RenderData3D & data) {
-	ofDisableDepthTest();
-	// Dessiner le background
-	drawBackground(ofRectangle(0, 0, ofGetWidth(), ofGetHeight()), ofColor(180, 200, 220)); // Background par défaut 3D
+	view3DDrawingArea = data.drawingArea;
+	ensureFboMatches(view3DFbo, view3DDrawingArea, true);
+
+	view3DFbo.begin();
+	ofPushView();
+	ofViewport(0, 0, view3DDrawingArea.width, view3DDrawingArea.height);
+	ofEnableDepthTest();
+
+	// Dessiner le background du viewport 3D
+	drawBackground(ofRectangle(0, 0, view3DDrawingArea.width, view3DDrawingArea.height),
+		ofColor(25, 30, 35));
 
 	// Configurer les options 3D
-	sceneRenderer.set3DDisplayOptions(data.showBoundingBox, data.showWireframe);
+	sceneRenderer.set3DDisplayOptions(data.showBoundingBox, data.showWireframe, data.showNormals);
 
 	// Pousser les données au renderer de scène
 	sceneRenderer.draw3D(data);
+
+	ofDisableDepthTest();
+	ofPopView();
+	view3DFbo.end();
+
+	view3DFbo.draw(view3DDrawingArea.x, view3DDrawingArea.y);
 }
 
 void Renderer::drawQuad(const RenderDataQuad & data) {
@@ -85,7 +99,7 @@ void Renderer::drawQuad(const RenderDataQuad & data) {
 	drawBackground(ofRectangle(0, 0, ofGetWidth(), ofGetHeight()), ofColor(180, 200, 220)); // Background par défaut Quad
 
 	// Configurer les options 3D
-	sceneRenderer.set3DDisplayOptions(data.showBoundingBox, data.showWireframe);
+	sceneRenderer.set3DDisplayOptions(data.showBoundingBox, data.showWireframe, false);
 
 	// Pousser les données au renderer de scène
 	sceneRenderer.drawQuadView(data);
@@ -104,12 +118,12 @@ void Renderer::setVisualParameters(
 	currentBgColor = bg;
 }
 
-void Renderer::set3DDisplayOptions(bool showBoundingBox, bool showWireframe) {
+void Renderer::set3DDisplayOptions(bool showBoundingBox, bool showWireframe, bool showNormals) {
 	showBoundingBox3D = showBoundingBox;
 	showWireframe3D = showWireframe;
 
 	// Configurer le SceneRenderer
-	sceneRenderer.set3DDisplayOptions(showBoundingBox, showWireframe);
+	sceneRenderer.set3DDisplayOptions(showBoundingBox, showWireframe, showNormals);
 }
 
 // ========== RENDU DU BACKGROUND ==========
@@ -122,14 +136,22 @@ void Renderer::drawBackground(const ofRectangle & area, const ofColor & bgColor)
 }
 
 void Renderer::ensureFboMatches(ofFbo & fbo, const ofRectangle & area) {
+	ensureFboMatches(fbo, area, false);
+}
+
+void Renderer::ensureFboMatches(ofFbo & fbo, const ofRectangle & area, bool useDepth) {
 	if (fbo.getWidth() != area.width || fbo.getHeight() != area.height) {
 		ofFbo::Settings settings;
 		settings.width = std::max(1.0f, area.width);
 		settings.height = std::max(1.0f, area.height);
 		settings.internalformat = GL_RGBA;
-		settings.useDepth = false;
+		settings.useDepth = useDepth;
 		settings.useStencil = false;
 		settings.textureTarget = GL_TEXTURE_2D;
+		if (useDepth) {
+			settings.depthStencilAsTexture = true;
+			settings.depthStencilInternalFormat = GL_DEPTH_COMPONENT24;
+		}
 		fbo.allocate(settings);
 	}
-	}
+}

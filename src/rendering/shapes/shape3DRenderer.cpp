@@ -1,7 +1,7 @@
 // Shape3DRenderer.cpp
 #include "Shape3DRenderer.h"
+#include <algorithm>
 #include <cfloat>
-
 
 void Shape3DRenderer::drawShape3D(const Shape & s) const {
 	ofMesh & mesh3D = const_cast<ofMesh &>(s.mesh3D);
@@ -13,7 +13,21 @@ void Shape3DRenderer::drawShape3D(const Shape & s) const {
 		mesh3D.draw();
 	}
 
-	// Dessiner la bounding box si activée
+	if (showNormals && mesh3D.hasNormals()) {
+		ofPushStyle();
+		ofSetColor(ofColor::cyan);
+		const auto & normals = mesh3D.getNormals();
+		const auto & verts = mesh3D.getVertices();
+		std::size_t count = std::min(normals.size(), verts.size());
+		for (std::size_t i = 0; i < count; ++i) {
+			const glm::vec3 & v = verts[i];
+			const glm::vec3 & n = glm::normalize(normals[i]);
+			ofDrawLine(v, v + n * 10.0f);
+		}
+		ofPopStyle();
+	}
+
+	// Dessiner la bounding box si active
 	if (showBoundingBox) {
 		glm::vec3 min(FLT_MAX), max(-FLT_MAX);
 		for (const auto & v : mesh3D.getVertices()) {

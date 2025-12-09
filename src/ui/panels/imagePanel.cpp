@@ -1,5 +1,5 @@
 // ImagePanel.cpp
-// Implémentation du panel d'images et modèles 3D
+// Implmentation du panel d'images
 #include "ImagePanel.h"
 
 ImagePanel::ImagePanel() { }
@@ -11,8 +11,6 @@ void ImagePanel::setup() {
 	imageMenuPanel.minimize();
 	imageMenuPanel.add(importImageButton.setup("Import Image"));
 	imageMenuPanel.add(clearImageButton.setup("Clear Image"));
-	imageMenuPanel.add(import3DModelButton.setup("Import 3D Model"));
-	imageMenuPanel.add(clear3DModelButton.setup("Clear 3D Models"));
 	imageMenuPanel.add(exportImageButton.setup("Export Image"));
 	imageMenuPanel.add(exportSequenceButton.setup("Export Sequence"));
 
@@ -27,8 +25,6 @@ void ImagePanel::setup() {
 	// Listeners
 	importImageButton.addListener(this, &ImagePanel::onImportImagePressed);
 	clearImageButton.addListener(this, &ImagePanel::onClearImagePressed);
-	import3DModelButton.addListener(this, &ImagePanel::onImport3DModelPressed);
-	clear3DModelButton.addListener(this, &ImagePanel::onClear3DModelPressed);
 	exportImageButton.addListener(this, &ImagePanel::onExportImagePressed);
 	exportSequenceButton.addListener(this, &ImagePanel::onExportSequencePressed);
 	generateFromSamplesButton.addListener(this, &ImagePanel::onGenerateFromSamplesPressed);
@@ -56,8 +52,6 @@ void ImagePanel::draw(float sideMenuWidth, float menuBarHeight) {
 void ImagePanel::clearRequests() {
 	importImageRequested = false;
 	clearImageRequested = false;
-	import3DModelRequested = false;
-	clear3DModelRequested = false;
 	exportImageRequested = false;
 	exportSequenceRequested = false;
 	generateFromSamplesRequested = false;
@@ -66,7 +60,7 @@ void ImagePanel::clearRequests() {
 }
 
 void ImagePanel::reset() {
-	// Rinitialiser l'état du panel lors du changement d'onglet
+	// Réinitialiser l'état du panel lors du changement d'onglet
 	clearRequests();
 	ofLogNotice("ImagePanel") << "Panel reset - ready for new interaction";
 }
@@ -81,16 +75,6 @@ void ImagePanel::onImportImagePressed() {
 void ImagePanel::onClearImagePressed() {
 	clearImageRequested = true;
 	ofLogNotice("ImagePanel") << "Clear image requested";
-}
-
-void ImagePanel::onImport3DModelPressed() {
-	import3DModelRequested = true;
-	ofLogNotice("ImagePanel") << "Import 3D model requested";
-}
-
-void ImagePanel::onClear3DModelPressed() {
-	clear3DModelRequested = true;
-	ofLogNotice("ImagePanel") << "Clear 3D models requested";
 }
 
 void ImagePanel::onExportImagePressed() {

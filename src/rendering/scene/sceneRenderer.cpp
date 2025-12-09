@@ -1,11 +1,12 @@
 // SceneRenderer.cpp
-// Implémentation du renderer de scène MVC PUR (VIEW uniquement)
+// Implmentation du renderer de scne MVC PUR (VIEW uniquement)
 #include "SceneRenderer.h"
+#include <algorithm>
 
 // ========== RENDU 2D ==========
 
 void SceneRenderer::draw2D(const RenderDataDraw2D & data) {
-	// Dessiner toutes les formes de la scène
+	// Dessiner toutes les formes de la scne
 	for (size_t i = 0; i < data.shapes.size(); ++i) {
 		const auto & shape = data.shapes[i];
 
@@ -14,7 +15,7 @@ void SceneRenderer::draw2D(const RenderDataDraw2D & data) {
 			continue;
 		}
 
-		// Vérifier si la forme est sélectionnée
+		// Vrifier si la forme est slectionne
 		bool isSelected = std::find(
 							  data.selectedIndices.begin(),
 							  data.selectedIndices.end(),
@@ -27,7 +28,7 @@ void SceneRenderer::draw2D(const RenderDataDraw2D & data) {
 
 	// Curves rendering is handled by the dedicated curves rendering path
 
-	// Dessiner l'aperçu de la forme en cours de création
+	// Dessiner l'aperu de la forme en cours de cration
 	if (data.hasPreview) {
 		shape2DRenderer.drawShape2D(data.currentPreview, false, data.lineWidth);
 	}
@@ -36,19 +37,44 @@ void SceneRenderer::draw2D(const RenderDataDraw2D & data) {
 // ========== RENDU 3D ==========
 
 void SceneRenderer::draw3D(const RenderData3D & data) {
-	// Créer et configurer une caméra temporaire
+	// Crer et configurer une camra temporaire
 	ofCamera camera;
 	applyCameraData(camera, data.camera);
 
-	// Démarrer le rendu avec la caméra
+	// Dmarrer le rendu avec la camra
 	camera.begin();
 
-	// Couleur par défaut pour les formes 3D
+	if (data.enableLighting) {
+		ofLight light;
+		light.setDirectional();
+		light.setDiffuseColor(data.lightColor);
+		light.setSpecularColor(data.lightColor);
+		light.setPosition(300, 400, 500);
+		light.enable();
+		ofSetGlobalAmbientColor(data.lightColor * data.lightIntensity);
+	}
+
+	if (data.showGrid) {
+		ofPushStyle();
+		ofSetColor(80, 90, 110);
+		ofDrawGrid(200.0f, 10, true, true, true, true);
+		ofPopStyle();
+	}
+
+	if (data.showAxes) {
+		ofDrawAxis(75.0f);
+	}
+
+	// Couleur par dfaut pour les formes 3D
 	ofSetColor(255);
 
 	// Dessiner toutes les formes 3D
 	for (const auto & shape : data.shapes) {
 		shape3DRenderer.drawShape3D(shape);
+	}
+
+	if (data.enableLighting) {
+		ofDisableLighting();
 	}
 
 	camera.end();
@@ -57,7 +83,7 @@ void SceneRenderer::draw3D(const RenderData3D & data) {
 // ========== RENDU QUAD VIEW ==========
 
 void SceneRenderer::drawQuadView(const RenderDataQuad & data) {
-	// Dessiner les 4 vues de caméra
+	// Dessiner les 4 vues de camra
 	for (int i = 0; i < 4; ++i) {
 		drawSingleCameraView(
 			data.shapes,
@@ -69,7 +95,7 @@ void SceneRenderer::drawQuadView(const RenderDataQuad & data) {
 	// Restaurer le viewport complet
 	ofViewport(0, 0, ofGetWidth(), ofGetHeight());
 
-	// Dessiner les séparateurs entre les vues
+	// Dessiner les sparateurs entre les vues
 	drawQuadViewSeparators(data);
 }
 
@@ -81,11 +107,11 @@ void SceneRenderer::drawSingleCameraView(
 	// Configurer le viewport pour cette vue
 	ofViewport(viewport.x, viewport.y, viewport.width, viewport.height);
 
-	// Créer et configurer la caméra
+	// Crer et configurer la camra
 	ofCamera camera;
 	applyCameraData(camera, cameraData);
 
-	// Dessiner avec cette caméra
+	// Dessiner avec cette camra
 	camera.begin();
 	ofSetColor(255);
 
@@ -103,7 +129,7 @@ void SceneRenderer::drawSingleCameraView(
 }
 
 void SceneRenderer::drawQuadViewSeparators(const RenderDataQuad & data) {
-	// Calculer les positions des séparateurs
+	// Calculer les positions des sparateurs
 	float centerX = data.viewports[0].width;
 	float centerY = data.viewports[0].height;
 	float totalWidth = data.viewports[0].width + data.viewports[1].width;
@@ -130,23 +156,25 @@ void SceneRenderer::drawQuadViewSeparators(const RenderDataQuad & data) {
 
 // ========== CONFIGURATION ==========
 
-void SceneRenderer::set3DDisplayOptions(bool showBoundingBox, bool showWireframe) {
+void SceneRenderer::set3DDisplayOptions(bool showBoundingBox, bool showWireframe, bool showNormals) {
 	showBoundingBox3D = showBoundingBox;
 	showWireframe3D = showWireframe;
+	showNormals3D = showNormals;
 
 	// Configurer les renderers 3D
 	shape3DRenderer.setShowBoundingBox(showBoundingBox);
 	shape3DRenderer.setShowWireframe(showWireframe);
+	shape3DRenderer.setShowNormals(showNormals);
 }
 
-// ========== UTILITAIRES PRIVÉS ==========
+// ========== UTILITAIRES PRIVS ==========
 
 void SceneRenderer::applyCameraData(ofCamera & cam, const CameraData & data) {
 	// Position et orientation
 	cam.setPosition(data.position);
 	cam.lookAt(data.target, data.up);
 
-	// Paramètres de projection
+	// Paramtres de projection
 	cam.setNearClip(data.nearClip);
 	cam.setFarClip(data.farClip);
 	cam.setFov(data.fov);

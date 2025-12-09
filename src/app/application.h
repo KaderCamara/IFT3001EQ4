@@ -105,4 +105,17 @@ private:
 	 * @return Données pures de la caméra
 	 */
 	CameraData extractCameraData(ofEasyCam & camera);
+
+	// Gestion du viewport 3D indépendant
+	void setup3DViewport();
+	void handle3DMousePressed(int x, int y, int button);
+	void handle3DMouseDragged(int x, int y, int button);
+	void handle3DMouseReleased();
+
+	ofEasyCam threeDViewportCamera;
+	bool isOrbiting3D = false;
+	bool isPanning3D = false;
+	glm::vec2 last3DMouse = { 0, 0 };
+	float orbitSpeed = 0.25f;
+	float panSpeed = 0.7f;
 };

@@ -57,7 +57,7 @@ public:
 	/**
 	 * @brief Configure les options d'affichage 3D
 	 */
-	void set3DDisplayOptions(bool showBoundingBox, bool showWireframe);
+	void set3DDisplayOptions(bool showBoundingBox, bool showWireframe, bool showNormals);
 
 private:
 	// ========== RENDERERS SPÉCIALISÉS (VIEW) ==========
@@ -68,6 +68,7 @@ private:
 	// ========== OPTIONS D'AFFICHAGE ==========
 	bool showBoundingBox3D = false;
 	bool showWireframe3D = false;
+	bool showNormals3D = false;
 
 	// ========== MÉTHODES PRIVÉES DE RENDU ==========
 

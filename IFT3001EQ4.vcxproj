@@ -273,6 +273,7 @@
     <ClCompile Include="src\ui\panels\3dEdition\geometry3DPanel.cpp" />
     <ClCompile Include="src\ui\panels\3dEdition\lightingPanel.cpp" />
     <ClCompile Include="src\ui\panels\3dEdition\rayTracingPanel.cpp" />
+    <ClCompile Include="src\ui\panels\3dEdition\sceneAssetsPanel.cpp" />
     <ClCompile Include="src\ui\panels\3dEdition\texture3DPanel.cpp" />
     <ClCompile Include="src\ui\panels\3dEdition\topologyPanel.cpp" />
     <ClCompile Include="src\ui\panels\3dEdition\transformation3DPanel.cpp" />
@@ -418,6 +419,7 @@
     <ClInclude Include="src\ui\panels\3dEdition\geometry3DPanel.h" />
     <ClInclude Include="src\ui\panels\3dEdition\lightingPanel.h" />
     <ClInclude Include="src\ui\panels\3dEdition\rayTracingPanel.h" />
+    <ClInclude Include="src\ui\panels\3dEdition\sceneAssetsPanel.h" />
     <ClInclude Include="src\ui\panels\3dEdition\texture3DPanel.h" />
     <ClInclude Include="src\ui\panels\3dEdition\topologyPanel.h" />
     <ClInclude Include="src\ui\panels\3dEdition\transformation3DPanel.h" />

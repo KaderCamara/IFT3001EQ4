@@ -2,6 +2,7 @@
 // Implémentation du renderer principal MVC PUR (VIEW uniquement)
 // Le Renderer REÇOIT les RenderData préparées par Application
 #include "Renderer.h"
+#include <algorithm>
 
 Renderer::Renderer() {
 }
@@ -13,10 +14,18 @@ void Renderer::setup() {
 
 // ========== MÉTHODES DE RENDU (VIEW PURE) ==========
 
-void Renderer::draw2D(const RenderData2D & data) {
+void Renderer::drawDrawCanvas(const RenderDataDraw2D & data) {
 	ofDisableDepthTest();
+
+	ensureFboMatches(drawFbo, drawDrawingArea);
+
+	drawFbo.begin();
+	ofClear(0, 0, 0, 0);
+	ofPushMatrix();
+	ofTranslate(-drawDrawingArea.x, -drawDrawingArea.y);
+
 	// Dessiner le background
-	drawBackground(data.backgroundColor);
+	drawBackground(drawDrawingArea, data.backgroundColor);
 
 	// Configurer les paramètres visuels depuis les données
 	currentLineWidth = data.lineWidth;
@@ -25,12 +34,43 @@ void Renderer::draw2D(const RenderData2D & data) {
 
 	// Pousser les données au renderer de scène
 	sceneRenderer.draw2D(data);
+
+	ofPopMatrix();
+	drawFbo.end();
+
+	drawFbo.draw(drawDrawingArea.x, drawDrawingArea.y);
+}
+
+void Renderer::drawCurvesCanvas(const RenderDataCurves2D & data) {
+	ofDisableDepthTest();
+
+	ensureFboMatches(curvesFbo, curvesDrawingArea);
+
+	curvesFbo.begin();
+	ofClear(0, 0, 0, 0);
+	ofPushMatrix();
+	ofTranslate(-curvesDrawingArea.x, -curvesDrawingArea.y);
+
+	// Dessiner le background spécifique aux courbes
+	drawBackground(curvesDrawingArea, data.backgroundColor);
+
+	// Configurer les paramètres visuels depuis les données
+	currentLineWidth = data.lineWidth;
+	currentStrokeColor = data.strokeColor;
+
+	// Pousser les données au renderer de courbes
+	curvesRenderer.render(data.controlPoints, data.curves);
+
+	ofPopMatrix();
+	curvesFbo.end();
+
+	curvesFbo.draw(curvesDrawingArea.x, curvesDrawingArea.y);
 }
 
 void Renderer::draw3D(const RenderData3D & data) {
 	ofDisableDepthTest();
 	// Dessiner le background
-	drawBackground(ofColor(180, 200, 220)); // Background par défaut 3D
+	drawBackground(ofRectangle(0, 0, ofGetWidth(), ofGetHeight()), ofColor(180, 200, 220)); // Background par défaut 3D
 
 	// Configurer les options 3D
 	sceneRenderer.set3DDisplayOptions(data.showBoundingBox, data.showWireframe);
@@ -42,7 +82,7 @@ void Renderer::draw3D(const RenderData3D & data) {
 void Renderer::drawQuad(const RenderDataQuad & data) {
 	ofDisableDepthTest();
 	// Dessiner le background
-	drawBackground(ofColor(180, 200, 220)); // Background par défaut Quad
+	drawBackground(ofRectangle(0, 0, ofGetWidth(), ofGetHeight()), ofColor(180, 200, 220)); // Background par défaut Quad
 
 	// Configurer les options 3D
 	sceneRenderer.set3DDisplayOptions(data.showBoundingBox, data.showWireframe);
@@ -74,9 +114,22 @@ void Renderer::set3DDisplayOptions(bool showBoundingBox, bool showWireframe) {
 
 // ========== RENDU DU BACKGROUND ==========
 
-void Renderer::drawBackground(const ofColor & bgColor) {
+void Renderer::drawBackground(const ofRectangle & area, const ofColor & bgColor) {
 	ofPushStyle();
 	ofSetColor(bgColor);
-	ofDrawRectangle(drawingArea.x, drawingArea.y, drawingArea.width, drawingArea.height);
+	ofDrawRectangle(area.x, area.y, area.width, area.height);
 	ofPopStyle();
 }
+
+void Renderer::ensureFboMatches(ofFbo & fbo, const ofRectangle & area) {
+	if (fbo.getWidth() != area.width || fbo.getHeight() != area.height) {
+		ofFbo::Settings settings;
+		settings.width = std::max(1.0f, area.width);
+		settings.height = std::max(1.0f, area.height);
+		settings.internalformat = GL_RGBA;
+		settings.useDepth = false;
+		settings.useStencil = false;
+		settings.textureTarget = GL_TEXTURE_2D;
+		fbo.allocate(settings);
+	}
+	}

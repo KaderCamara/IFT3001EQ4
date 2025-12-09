@@ -105,7 +105,8 @@ void Application::update() {
 
 void Application::draw() {
 	// ========== CONFIGURATION DU RENDERER ==========
-	renderer.setDrawingArea(uiWindow.getDrawingArea());
+	renderer.setDrawDrawingArea(uiWindow.getDrawDrawingArea());
+	renderer.setCurvesDrawingArea(uiWindow.getCurvesDrawingArea());
 
 	// Appliquer les paramètres visuels
 	renderer.setVisualParameters(
@@ -145,12 +146,15 @@ void Application::draw() {
 		renderer.draw3D(data);
 
 	} else if (sceneController.is2DView()) {
-		// Préparer les données pour le rendu 2D
-		RenderData2D data = prepareRenderData2D();
-
-		// Pousser au renderer
-		renderer.draw2D(data);
+		if (uiWindow.isDrawModeActive()) {
+			RenderDataDraw2D data = prepareRenderDataDraw2D();
+			renderer.drawDrawCanvas(data);
+		} else if (uiWindow.isCurvesModeActive()) {
+			RenderDataCurves2D data = prepareRenderDataCurves2D();
+			renderer.drawCurvesCanvas(data);
+		}
 	}
+
 
 	// Dessiner l'UI par-dessus
 	// Make sure 3D depth testing doesn't hide UI elements
@@ -162,8 +166,8 @@ void Application::draw() {
 
 // ========== PRÉPARATION DES RENDERDATA (CONTROLLER → VIEW) ==========
 
-RenderData2D Application::prepareRenderData2D() {
-	RenderData2D data;
+RenderDataDraw2D Application::prepareRenderDataDraw2D() {
+	RenderDataDraw2D data;
 
 	// Récupérer les données du SceneController
 	const SceneGraph & sceneGraph = sceneController.getSceneGraph();
@@ -181,16 +185,27 @@ RenderData2D Application::prepareRenderData2D() {
 		data.hasPreview = false;
 	}
 
+	 // Paramètres visuels
+	data.lineWidth = uiWindow.getLineWidth();
+	data.strokeColor = uiWindow.getStrokeColor();
+	data.fillColor = uiWindow.getFillColor();
+	data.backgroundColor = uiWindow.getBackgroundColor();
+
+	return data;
+}
+
+RenderDataCurves2D Application::prepareRenderDataCurves2D() {
+	RenderDataCurves2D data;
+
 	// Courbes de Bézier
 	const ControlPointsManager & cpm = curvesController.getControlPointsManager();
 	const CurveManager & cm = curvesController.getCurveManager();
 	data.controlPoints = cpm.getControlPoints();
 	data.curves = cm.getCurves();
 
-	// Paramètres visuels
+	// Paramètres visuels dédiés aux courbes (on conserve les paramètres de trait actuels)
 	data.lineWidth = uiWindow.getLineWidth();
 	data.strokeColor = uiWindow.getStrokeColor();
-	data.fillColor = uiWindow.getFillColor();
 	data.backgroundColor = uiWindow.getBackgroundColor();
 
 	return data;
@@ -297,22 +312,22 @@ void Application::keyPressed(int key) {
 
 	sceneController.handleKeyPressed(key);
 }
-
 void Application::mousePressed(int x, int y, int button) {
-	if (uiWindow.getDrawingArea().inside(x, y)) {
-		if (uiWindow.isPlacePointsMode()) {
-			curvesController.addControlPoint(x, y, uiWindow.getDrawingArea());
-		} else {
-			sceneController.setCurrentShape(uiWindow.getCurrentShape());
-			sceneController.handleMousePressed(x, y, button, uiWindow.getDrawingArea());
-		}
-	} else {
-		uiWindow.mousePressed(x, y, button);
+
+if (uiWindow.isDrawModeActive() && uiWindow.getDrawDrawingArea().inside(x, y)) {
+	sceneController.setCurrentShape(uiWindow.getCurrentShape());
+	sceneController.handleMousePressed(x, y, button, uiWindow.getDrawDrawingArea());
+} else if (uiWindow.isCurvesModeActive() && uiWindow.getCurvesDrawingArea().inside(x, y)) {
+	if (uiWindow.isPlacePointsMode()) {
+		curvesController.addControlPoint(x, y, uiWindow.getCurvesDrawingArea());
 	}
+} else {
+	uiWindow.mousePressed(x, y, button);
+}
 }
 
 void Application::mouseReleased(int x, int y, int button) {
-	if (uiWindow.getDrawingArea().inside(x, y)) {
+	if (uiWindow.isDrawModeActive() && uiWindow.getDrawDrawingArea().inside(x, y)) {
 		sceneController.handleMouseReleased(x, y, button);
 	} else {
 		uiWindow.mouseReleased(x, y, button);
@@ -320,9 +335,9 @@ void Application::mouseReleased(int x, int y, int button) {
 }
 
 void Application::mouseDragged(int x, int y, int button) {
-	if (uiWindow.getDrawingArea().inside(x, y)) {
+	if (uiWindow.isDrawModeActive() && uiWindow.getDrawDrawingArea().inside(x, y)) {
 		if (sceneController.isDrawing()) {
-			sceneController.handleMouseDragged(x, y, button, uiWindow.getDrawingArea());
+			sceneController.handleMouseDragged(x, y, button, uiWindow.getDrawDrawingArea());
 		}
 	}
 }

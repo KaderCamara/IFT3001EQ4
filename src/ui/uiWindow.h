@@ -36,6 +36,8 @@ public:
 public:
 	// ========== ACCESSEURS GÉNÉRAUX ==========
 	ofRectangle getDrawingArea() const { return drawingArea; }
+	ofRectangle getDrawDrawingArea() const { return drawDrawingArea; }
+	ofRectangle getCurvesDrawingArea() const { return curvesDrawingArea; }
 
 	// ========== DRAWING PANEL ==========
 	std::string getCurrentShape() const { return drawingPanel.getCurrentShape(); }
@@ -79,6 +81,9 @@ public:
 	bool isClearCurvesRequested() const { return drawingPanel.isClearCurvesRequested(); }
 	bool isUndoPointRequested() const { return drawingPanel.isUndoPointRequested(); }
 	bool isClearPointsRequested() const { return drawingPanel.isClearPointsRequested(); }
+
+	 bool isDrawModeActive() const { return current2DMode == TwoDMode::Draw; }
+	bool isCurvesModeActive() const { return current2DMode == TwoDMode::CurvesTools; }
 
 	void clearGenerateCurveRequest() { drawingPanel.clearRequests(); }
 	void clearClearCurvesRequest() { drawingPanel.clearRequests(); }
@@ -132,6 +137,8 @@ private:
 	// ========== ZONES UI ==========
 	ofRectangle drawingArea;
 	ofRectangle statusBox;
+	ofRectangle drawDrawingArea;
+	ofRectangle curvesDrawingArea;
 	float menuBarHeight = 50;
 
 	// ========== ÉTAT GLOBAL ==========

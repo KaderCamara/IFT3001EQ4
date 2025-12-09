@@ -9,13 +9,10 @@
 #include <vector>
 
 /**
- * @struct RenderData2D
- * @brief Données nécessaires pour le rendu  (MODEL pur)
- * 
- * Cette structure contient UNIQUEMENT des données.
- * Aucune logique métier, aucune référence à des Controllers.
+* @struct RenderDataDraw2D
+ * @brief Données nécessaires pour le rendu de la zone de dessin principale (MODEL pur)
  */
-struct RenderData2D {
+struct RenderDataDraw2D {
 	// Formes de la scène
 	std::vector<Shape> shapes;
 	std::vector<int> selectedIndices;
@@ -24,6 +21,18 @@ struct RenderData2D {
 	Shape currentPreview;
 	bool hasPreview = false;
 
+	// Paramètres visuels
+	float lineWidth = 2.0f;
+	ofColor strokeColor = ofColor::black;
+	ofColor fillColor = ofColor::white;
+	ofColor backgroundColor = ofColor::white;
+};
+
+/**
+ * @struct RenderDataCurves2D
+ * @brief Données nécessaires pour le rendu de la zone dédiée aux courbes (MODEL pur)
+ */
+struct RenderDataCurves2D {
 	// Courbes de Bézier
 	std::vector<glm::vec2> controlPoints;
 	std::vector<BezierCurve> curves;
@@ -31,7 +40,6 @@ struct RenderData2D {
 	// Paramètres visuels
 	float lineWidth = 2.0f;
 	ofColor strokeColor = ofColor::black;
-	ofColor fillColor = ofColor::white;
 	ofColor backgroundColor = ofColor::white;
 };
 

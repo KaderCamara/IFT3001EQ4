@@ -4,7 +4,7 @@
 
 // ========== RENDU 2D ==========
 
-void SceneRenderer::draw2D(const RenderData2D & data) {
+void SceneRenderer::draw2D(const RenderDataDraw2D & data) {
 	// Dessiner toutes les formes de la scène
 	for (size_t i = 0; i < data.shapes.size(); ++i) {
 		const auto & shape = data.shapes[i];
@@ -25,8 +25,7 @@ void SceneRenderer::draw2D(const RenderData2D & data) {
 		shape2DRenderer.drawShape2D(shape, isSelected, data.lineWidth);
 	}
 
-	// Dessiner les courbes de Bézier et points de contrôle
-	curvesRenderer.render(data.controlPoints, data.curves);
+	// Curves rendering is handled by the dedicated curves rendering path
 
 	// Dessiner l'aperçu de la forme en cours de création
 	if (data.hasPreview) {

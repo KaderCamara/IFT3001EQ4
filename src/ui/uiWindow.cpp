@@ -52,24 +52,30 @@ void UIWindow::draw() {
 	// bottom inset reserved for info panel
 	float bottomInset = infoPanel.getHeight();
 
-	// Mise à jour de la zone de dessin
+	// Mise  jour de la zone de dessin
+	ofRectangle baseArea;
 	if (view3DActive) {
 		// Reserve left and right side panels from the drawing area so the 3D view is centered
 		float left = leftPanelWidth;
 		float right = sideMenuWidth;
 		float w = ofGetWidth() - left - right;
 		if (w < 0) w = ofGetWidth();
-		drawingArea.set(left, menuBarHeight, w, ofGetHeight() - menuBarHeight - bottomInset);
+		baseArea.set(left, menuBarHeight, w, ofGetHeight() - menuBarHeight - bottomInset);
 	} else if (leftActive || rightActive) {
 		// Reserve space for left and/or right sidebars in 2D mode
 		float left = leftActive ? leftPanelWidth : 0.0f;
 		float right = rightActive ? rightPanelWidth : 0.0f;
 		float w = ofGetWidth() - left - right;
 		if (w < 0) w = ofGetWidth();
-		drawingArea.set(left, menuBarHeight, w, ofGetHeight() - menuBarHeight - bottomInset);
+		baseArea.set(left, menuBarHeight, w, ofGetHeight() - menuBarHeight - bottomInset);
 	} else {
-		drawingArea.set(0, menuBarHeight, ofGetWidth(), ofGetHeight() - menuBarHeight - bottomInset);
+		baseArea.set(0, menuBarHeight, ofGetWidth(), ofGetHeight() - menuBarHeight - bottomInset);
 	}
+
+	drawDrawingArea = baseArea;
+	curvesDrawingArea = baseArea;
+	drawingArea = view3DActive ? baseArea
+							   : (current2DMode == TwoDMode::Draw ? drawDrawingArea : curvesDrawingArea);
 
 	// Fond de la barre de menu
 	ofPushStyle();
@@ -109,6 +115,19 @@ void UIWindow::draw() {
 		ofSetColor(180, 200, 255);
 		ofSetLineWidth(2);
 		ofDrawRectangle(rx, menuBarHeight, rightPanelWidth, ofGetHeight() - menuBarHeight - bottomInset);
+		ofPopStyle();
+	}
+	// Delimiter for active 2D canvas
+	if (!view3DActive && drawingPanel.isVisible()) {
+		const ofRectangle & activeArea = (current2DMode == TwoDMode::Draw) ? drawDrawingArea : curvesDrawingArea;
+		ofPushStyle();
+		ofNoFill();
+		ofSetColor(180, 200, 255);
+		ofSetLineWidth(3);
+		ofDrawRectangle(activeArea.x + 2, activeArea.y + 2, activeArea.width - 4, activeArea.height - 4);
+		ofSetColor(200);
+		std::string label = (current2DMode == TwoDMode::Draw) ? "DRAW CANVAS" : "CURVES CANVAS";
+		ofDrawBitmapString(label, activeArea.x + 10, activeArea.y + 20);
 		ofPopStyle();
 	}
 

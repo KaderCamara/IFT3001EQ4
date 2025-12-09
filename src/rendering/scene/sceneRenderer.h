@@ -38,7 +38,7 @@ public:
 	 * @brief Dessine la scène en mode 2D
 	 * @param data Données pures nécessaires au rendu 2D
 	 */
-	void draw2D(const RenderData2D & data);
+	void draw2D(const RenderDataDraw2D & data);
 
 	/**
 	 * @brief Dessine la scène en mode 3D

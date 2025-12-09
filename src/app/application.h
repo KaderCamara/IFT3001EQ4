@@ -77,7 +77,15 @@ private:
 	 * @brief Prépare les données pour le rendu 2D
 	 * @return Structure RenderData2D prête à être passée au renderer
 	 */
-	RenderData2D prepareRenderData2D();
+	RenderDataDraw2D prepareRenderDataDraw2D();
+
+	/**
+	 * @brief Prépare les données pour le rendu des courbes 2D
+	 * @return Structure RenderDataCurves2D prête à être passée au renderer
+	 */
+	RenderDataCurves2D prepareRenderDataCurves2D();
+
+
 
 	/**
 	 * @brief Prépare les données pour le rendu 3D

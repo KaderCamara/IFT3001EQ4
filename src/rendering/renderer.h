@@ -40,7 +40,12 @@ public:
 	 * @brief Dessine la scène en mode 2D
 	 * @param data Données pures préparées par Application
 	 */
-	void draw2D(const RenderData2D & data);
+	void drawDrawCanvas(const RenderDataDraw2D & data);
+	/**
+	 * @brief Dessine les courbes en mode 2D
+	 * @param data Données pures préparées par Application
+	 */
+	void drawCurvesCanvas(const RenderDataCurves2D & data);
 
 	/**
 	 * @brief Dessine la scène en mode 3D
@@ -56,8 +61,8 @@ public:
 
 	// ========== CONFIGURATION VISUELLE ==========
 
-	void setDrawingArea(const ofRectangle & area) { drawingArea = area; }
-	ofRectangle getDrawingArea() const { return drawingArea; }
+	void setDrawDrawingArea(const ofRectangle & area) { drawDrawingArea = area; }
+	void setCurvesDrawingArea(const ofRectangle & area) { curvesDrawingArea = area; }
 
 	/**
 	 * @brief Configure les paramètres visuels (appelé par Application)
@@ -83,7 +88,8 @@ private:
 	ImageRenderer imageRenderer;
 
 	// ========== ZONE DE RENDU ==========
-	ofRectangle drawingArea;
+	ofRectangle drawDrawingArea;
+	ofRectangle curvesDrawingArea; // Zone spécifique pour les courbes
 
 	// ========== PARAMÈTRES VISUELS ==========
 	float currentLineWidth = 2.0f;
@@ -100,5 +106,13 @@ private:
 	/**
 	 * @brief Dessine le background de la zone de dessin
 	 */
-	void drawBackground(const ofColor & bgColor);
+	void drawBackground(const ofRectangle & area, const ofColor & bgColor);
+
+	/**
+	 * @brief Assure que le FBO correspond à la taille de la zone donnée
+	 */
+	void ensureFboMatches(ofFbo & fbo, const ofRectangle & area);
+
+	ofFbo drawFbo;
+	ofFbo curvesFbo;
 };

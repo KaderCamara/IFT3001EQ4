@@ -1,4 +1,5 @@
 #include "shapeManager.h"
+#include <rendering/ProceduralTexture.h>
 
 
 void ShapeManager::setDrawingParameters(float lineW, ofColor stroke, ofColor fill) {
@@ -24,4 +25,9 @@ void ShapeManager::deleteCurrentShapeToDraw() {
 void ShapeManager::convertTo3d(Shape & shape) {
 	shape.is3D = true;
 	shape.mesh3D = shapeManager3D.to3DDraw(shape);
+
+	// texture procédurale
+	if (!shape.proceduralTexture.isAllocated()) {
+		shape.proceduralTexture = generateSimpleProceduralTexture(128, 128);
+	}
 }

@@ -2,17 +2,24 @@
 #include "Shape3DRenderer.h"
 #include <algorithm>
 #include <cfloat>
+#include "ofMain.h"
 
 void Shape3DRenderer::drawShape3D(const Shape & s) const {
 	ofMesh & mesh3D = const_cast<ofMesh &>(s.mesh3D);
 
-	// Dessiner le mesh
-	if (showWireframe) {
-		mesh3D.drawWireframe();
+	// Appliquer la texture procédurale si elle existe
+	if (s.proceduralTexture.isAllocated()) {
+		s.proceduralTexture.bind();
+		mesh3D.draw();
+		s.proceduralTexture.unbind();
 	} else {
 		mesh3D.draw();
 	}
 
+	// Wireframe
+	if (showWireframe) mesh3D.drawWireframe();
+
+	// Normales
 	if (showNormals && mesh3D.hasNormals()) {
 		ofPushStyle();
 		ofSetColor(ofColor::cyan);
@@ -27,7 +34,7 @@ void Shape3DRenderer::drawShape3D(const Shape & s) const {
 		ofPopStyle();
 	}
 
-	// Dessiner la bounding box si active
+	// Bounding box
 	if (showBoundingBox) {
 		glm::vec3 min(FLT_MAX), max(-FLT_MAX);
 		for (const auto & v : mesh3D.getVertices()) {

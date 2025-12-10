@@ -129,6 +129,10 @@ void Application::draw() {
 	// ✅ L'Application (CONTROLLER) prépare les données
 	// ✅ Le Renderer (VIEW) reçoit et dessine
 
+	// Pousser camera interactive du CameraManager vers le renderer
+	CameraManager & cameraManager = sceneController.getCameraManager();
+	renderer.setExternalSceneCamera(&cameraManager.getCurrentCamera());
+
 	if (sceneController.isQuadView()) {
 		// Préparer les données pour le rendu Quad
 		RenderDataQuad data = prepareRenderDataQuad();
@@ -216,8 +220,12 @@ RenderData3D Application::prepareRenderData3D() {
 	const SceneGraph & sceneGraph = sceneController.getSceneGraph();
 	data.shapes = sceneGraph.shapes;
 
-	// Extraire les données de la caméra dédiée au viewport 3D
-	data.camera = extractCameraData(threeDViewportCamera);
+	// Use CameraManager's current camera for the 3D view so CameraManager handles interactions
+	CameraManager & cameraManager = sceneController.getCameraManager();
+	if (cameraManager.needsUpdate()) {
+		cameraManager.lookAtScene(sceneGraph.shapes, false);
+	}
+	data.camera = extractCameraData(cameraManager.getCurrentCamera());
 
 	// Options d'affichage
 	data.showBoundingBox = uiWindow.isShowBoundingBoxEnabled();
@@ -352,7 +360,7 @@ void Application::keyPressed(int key) {
 }
 void Application::mousePressed(int x, int y, int button) {
 
-if (uiWindow.isDrawModeActive() && uiWindow.getDrawDrawingArea().inside(x, y)) {
+	if (uiWindow.isDrawModeActive() && uiWindow.getDrawDrawingArea().inside(x, y)) {
 		sceneController.setCurrentShape(uiWindow.getCurrentShape());
 		sceneController.handleMousePressed(x, y, button, uiWindow.getDrawDrawingArea());
 	} else if (uiWindow.isCurvesModeActive() && uiWindow.getCurvesDrawingArea().inside(x, y)) {
@@ -360,7 +368,13 @@ if (uiWindow.isDrawModeActive() && uiWindow.getDrawDrawingArea().inside(x, y)) {
 			curvesController.addControlPoint(x, y, uiWindow.getCurvesDrawingArea());
 		}
 	} else if (uiWindow.is3DTabActive() && uiWindow.getDrawingArea().inside(x, y)) {
-		handle3DMousePressed(x, y, button);
+		// If CameraManager's free interactive camera is active (index 4), allow ofEasyCam to receive events
+		CameraManager & cameraManager = sceneController.getCameraManager();
+		if (cameraManager.getCurrentCameraIndex() == 4) {
+			// do nothing: ofEasyCam will handle mouse input via events
+		} else {
+			handle3DMousePressed(x, y, button);
+		}
 	} else {
 		uiWindow.mousePressed(x, y, button);
 	}
@@ -370,7 +384,12 @@ void Application::mouseReleased(int x, int y, int button) {
 	if (uiWindow.isDrawModeActive() && uiWindow.getDrawDrawingArea().inside(x, y)) {
 		sceneController.handleMouseReleased(x, y, button);
 	} else if (uiWindow.is3DTabActive() && uiWindow.getDrawingArea().inside(x, y)) {
-		handle3DMouseReleased();
+		CameraManager & cameraManager = sceneController.getCameraManager();
+		if (cameraManager.getCurrentCameraIndex() == 4) {
+			// let ofEasyCam handle
+		} else {
+			handle3DMouseReleased();
+		}
 	} else {
 		uiWindow.mouseReleased(x, y, button);
 	}
@@ -382,7 +401,12 @@ void Application::mouseDragged(int x, int y, int button) {
 			sceneController.handleMouseDragged(x, y, button, uiWindow.getDrawDrawingArea());
 		}
 	} else if (uiWindow.is3DTabActive() && uiWindow.getDrawingArea().inside(x, y)) {
-		handle3DMouseDragged(x, y, button);
+		CameraManager & cameraManager = sceneController.getCameraManager();
+		if (cameraManager.getCurrentCameraIndex() == 4) {
+			// let ofEasyCam handle dragging
+		} else {
+			handle3DMouseDragged(x, y, button);
+		}
 	}
 }
 

@@ -68,30 +68,22 @@ void Renderer::drawCurvesCanvas(const RenderDataCurves2D & data) {
 }
 
 void Renderer::draw3D(const RenderData3D & data) {
-	view3DDrawingArea = data.drawingArea;
-	ensureFboMatches(view3DFbo, view3DDrawingArea, true);
+	// La viewport et la zone visuelle dédiées 3D ont été supprimées.
+	// Nous dessinons directement en 3D sur le contexte courant.
 
-	view3DFbo.begin();
-	ofClear(0, 0, 0, 0);
-	ofPushView();
-	ofViewport(0, 0, view3DDrawingArea.width, view3DDrawingArea.height);
-	ofEnableDepthTest();
-
-	// Dessiner le background du viewport 3D
-	drawBackground(ofRectangle(0, 0, view3DDrawingArea.width, view3DDrawingArea.height),
-		ofColor(25, 30, 35));
+	// Ne plus dessiner le rectangle de fond délimitant la zone 3D
+	// (remplacé par le rendu direct de la scène 3D par sceneRenderer)
 
 	// Configurer les options 3D
 	sceneRenderer.set3DDisplayOptions(data.showBoundingBox, data.showWireframe, data.showNormals);
 
-	// Pousser les données au renderer de scène
+	// Activer le test de profondeur pour le rendu 3D
+	ofEnableDepthTest();
+
+	// Pousser les données au renderer de scène (qui gère la caméra et le rendu)
 	sceneRenderer.draw3D(data);
 
 	ofDisableDepthTest();
-	ofPopView();
-	view3DFbo.end();
-
-	view3DFbo.draw(view3DDrawingArea.x, view3DDrawingArea.y);
 }
 
 void Renderer::drawQuad(const RenderDataQuad & data) {
@@ -125,6 +117,10 @@ void Renderer::set3DDisplayOptions(bool showBoundingBox, bool showWireframe, boo
 
 	// Configurer le SceneRenderer
 	sceneRenderer.set3DDisplayOptions(showBoundingBox, showWireframe, showNormals);
+}
+
+void Renderer::setExternalSceneCamera(ofEasyCam * cam) {
+	sceneRenderer.setExternalCamera(cam);
 }
 
 // ========== RENDU DU BACKGROUND ==========

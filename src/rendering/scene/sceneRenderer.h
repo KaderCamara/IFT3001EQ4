@@ -59,6 +59,14 @@ public:
 	 */
 	void set3DDisplayOptions(bool showBoundingBox, bool showWireframe, bool showNormals);
 
+	// ========== CAMÉRA INTERACTIVE EXTERNE ==========
+
+	/**
+	 * @brief Définit une caméra interactive externe (ex. : provenant de CameraManager)
+	 * Permet à SceneRenderer d'utiliser la caméra du gestionnaire de caméras pour le contrôle interactif.
+	 */
+	void setExternalCamera(ofEasyCam * cam) { externalCam = cam; }
+
 private:
 	// ========== RENDERERS SPÉCIALISÉS (VIEW) ==========
 	Shape2DRenderer shape2DRenderer;
@@ -69,6 +77,12 @@ private:
 	bool showBoundingBox3D = false;
 	bool showWireframe3D = false;
 	bool showNormals3D = false;
+
+	// ========== CAMÉRA PERSISTANTE ==========
+	// Caméra interactive persistante pour que l'utilisateur puisse manipuler la vue entre les images
+	ofEasyCam sceneCam;
+	// Caméra externe optionnelle fournie par CameraManager
+	ofEasyCam * externalCam = nullptr;
 
 	// ========== MÉTHODES PRIVÉES DE RENDU ==========
 

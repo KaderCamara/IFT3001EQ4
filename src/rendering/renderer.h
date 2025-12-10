@@ -81,6 +81,9 @@ public:
 	// Accesseurs
 	ImageRenderer & getImageRenderer() { return imageRenderer; }
 
+	// Allow injecting an external scene camera (e.g., from CameraManager)
+	void setExternalSceneCamera(ofEasyCam * cam);
+
 private:
 	// ========== RENDERERS SPÉCIALISÉS (VIEW) ==========
 	SceneRenderer sceneRenderer;
@@ -90,7 +93,6 @@ private:
 	// ========== ZONE DE RENDU ==========
 	ofRectangle drawDrawingArea;
 	ofRectangle curvesDrawingArea; // Zone spécifique pour les courbes
-	ofRectangle view3DDrawingArea;
 
 	// ========== PARAMÈTRES VISUELS ==========
 	float currentLineWidth = 2.0f;
@@ -117,5 +119,4 @@ private:
 
 	ofFbo drawFbo;
 	ofFbo curvesFbo;
-	ofFbo view3DFbo;
 };

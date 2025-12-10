@@ -17,9 +17,9 @@ void SceneRenderer::draw2D(const RenderDataDraw2D & data) {
 
 		// Vrifier si la forme est slectionne
 		bool isSelected = std::find(
-							  data.selectedIndices.begin(),
-							  data.selectedIndices.end(),
-							  i)
+						  data.selectedIndices.begin(),
+						  data.selectedIndices.end(),
+						  i)
 			!= data.selectedIndices.end();
 
 		// Dessiner la forme
@@ -34,15 +34,32 @@ void SceneRenderer::draw2D(const RenderDataDraw2D & data) {
 	}
 }
 
+// Helper to get the active camera (external if set, otherwise internal)
+static ofEasyCam & getActiveCam(ofEasyCam & internalCam, ofEasyCam * externalCam) {
+	return externalCam ? *externalCam : internalCam;
+}
+
 // ========== RENDU 3D ==========
 
 void SceneRenderer::draw3D(const RenderData3D & data) {
-	// Crer et configurer une camra temporaire
-	ofCamera camera;
-	applyCameraData(camera, data.camera);
+	// Use the provided drawing area as the viewport for 3D rendering
+	ofRectangle viewport = data.drawingArea;
+	if (viewport.width <= 0 || viewport.height <= 0) {
+		// fallback to full window
+		viewport.set(0, 0, ofGetWidth(), ofGetHeight());
+	}
 
-	// Dmarrer le rendu avec la camra
-	camera.begin();
+	ofEasyCam & cam = getActiveCam(sceneCam, externalCam);
+
+	// NOTE: We intentionally avoid overwriting external camera transforms to preserve user interactions
+	// Ensure camera aspect matches viewport
+	cam.setAspectRatio(viewport.width / viewport.height);
+
+	// Set viewport so subsequent drawing occurs inside the drawing area
+	ofViewport(viewport.x, viewport.y, viewport.width, viewport.height);
+
+	// Begin camera with explicit viewport
+	cam.begin(viewport);
 
 	if (data.enableLighting) {
 		ofLight light;
@@ -54,30 +71,74 @@ void SceneRenderer::draw3D(const RenderData3D & data) {
 		ofSetGlobalAmbientColor(data.lightColor * data.lightIntensity);
 	}
 
+	// Adapt grid/axis size to viewport
+	float viewSize = std::max(1.0f, std::min(viewport.width, viewport.height));
 	if (data.showGrid) {
 		ofPushStyle();
 		ofSetColor(80, 90, 110);
-		ofDrawGrid(200.0f, 10, true, true, true, true);
+		ofDrawGrid(viewSize, 10, true, true, true, true);
 		ofPopStyle();
 	}
 
 	if (data.showAxes) {
-		ofDrawAxis(75.0f);
+		ofDrawAxis(viewSize * 0.5f);
 	}
 
 	// Couleur par dfaut pour les formes 3D
 	ofSetColor(255);
 
-	// Dessiner toutes les formes 3D
+	// Calculer la bounding box de la scène pour adapter l'échelle si nécessaire
+	bool hasVertices = false;
+	glm::vec3 sceneMin(FLT_MAX), sceneMax(-FLT_MAX);
 	for (const auto & shape : data.shapes) {
-		shape3DRenderer.drawShape3D(shape);
+		const ofMesh & m = shape.mesh3D;
+		for (std::size_t i = 0; i < m.getNumVertices(); ++i) {
+			const glm::vec3 & v = m.getVertex(i);
+			hasVertices = true;
+			sceneMin = glm::min(sceneMin, v);
+			sceneMax = glm::max(sceneMax, v);
+		}
+	}
+
+	float scaleFactor = 1.0f;
+	glm::vec3 sceneCenter(0.0f);
+	if (hasVertices) {
+		glm::vec3 extent = sceneMax - sceneMin;
+		float maxExtent = std::max(std::max(extent.x, extent.y), extent.z);
+		if (maxExtent > 0.0f) {
+			// Choose a target size based on the viewport so the scene fits visually
+			const float targetMaxSize = viewSize * 0.5f; // occupy about half of the viewport
+			scaleFactor = std::min(1.0f, targetMaxSize / maxExtent);
+			sceneCenter = (sceneMin + sceneMax) * 0.5f;
+		}
+	}
+
+	// Dessiner toutes les formes 3D (avec recentrage et mise à l'échelle globale)
+	if (hasVertices && scaleFactor != 1.0f) {
+		ofPushMatrix();
+		// Recentre la scène autour de l'origine puis applique l'échelle
+		ofTranslate(-sceneCenter.x, -sceneCenter.y, -sceneCenter.z);
+		ofScale(scaleFactor, scaleFactor, scaleFactor);
+
+		for (const auto & shape : data.shapes) {
+			shape3DRenderer.drawShape3D(shape);
+		}
+
+		ofPopMatrix();
+	} else {
+		// Aucun ajustement nécessaire
+		for (const auto & shape : data.shapes) {
+			shape3DRenderer.drawShape3D(shape);
+		}
 	}
 
 	if (data.enableLighting) {
 		ofDisableLighting();
 	}
 
-	camera.end();
+	// End camera and restore full viewport
+	cam.end();
+	ofViewport(0, 0, ofGetWidth(), ofGetHeight());
 }
 
 // ========== RENDU QUAD VIEW ==========
@@ -110,9 +171,10 @@ void SceneRenderer::drawSingleCameraView(
 	// Crer et configurer la camra
 	ofCamera camera;
 	applyCameraData(camera, cameraData);
+	camera.setAspectRatio(viewport.width / viewport.height);
 
 	// Dessiner avec cette camra
-	camera.begin();
+	camera.begin(viewport);
 	ofSetColor(255);
 
 	for (const auto & shape : shapes) {

@@ -406,6 +406,7 @@
     <ClInclude Include="src\rendering\curves\controlPointsRenderer.h" />
     <ClInclude Include="src\rendering\curves\curvesRenderer.h" />
     <ClInclude Include="src\rendering\image\imageRenderer.h" />
+    <ClInclude Include="src\rendering\ProceduralTexture.h" />
     <ClInclude Include="src\rendering\renderData.h" />
     <ClInclude Include="src\rendering\renderer.h" />
     <ClInclude Include="src\objects\sceneGraph.h" />

@@ -19,6 +19,7 @@ ofMesh ShapeManager3D::to3DDraw(const Shape & shape) {
 ofMesh ShapeManager3D::to3DCube(const Shape & shape, ofMesh mesh) {
 	float width, height;
 
+	// Calcul largeur et hauteur
 	if (shape.type == "square") {
 		float side = abs(shape.end.x - shape.start.x);
 		width = side;
@@ -27,6 +28,7 @@ ofMesh ShapeManager3D::to3DCube(const Shape & shape, ofMesh mesh) {
 		width = abs(shape.end.x - shape.start.x);
 		height = abs(shape.end.y - shape.start.y);
 	}
+
 	float centerX = (shape.start.x + shape.end.x) / 2.0f;
 	float centerY = (shape.start.y + shape.end.y) / 2.0f;
 	float depth = std::min(width, height);
@@ -34,15 +36,17 @@ ofMesh ShapeManager3D::to3DCube(const Shape & shape, ofMesh mesh) {
 	float halfW = width / 2.0f;
 	float halfH = height / 2.0f;
 
-	mesh.addVertex({ centerX - halfW, centerY - halfH, -halfZ });
-	mesh.addVertex({ centerX + halfW, centerY - halfH, -halfZ });
-	mesh.addVertex({ centerX + halfW, centerY + halfH, -halfZ });
-	mesh.addVertex({ centerX - halfW, centerY + halfH, -halfZ });
-	mesh.addVertex({ centerX - halfW, centerY - halfH, halfZ });
-	mesh.addVertex({ centerX + halfW, centerY - halfH, halfZ });
-	mesh.addVertex({ centerX + halfW, centerY + halfH, halfZ });
-	mesh.addVertex({ centerX - halfW, centerY + halfH, halfZ });
+	// Ajouter les vertices
+	mesh.addVertex({ centerX - halfW, centerY - halfH, -halfZ }); // 0
+	mesh.addVertex({ centerX + halfW, centerY - halfH, -halfZ }); // 1
+	mesh.addVertex({ centerX + halfW, centerY + halfH, -halfZ }); // 2
+	mesh.addVertex({ centerX - halfW, centerY + halfH, -halfZ }); // 3
+	mesh.addVertex({ centerX - halfW, centerY - halfH, halfZ }); // 4
+	mesh.addVertex({ centerX + halfW, centerY - halfH, halfZ }); // 5
+	mesh.addVertex({ centerX + halfW, centerY + halfH, halfZ }); // 6
+	mesh.addVertex({ centerX - halfW, centerY + halfH, halfZ }); // 7
 
+	// Ajouter les indices pour les faces
 	int faces[] = {
 		0, 1, 2, 0, 2, 3, // front
 		4, 7, 6, 4, 6, 5, // back
@@ -51,9 +55,20 @@ ofMesh ShapeManager3D::to3DCube(const Shape & shape, ofMesh mesh) {
 		1, 5, 6, 1, 6, 2, // right
 		0, 3, 7, 0, 7, 4 // left
 	};
-
-	for (int i = 0; i < 36; i++)
+	for (int i = 0; i < 36; i++) {
 		mesh.addIndex(faces[i]);
+	}
+
+	// Ajouter les coordonnées de texture (UVs)
+	// Chaque face a ses UVs de 0 à 1
+	mesh.addTexCoord({ 0, 0 }); // 0
+	mesh.addTexCoord({ 1, 0 }); // 1
+	mesh.addTexCoord({ 1, 1 }); // 2
+	mesh.addTexCoord({ 0, 1 }); // 3
+	mesh.addTexCoord({ 0, 0 }); // 4
+	mesh.addTexCoord({ 1, 0 }); // 5
+	mesh.addTexCoord({ 1, 1 }); // 6
+	mesh.addTexCoord({ 0, 1 }); // 7
 
 	return mesh;
 }

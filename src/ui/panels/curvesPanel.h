@@ -20,6 +20,9 @@ public:
 	bool isClearPointsRequested() const { return clearPointsRequested; }
 	void setPlacePointsMode(bool mode) { placePointsMode = mode; }
 
+	bool isPlayAnimationRequested() const { return playAnimationRequested; }
+	bool isStopAnimationRequested() const { return stopAnimationRequested; }
+
 private:
 	ofxPanel curvesPanel;
 	ofxButton placePointsButton;
@@ -27,6 +30,14 @@ private:
 	ofxButton clearCurvesButton;
 	ofxButton undoPointButton;
 	ofxButton clearPointsButton;
+
+	ofxButton playAnimationButton;
+	ofxButton stopAnimationButton;
+	bool playAnimationRequested = false;
+	bool stopAnimationRequested = false;
+
+	void onPlayAnimation();
+	void onStopAnimation();
 
 	bool placePointsMode = false;
 	bool generateCurveRequested = false;

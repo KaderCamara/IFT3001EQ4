@@ -51,15 +51,13 @@ void Renderer::drawCurvesCanvas(const RenderDataCurves2D & data) {
 	ofPushMatrix();
 	ofTranslate(-curvesDrawingArea.x, -curvesDrawingArea.y);
 
-	// Dessiner le background spécifique aux courbes
 	drawBackground(curvesDrawingArea, data.backgroundColor);
 
-	// Configurer les paramètres visuels depuis les données
 	currentLineWidth = data.lineWidth;
 	currentStrokeColor = data.strokeColor;
 
-	// Pousser les données au renderer de courbes
-	curvesRenderer.render(data.controlPoints, data.curves);
+	// MODIFIER l'appel:
+	curvesRenderer.render(data.controlPoints, data.curves, data.animator);
 
 	ofPopMatrix();
 	curvesFbo.end();

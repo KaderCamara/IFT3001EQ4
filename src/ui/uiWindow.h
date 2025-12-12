@@ -32,11 +32,29 @@ public:
 	float getLineWidth() const { return view2DPanel.getLineWidth(); }
 	ofColor getStrokeColor() const { return view2DPanel.getStrokeColor(); }
 	ofColor getFillColor() const { return view2DPanel.getFillColor(); }
-	ofColor getBackgroundColor() const { return view2DPanel.getBackgroundColor(); }
+
+	// Transform accessors required by Application
 	float getTranslateX() const { return view2DPanel.getTranslateX(); }
 	float getTranslateY() const { return view2DPanel.getTranslateY(); }
 	float getRotation() const { return view2DPanel.getRotation(); }
 	float getScale() const { return view2DPanel.getScale(); }
+
+	// Return background color depending on active tab: Image has its own default background
+	ofColor getBackgroundColor() const {
+		if (imageTab.active) {
+			// Image mode uses a neutral darker background to better show images
+			return ofColor(20, 20, 20);
+		}
+		// Default to the 2D view background when 2D view is active
+		if (view2DPanel.isVisible()) {
+			return view2DPanel.getBackgroundColor();
+		}
+		// Fallback background
+		return ofColor(180, 200, 220);
+	}
+
+	// Expose active tab states
+	bool isImageTabActive() const { return imageTab.active; }
 
 	// IMAGE PANEL
 	bool isImportImageRequested() const { return imagePanel.isImportImageRequested(); }
@@ -75,6 +93,11 @@ public:
 	void clearRequests();
 
 	std::string statusMessage;
+
+	bool isPlayAnimationRequested() const { return view2DPanel.isPlayAnimationRequested(); }
+	bool isStopAnimationRequested() const { return view2DPanel.isStopAnimationRequested(); }
+	void clearPlayAnimationRequest() { view2DPanel.clearRequests(); }
+	void clearStopAnimationRequest() { view2DPanel.clearRequests(); }
 
 private:
 	ImagePanel imagePanel;

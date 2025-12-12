@@ -11,11 +11,17 @@ void CurvesPanel::setup() {
 	curvesPanel.add(undoPointButton.setup("Undo point"));
 	curvesPanel.add(clearPointsButton.setup("Clear points"));
 
+	curvesPanel.add(playAnimationButton.setup("Play Animation"));
+	curvesPanel.add(stopAnimationButton.setup("Stop Animation"));
+
 	placePointsButton.addListener(this, &CurvesPanel::onPlacePointsPressed);
 	generateBezierCurveButton.addListener(this, &CurvesPanel::onGenerateCurvePressed);
 	clearCurvesButton.addListener(this, &CurvesPanel::onClearCurvesPressed);
 	undoPointButton.addListener(this, &CurvesPanel::onUndoPointPressed);
 	clearPointsButton.addListener(this, &CurvesPanel::onClearPointsPressed);
+
+	playAnimationButton.addListener(this, &CurvesPanel::onPlayAnimation);
+	stopAnimationButton.addListener(this, &CurvesPanel::onStopAnimation);
 }
 
 void CurvesPanel::draw(float x, float y, float width) {
@@ -29,6 +35,9 @@ void CurvesPanel::clearRequests() {
 	clearCurvesRequested = false;
 	undoPointRequested = false;
 	clearPointsRequested = false;
+
+	playAnimationRequested = false;
+	stopAnimationRequested = false;
 }
 
 void CurvesPanel::onPlacePointsPressed() {
@@ -54,4 +63,14 @@ void CurvesPanel::onUndoPointPressed() {
 void CurvesPanel::onClearPointsPressed() {
 	clearPointsRequested = true;
 	ofLogNotice("CurvesPanel") << "Clear points requested";
+}
+
+void CurvesPanel::onPlayAnimation() {
+	playAnimationRequested = true;
+	ofLogNotice("CurvesPanel") << "Play animation requested";
+}
+
+void CurvesPanel::onStopAnimation() {
+	stopAnimationRequested = true;
+	ofLogNotice("CurvesPanel") << "Stop animation requested";
 }

@@ -22,8 +22,8 @@ public:
 	void hide() { isActive = false; }
 
 	// Mode actuel
-	bool isDrawModeActive() const { return activeSection == Section::Draw; }
-	bool isCurvesModeActive() const { return activeSection == Section::Curves; }
+	bool isDrawModeActive() const { return currentMode == Mode::Draw; }
+	bool isCurvesModeActive() const { return currentMode == Mode::Curves; }
 
 	// Accesseurs DrawingPanel
 	std::string getCurrentShape() const { return drawingPanel.getCurrentShape(); }
@@ -50,6 +50,8 @@ public:
 	void clearClearCurvesRequest() { curvesPanel.clearRequests(); }
 	void clearUndoPointRequest() { curvesPanel.clearRequests(); }
 	void clearClearPointsRequest() { curvesPanel.clearRequests(); }
+	bool isPlayAnimationRequested() const { return curvesPanel.isPlayAnimationRequested(); }
+	bool isStopAnimationRequested() const { return curvesPanel.isStopAnimationRequested(); }
 
 private:
 	enum class Section {
@@ -65,7 +67,7 @@ private:
 
 	bool isActive = false;
 	Section activeSection = Section::Draw;
-	Mode currentMode = Mode::Navigation;
+	Mode currentMode = Mode::Draw; // default to Draw so 2D draw mode is active
 
 	ofxPanel navigationPanel;
 	ofxButton drawButton;

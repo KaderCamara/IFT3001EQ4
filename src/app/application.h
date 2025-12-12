@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "../controllers/CurvesController.h"
+#include "../controllers/curvesController.h"
 #include "../controllers/ImageController.h"
 #include "../controllers/SceneController.h"
 #include "../controllers/TransformController.h"

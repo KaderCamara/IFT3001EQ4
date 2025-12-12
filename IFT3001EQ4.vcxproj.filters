@@ -98,7 +98,6 @@
     <ClCompile Include="src\rendering\scene\sceneRenderer.cpp" />
     <ClCompile Include="src\rendering\image\imageRenderer.cpp" />
     <ClCompile Include="src\controllers\imageController.cpp" />
-    <ClCompile Include="src\controllers\curvesController.cpp" />
     <ClCompile Include="src\controllers\curvesController.h" />
     <ClCompile Include="src\controllers\transformController.cpp" />
     <ClCompile Include="src\services\transformServices.cpp" />
@@ -114,6 +113,8 @@
     <ClCompile Include="src\ui\panels\vectorEditionPanel.cpp" />
     <ClCompile Include="src\ui\panels\3dEdition\sceneAssetsPanel.cpp" />
     <ClCompile Include="src\ui\panels\view2DPanel.cpp" />
+    <ClCompile Include="src\objects\curveAnimator.cpp" />
+    <ClCompile Include="src\rendering\curves\AnimatedObjectRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -545,11 +546,14 @@
     <ClInclude Include="src\ui\panels\vectorEditionPanel.h" />
     <ClInclude Include="src\ui\panels\3dEdition\sceneAssetsPanel.h" />
     <ClInclude Include="src\ui\panels\view2DPanel.h" />
+    <ClInclude Include="src\objects\curveAnimator.h" />
+    <ClInclude Include="src\rendering\curves\AnimatedObjectRenderer.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="icon.rc" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitignore" />
+    <None Include="dll\x64\placeholder.dll" />
   </ItemGroup>
 </Project>

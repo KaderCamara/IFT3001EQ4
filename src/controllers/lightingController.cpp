@@ -17,19 +17,23 @@ LightingData LightingController::prepareLightingData(const LightingPanel & panel
 
 	// ========== DETERMINE SHADING MODEL ==========
 	// Priority order based on what's toggled on
-	if (panel.isPBREnabled()) {
-		data.currentModel = LightingData::ShadingModel::PBR;
+	if (panel.isLambertEnabled()) {
+		data.currentModel = LightingData::ShadingModel::LAMBERT;
 	} else if (panel.isBlinnPhongEnabled()) {
 		data.currentModel = LightingData::ShadingModel::BLINN_PHONG;
 	} else if (panel.isPhongEnabled()) {
 		data.currentModel = LightingData::ShadingModel::PHONG;
 	} else if (panel.isGouraudEnabled()) {
 		data.currentModel = LightingData::ShadingModel::GOURAUD;
-	} else if (panel.isLambertEnabled()) {
-		data.currentModel = LightingData::ShadingModel::LAMBERT;
-	} else {
-		// Default to FLAT if nothing is enabled (no lighting calculation)
+	} else if (panel.isFlatEnabled()) {
 		data.currentModel = LightingData::ShadingModel::FLAT;
+	} else if (panel.isCelEnabled()) {
+		data.currentModel = LightingData::ShadingModel::CEL;
+	} else if (panel.isGoochEnabled()) {
+		data.currentModel = LightingData::ShadingModel::GOOCH;
+	} else {
+		// Default to LAMBERT if nothing is enabled (no lighting calculation)
+		data.currentModel = LightingData::ShadingModel::LAMBERT;
 	}
 
 	// ========== SET MATERIAL INDEX ==========
@@ -59,11 +63,11 @@ LightingData LightingController::extractFromPanel(const LightingPanel & panel) c
 	data.contrast = panel.getContrast();
 
 	// Advanced settings
-	data.useEnvironmentMap = panel.isEnvironmentMapEnabled();
-	data.useHDRI = panel.isHDRIEnabled();
-	data.castShadows = panel.isShadowsEnabled();
-	data.useAmbientOcclusion = panel.isAmbientOcclusionEnabled();
-	data.useBloom = panel.isBloomEnabled();
+	//data.useEnvironmentMap = panel.isEnvironmentMapEnabled();
+	//data.useHDRI = panel.isHDRIEnabled();
+	//data.castShadows = panel.isShadowsEnabled();
+	//data.useAmbientOcclusion = panel.isAmbientOcclusionEnabled();
+	//.useBloom = panel.isBloomEnabled();
 
 	return data;
 }

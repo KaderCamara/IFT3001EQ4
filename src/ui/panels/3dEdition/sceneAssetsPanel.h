@@ -29,9 +29,9 @@ public:
 	bool isNormalsEnabled() const { return static_cast<bool>(const_cast<ofxToggle&>(toggleNormals)); }
 
 	// Lighting
-	bool isLightingEnabled() const { return static_cast<bool>(const_cast<ofxToggle&>(toggleLighting)); }
-	float getLightIntensity() const { return static_cast<float>(const_cast<ofxFloatSlider&>(lightIntensity)); }
-	ofColor getLightColor() const { return static_cast<ofColor>(const_cast<ofxColorSlider&>(lightColor)); }
+	//bool isLightingEnabled() const { return static_cast<bool>(const_cast<ofxToggle&>(toggleLighting)); }
+	//float getLightIntensity() const { return static_cast<float>(const_cast<ofxFloatSlider&>(lightIntensity)); }
+	//ofColor getLightColor() const { return static_cast<ofColor>(const_cast<ofxColorSlider&>(lightColor)); }
 
 private:
 	bool visible = true;
@@ -50,10 +50,10 @@ private:
 	ofxToggle toggleBoundingBoxes;
 	ofxToggle toggleNormals;
 
-	ofxLabel lightingTitle;
-	ofxToggle toggleLighting;
-	ofxFloatSlider lightIntensity;
-	ofxColorSlider lightColor;
+	//ofxLabel lightingTitle;
+	//ofxToggle toggleLighting;
+	//ofxFloatSlider lightIntensity;
+	//ofxColorSlider lightColor;
 
 	void onImport3D();
 	void onClear3D();

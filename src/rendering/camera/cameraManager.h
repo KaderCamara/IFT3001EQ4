@@ -4,6 +4,8 @@
 #include "../../objects/shape.h"
 #include "ofMain.h"
 #include <vector>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 class CameraManager {
 public:

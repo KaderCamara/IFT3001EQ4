@@ -39,6 +39,12 @@ public:
 	bool isBlinnPhongEnabled() const {return static_cast<ofParameter<bool> &>(const_cast<ofxToggle &>(toggleBlinnPhong).getParameter()).get();}
 	int getMaterialCount() const {return static_cast<ofParameter<int> &>(const_cast<ofxIntSlider &>(materialCount).getParameter()).get();}
 
+	//non realistic illumination
+	bool isFlatEnabled() const { return static_cast<ofParameter<bool> &>(const_cast<ofxToggle &>(toggleFlat).getParameter()).get(); }
+	bool isCelEnabled() const { return static_cast<ofParameter<bool> &>(const_cast<ofxToggle &>(toggleCel).getParameter()).get(); }
+	bool isGoochEnabled() const { return static_cast<ofParameter<bool> &>(const_cast<ofxToggle &>(toggleGooch).getParameter()).get(); }
+	
+
 	// Light Types
 	bool isPointTypeEnabled() const {return static_cast<ofParameter<bool> &>(const_cast<ofxToggle &>(togglePointType).getParameter()).get();}
 	bool isDirectionalTypeEnabled() const {return static_cast<ofParameter<bool> &>(const_cast<ofxToggle &>(toggleDirectionalType).getParameter()).get();}
@@ -118,6 +124,12 @@ private:
 	ofxFloatSlider exposureSlider;
 	ofxFloatSlider temperatureSlider;
 	ofxFloatSlider contrastSlider;
+
+	//animated shading
+	ofxLabel lblNonRealistic;
+	ofxToggle toggleFlat;
+	ofxToggle toggleCel;
+	ofxToggle toggleGooch;
 
 	float enforcedX = 0.f;
 	float enforcedY = 0.f;

@@ -38,9 +38,9 @@ public:
 	bool isGridEnabled() const { return sceneAssetsPanel.isGridEnabled(); }
 	bool isAxesEnabled() const { return sceneAssetsPanel.isAxesEnabled(); }
 	bool isNormalsEnabled() const { return sceneAssetsPanel.isNormalsEnabled(); }
-	bool isLightingEnabled() const { return sceneAssetsPanel.isLightingEnabled(); }
-	float getLightIntensity() const { return sceneAssetsPanel.getLightIntensity(); }
-	ofColor getLightColor() const { return sceneAssetsPanel.getLightColor(); }
+	//bool isLightingEnabled() const { return sceneAssetsPanel.isLightingEnabled(); }
+	//float getLightIntensity() const { return sceneAssetsPanel.getLightIntensity(); }
+	//ofColor getLightColor() const { return sceneAssetsPanel.getLightColor(); }
 	const LightingPanel & getLightingPanel() const {return lightingPanel;}
 
 	bool isImport3DModelRequested() const { return sceneAssetsPanel.isImportRequested(); }

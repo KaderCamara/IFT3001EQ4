@@ -74,9 +74,9 @@ public:
 	bool isGridEnabled() const { return view3DPanel.isGridEnabled(); }
 	bool isAxesEnabled() const { return view3DPanel.isAxesEnabled(); }
 	bool isNormalsEnabled() const { return view3DPanel.isNormalsEnabled(); }
-	bool isLightingEnabled() const { return view3DPanel.isLightingEnabled(); }
-	float getLightingIntensity() const { return view3DPanel.getLightIntensity(); }
-	ofColor getLightingColor() const { return view3DPanel.getLightColor(); }
+	//bool isLightingEnabled() const { return view3DPanel.isLightingEnabled(); }
+	//float getLightingIntensity() const { return view3DPanel.getLightIntensity(); }
+	//ofColor getLightingColor() const { return view3DPanel.getLightColor(); }
 	const LightingPanel & getLightingPanel() const {return view3DPanel.getLightingPanel();}
 
 	bool is3DTabActive() const { return view3DActive; }

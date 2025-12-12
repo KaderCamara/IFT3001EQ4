@@ -15,15 +15,15 @@ void SceneAssetsPanel::setup() {
 	panel.add(toggleBoundingBoxes.setup("Bounding boxes", false));
 	panel.add(toggleNormals.setup("Show normals", false));
 
-	lightingTitle.setup("Lighting", "");
-	panel.add(&lightingTitle);
-	panel.add(toggleLighting.setup("Enable lighting", false));
-	panel.add(lightIntensity.setup("Light intensity", 1.0f, 0.0f, 3.0f));
-	panel.add(lightColor.setup("Light color", ofColor::white, ofColor(0), ofColor(255)));
+	//lightingTitle.setup("Lighting", "");
+	//panel.add(&lightingTitle);
+	//panel.add(toggleLighting.setup("Enable lighting", false));
+	//panel.add(lightIntensity.setup("Light intensity", 1.0f, 0.0f, 3.0f));
+	//panel.add(lightColor.setup("Light color", ofColor::white, ofColor(0), ofColor(255)));
 
 	import3DButton.addListener(this, &SceneAssetsPanel::onImport3D);
 	clear3DButton.addListener(this, &SceneAssetsPanel::onClear3D);
-	toggleLighting.addListener(this, &SceneAssetsPanel::onLightingToggle);
+	//toggleLighting.addListener(this, &SceneAssetsPanel::onLightingToggle);
 }
 
 void SceneAssetsPanel::draw(float x, float y, float width) {

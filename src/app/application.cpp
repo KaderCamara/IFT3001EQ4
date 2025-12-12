@@ -120,33 +120,52 @@ void Application::update() {
 
 	// Track key lighting states
 	static bool lastSunEnabled = false;
-	static bool lastPointEnabled = false;
-	static bool lastSpotEnabled = false;
+	//static bool lastPointEnabled = false;
+	//static bool lastSpotEnabled = false;
 	static bool lastPhongEnabled = false;
 	static int lastMaterialCount = 0;
+	static bool lastLambertEnabled = false;
+	static bool lastGouraudEnabled = false;
+	static bool lastBlinnPhongEnabled = false;
+	static bool lastFlatEnabled = false;
+	static bool lastCelEnabled = false;
+	static bool lastGoochEnabled = false;
 
 	bool sunEnabled = lightingPanel.isSunLightEnabled();
-	bool pointEnabled = lightingPanel.isPointLightEnabled();
-	bool spotEnabled = lightingPanel.isSpotLightEnabled();
+	//bool pointEnabled = lightingPanel.isPointLightEnabled();
+	//bool spotEnabled = lightingPanel.isSpotLightEnabled();
 	bool phongEnabled = lightingPanel.isPhongEnabled();
 	int materialCount = lightingPanel.getMaterialCount();
+	bool LambertEnabled = lightingPanel.isLambertEnabled();
+	bool GoureaudEnabled = lightingPanel.isGouraudEnabled();
+	bool BlinnPhongEnabled = lightingPanel.isBlinnPhongEnabled();
+	bool FlatEnabled = lightingPanel.isFlatEnabled();
+	bool CelEnabled = lightingPanel.isCelEnabled();
+	bool GoochEnabled = lightingPanel.isGoochEnabled();
 
 	// Detect changes
-	if (sunEnabled != lastSunEnabled || pointEnabled != lastPointEnabled || spotEnabled != lastSpotEnabled || phongEnabled != lastPhongEnabled || materialCount != lastMaterialCount) {
+	if (sunEnabled != lastSunEnabled || LambertEnabled != lastLambertEnabled || GoureaudEnabled != lastGouraudEnabled || BlinnPhongEnabled != lastBlinnPhongEnabled
+		|| phongEnabled != lastPhongEnabled || materialCount != lastMaterialCount || FlatEnabled != lastFlatEnabled || CelEnabled != lastCelEnabled || GoochEnabled != lastGoochEnabled) {
 
 		lightingDataNeedsUpdate = true;
 
 		ofLogNotice("Application") << "Lighting panel changed - update scheduled "
-								   << "(Sun:" << sunEnabled << " Point:" << pointEnabled
-								   << " Spot:" << spotEnabled << " Phong:" << phongEnabled
+								   << "(Sun:" << sunEnabled << " Lambert:" << LambertEnabled
+								   << " Goureaud:" << GoureaudEnabled << " BlinnPhong:" << BlinnPhongEnabled
+								   << " Phong:" << phongEnabled << " Flat:" << FlatEnabled
+								   << " Cel:" << CelEnabled << " Gooch:" << GoochEnabled
 								   << " Material:" << materialCount << ")";
 
 		// Update tracking
 		lastSunEnabled = sunEnabled;
-		lastPointEnabled = pointEnabled;
-		lastSpotEnabled = spotEnabled;
 		lastPhongEnabled = phongEnabled;
 		lastMaterialCount = materialCount;
+		lastLambertEnabled = LambertEnabled;
+		lastGouraudEnabled = GoureaudEnabled;
+		lastBlinnPhongEnabled = BlinnPhongEnabled;
+		lastFlatEnabled = FlatEnabled;
+		lastCelEnabled = CelEnabled;
+		lastGoochEnabled = GoochEnabled;
 	}
 
 

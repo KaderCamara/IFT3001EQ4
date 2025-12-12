@@ -170,6 +170,46 @@ vec3 processLight(
     return result;
 }
 
+// ========== NON-REALISTIC SHADING ==========
+
+vec3 celShading(vec3 color, vec3 normal, vec3 viewDir) {
+    // Get main light direction (use first light if available, else default)
+    vec3 lightDir = normalize(vec3(1.0, -1.0, 0.5));
+    if (u_numLights > 0 && u_light0Type == 1) {
+        lightDir = normalize(-u_light0Direction);
+    }
+    
+    float intensity = max(dot(normal, lightDir), 0.0);
+    
+    // Quantize to discrete levels (default 4 levels)
+    int levels = 4;
+    intensity = floor(intensity * float(levels)) / float(levels);
+    
+    // Add edge detection for outlines
+    float edge = max(0.0, dot(normal, viewDir));
+    if (edge < 0.3) {
+        return vec3(0.0); // Black outline
+    }
+    
+    return color * max(intensity, 0.2); // Minimum 20% brightness
+}
+
+vec3 goochShading(vec3 normal) {
+    // Get main light direction
+    vec3 lightDir = normalize(vec3(1.0, -1.0, 0.5));
+    if (u_numLights > 0 && u_light0Type == 1) {
+        lightDir = normalize(-u_light0Direction);
+    }
+    
+    float t = (dot(normal, lightDir) + 1.0) * 0.5;
+    
+    // Warm color (lit areas) and cool color (shadow areas)
+    vec3 warmColor = vec3(1.0, 0.8, 0.4);  // Warm yellow-orange
+    vec3 coolColor = vec3(0.2, 0.3, 0.7);  // Cool blue
+    
+    return mix(coolColor, warmColor, t);
+}
+
 void main() {
     vec3 normal = normalize(v_normal);
     vec3 viewDir = normalize(u_viewPos - v_fragPos);
@@ -181,6 +221,14 @@ void main() {
     if (u_shadingModel == 5) {
         // Just use material diffuse color with ambient
         finalColor = finalColor + u_materialDiffuse;
+    }
+    // ========== CEL/TOON SHADING (7.5) ==========
+    else if (u_shadingModel == 6) {
+        finalColor = celShading(u_materialDiffuse, normal, viewDir);
+    }
+    // ========== GOOCH SHADING (7.5) ==========
+    else if (u_shadingModel == 7) {
+        finalColor = goochShading(normal);
     }
     // ========== REALISTIC SHADING ==========
     else {

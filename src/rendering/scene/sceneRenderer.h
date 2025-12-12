@@ -32,6 +32,8 @@ public:
 	SceneRenderer() = default;
 	~SceneRenderer() = default;
 
+	void setup();
+
 	// ========== MÉTHODES DE RENDU (VIEW PURE) ==========
 
 	/**
@@ -91,9 +93,12 @@ private:
 	 */
 	void drawSingleCameraView(
 		const std::vector<Shape> & shapes,
-		const CameraData & camera,
+		const CameraData & cameraData,
 		const ofRectangle & viewport,
-		const std::string & label);
+		const std::string & label,
+		const LightingData & lighting,
+		bool showGrid,
+		bool showAxes);
 
 	/**
 	 * @brief Dessine les séparateurs de la vue quad

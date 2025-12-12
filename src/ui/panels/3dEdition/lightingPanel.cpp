@@ -1,4 +1,4 @@
-#include "lightingPanel.h"
+﻿#include "lightingPanel.h"
 
 LightingPanel::LightingPanel() { }
 LightingPanel::~LightingPanel() { }
@@ -9,45 +9,45 @@ void LightingPanel::setup() {
 	lightingPanel.setBackgroundColor(ofColor(0, 0, 0, 0));
 	// Collapsible dropdown
 	lightingPanel.enableHeader();
-	lightingPanel.minimize();
+	//lightingPanel.minimize();
 
-	lblTitle.setup("-- Global Settings --", "");
-	toggleEnvironmentMap.setup("Use Environment Map", true);
-	toggleHDRI.setup("HDRI Background", true);
-	toggleShadows.setup("Cast Shadows", true);
-	toggleAmbientOcclusion.setup("Ambient Occlusion", true);
-	toggleBloom.setup("Bloom", false);
+	//lblTitle.setup("-- Global Settings --", "");
+	//toggleEnvironmentMap.setup("Use Environment Map", false); // ✅ DISABLED
+	//toggleHDRI.setup("HDRI Background", false); // ✅ DISABLED
+	//toggleShadows.setup("Cast Shadows", false); // ✅ DISABLED
+	//toggleAmbientOcclusion.setup("Ambient Occlusion", false); // ✅ DISABLED
+	//toggleBloom.setup("Bloom", false); // Already disabled
 
 	lblClassic.setup("-- Illumination Classique --", "");
-	toggleLambert.setup("Lambert", true);
-	toggleGouraud.setup("Gouraud", true);
-	togglePhong.setup("Phong", true);
-	toggleBlinnPhong.setup("Blinn-Phong", true);
-	materialCount.setup("Materials", 2, 0, 8);
-	togglePointType.setup("Point lights", true);
-	toggleDirectionalType.setup("Directional lights", true);
-	toggleSpotType.setup("Spot lights", true);
-	toggleAreaType.setup("Area lights", false);
+	toggleLambert.setup("Lambert", false); // ✅ DISABLED
+	toggleGouraud.setup("Gouraud", false); // ✅ DISABLED
+	togglePhong.setup("Phong", false); // ✅ DISABLED - Start with NO shading
+	toggleBlinnPhong.setup("Blinn-Phong", false); // ✅ DISABLED
+	materialCount.setup("Materials", 0, 0, 8); // ✅ Set to 0
+	togglePointType.setup("Point lights", false); // ✅ DISABLED
+	toggleDirectionalType.setup("Directional lights", false); // ✅ DISABLED
+	toggleSpotType.setup("Spot lights", false); // ✅ DISABLED
+	toggleAreaType.setup("Area lights", false); // Already disabled
 
 	lblSunLight.setup("-- Sun / Directional --", "");
-	toggleSunLight.setup("Enable Sun Light", true);
+	toggleSunLight.setup("Enable Sun Light", true); 
 	sunIntensity.setup("Sun Intensity", 1.0f, 0.0f, 5.0f);
 	sunAzimuth.setup("Azimuth", 45.0f, -180.0f, 180.0f);
 	sunElevation.setup("Elevation", 35.0f, -90.0f, 90.0f);
 
 	lblFillLights.setup("-- Fill Lights --", "");
-	togglePointLight.setup("Point Light", true);
+	togglePointLight.setup("Point Light", false); // ✅ DISABLED
 	pointIntensity.setup("Point Intensity", 0.7f, 0.0f, 5.0f);
-	toggleSpotLight.setup("Spot Light", false);
+	toggleSpotLight.setup("Spot Light", false); // Already disabled
 	spotIntensity.setup("Spot Intensity", 1.2f, 0.0f, 5.0f);
 	spotAngle.setup("Spot Angle", 30.0f, 1.0f, 90.0f);
 
 	lblModern.setup("-- Illumination Moderne --", "");
-	togglePBR.setup("PBR shading", true);
+	togglePBR.setup("PBR shading", false); // ✅ DISABLED
 	metallicity.setup("Metallic", 0.5f, 0.0f, 1.0f);
 	roughness.setup("Roughness", 0.4f, 0.0f, 1.0f);
-	toggleMicrofacets.setup("Microfacets", true);
-	toggleEnvLighting.setup("Env. lighting", true);
+	toggleMicrofacets.setup("Microfacets", false); // ✅ DISABLED
+	toggleEnvLighting.setup("Env. lighting", false); // ✅ DISABLED
 	ior.setup("IOR", 1.45f, 1.0f, 3.0f);
 
 	lblColorControls.setup("-- Color & Tone --", "");
@@ -56,11 +56,11 @@ void LightingPanel::setup() {
 	contrastSlider.setup("Contrast", 1.0f, 0.5f, 2.0f);
 
 	lightingPanel.add(&lblTitle);
-	lightingPanel.add(&toggleEnvironmentMap);
-	lightingPanel.add(&toggleHDRI);
-	lightingPanel.add(&toggleShadows);
-	lightingPanel.add(&toggleAmbientOcclusion);
-	lightingPanel.add(&toggleBloom);
+	//lightingPanel.add(&toggleEnvironmentMap);
+	//lightingPanel.add(&toggleHDRI);
+	//lightingPanel.add(&toggleShadows);
+	//lightingPanel.add(&toggleAmbientOcclusion);
+	//lightingPanel.add(&toggleBloom);
 
 	lightingPanel.add(&lblClassic);
 	lightingPanel.add(&toggleLambert);
@@ -68,10 +68,10 @@ void LightingPanel::setup() {
 	lightingPanel.add(&togglePhong);
 	lightingPanel.add(&toggleBlinnPhong);
 	lightingPanel.add(&materialCount);
-	lightingPanel.add(&togglePointType);
+	//lightingPanel.add(&togglePointType);
 	lightingPanel.add(&toggleDirectionalType);
-	lightingPanel.add(&toggleSpotType);
-	lightingPanel.add(&toggleAreaType);
+	//lightingPanel.add(&toggleSpotType);
+	//lightingPanel.add(&toggleAreaType);
 
 	lightingPanel.add(&lblSunLight);
 	lightingPanel.add(&toggleSunLight);
@@ -80,19 +80,19 @@ void LightingPanel::setup() {
 	lightingPanel.add(&sunElevation);
 
 	lightingPanel.add(&lblFillLights);
-	lightingPanel.add(&togglePointLight);
-	lightingPanel.add(&pointIntensity);
-	lightingPanel.add(&toggleSpotLight);
-	lightingPanel.add(&spotIntensity);
-	lightingPanel.add(&spotAngle);
+	//lightingPanel.add(&togglePointLight);
+	//lightingPanel.add(&pointIntensity);
+	//lightingPanel.add(&toggleSpotLight);
+	//lightingPanel.add(&spotIntensity);
+	//lightingPanel.add(&spotAngle);
 
-	lightingPanel.add(&lblModern);
-	lightingPanel.add(&togglePBR);
-	lightingPanel.add(&metallicity);
-	lightingPanel.add(&roughness);
-	lightingPanel.add(&toggleMicrofacets);
-	lightingPanel.add(&toggleEnvLighting);
-	lightingPanel.add(&ior);
+	//lightingPanel.add(&lblModern);
+	//lightingPanel.add(&togglePBR);
+	//lightingPanel.add(&metallicity);
+	//lightingPanel.add(&roughness);
+	//lightingPanel.add(&toggleMicrofacets);
+	//lightingPanel.add(&toggleEnvLighting);
+	//lightingPanel.add(&ior);
 
 	lightingPanel.add(&lblColorControls);
 	lightingPanel.add(&exposureSlider);

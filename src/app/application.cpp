@@ -13,12 +13,15 @@ void Application::setup() {
 	imageController.setup();
 	curvesController.setup();
 	transformController.setup();
+	lightingController.setup(); 
 
 	// ✅ PLUS BESOIN d'injecter les Controllers dans le Renderer
 	// Le Renderer est maintenant une VIEW pure
 
 	// Configuration du TransformController
 	transformController.setSceneGraph(&sceneController.getSceneGraph());
+	const LightingPanel & lightingPanel = uiWindow.getLightingPanel();
+	cachedLightingData = lightingController.prepareLightingData(lightingPanel);
 
 	ofLogNotice("Application") << "Setup complete - MVC architecture initialized";
 }
@@ -46,13 +49,25 @@ void Application::update() {
 	}
 
 	// ========== GESTION DES VUES ==========
-
-	if (uiWindow.isQuadViewRequested()) {
+	bool isQuadView = uiWindow.isQuadViewRequested();
+	bool is3DView = uiWindow.is3DviewRequested();
+	bool is2DView = uiWindow.is2DviewRequested();
+	if (isQuadView && !wasQuadView) {
 		sceneController.setViewQuadMode();
-	} else if (uiWindow.is3DviewRequested()) {
+		lightingDataNeedsUpdate = true;
+		wasQuadView = true;
+		was3DView = false;
+		ofLogNotice("Application") << "View changed to QUAD - lighting update scheduled";
+	} else if (is3DView && !was3DView) {
 		sceneController.setView3DMode();
-	} else if (uiWindow.is2DviewRequested()) {
+		lightingDataNeedsUpdate = true;
+		was3DView = true;
+		wasQuadView = false;
+		ofLogNotice("Application") << "View changed to 3D - lighting update scheduled";
+	} else if (is2DView) {
 		sceneController.setView2DMode();
+		wasQuadView = false;
+		was3DView = false;
 	}
 
 	// ========== GESTION DES COURBES ==========
@@ -85,6 +100,7 @@ void Application::update() {
 		if (!importedShapes.empty()) {
 			sceneController.addShapesToScene(importedShapes);
 			sceneController.setView3DMode();
+			lightingDataNeedsUpdate = true;  
 			ofLogNotice("Application") << "Successfully imported "
 									   << importedShapes.size() << " 3D shape(s)";
 		}
@@ -95,6 +111,49 @@ void Application::update() {
 		std::vector<Shape> filteredShapes = model3DImportManager.removeAll3DModels(currentShapes);
 		sceneController.setAllShapes(filteredShapes);
 	}
+
+
+	//////// check
+
+
+	const LightingPanel & lightingPanel = uiWindow.getLightingPanel();
+
+	// Track key lighting states
+	static bool lastSunEnabled = false;
+	static bool lastPointEnabled = false;
+	static bool lastSpotEnabled = false;
+	static bool lastPhongEnabled = false;
+	static int lastMaterialCount = 0;
+
+	bool sunEnabled = lightingPanel.isSunLightEnabled();
+	bool pointEnabled = lightingPanel.isPointLightEnabled();
+	bool spotEnabled = lightingPanel.isSpotLightEnabled();
+	bool phongEnabled = lightingPanel.isPhongEnabled();
+	int materialCount = lightingPanel.getMaterialCount();
+
+	// Detect changes
+	if (sunEnabled != lastSunEnabled || pointEnabled != lastPointEnabled || spotEnabled != lastSpotEnabled || phongEnabled != lastPhongEnabled || materialCount != lastMaterialCount) {
+
+		lightingDataNeedsUpdate = true;
+
+		ofLogNotice("Application") << "Lighting panel changed - update scheduled "
+								   << "(Sun:" << sunEnabled << " Point:" << pointEnabled
+								   << " Spot:" << spotEnabled << " Phong:" << phongEnabled
+								   << " Material:" << materialCount << ")";
+
+		// Update tracking
+		lastSunEnabled = sunEnabled;
+		lastPointEnabled = pointEnabled;
+		lastSpotEnabled = spotEnabled;
+		lastPhongEnabled = phongEnabled;
+		lastMaterialCount = materialCount;
+	}
+
+
+
+
+
+	//////////////////
 
 	// Clear des requêtes UI
 	uiWindow.clearRequests();
@@ -233,9 +292,17 @@ RenderData3D Application::prepareRenderData3D() {
 	data.showGrid = uiWindow.isGridEnabled();
 	data.showAxes = uiWindow.isAxesEnabled();
 	data.showNormals = uiWindow.isNormalsEnabled();
-	data.enableLighting = uiWindow.isLightingEnabled();
-	data.lightIntensity = uiWindow.getLightingIntensity();
-	data.lightColor = uiWindow.getLightingColor();
+
+	if (lightingDataNeedsUpdate) {
+		const LightingPanel & lightingPanel = uiWindow.getLightingPanel();
+		cachedLightingData = lightingController.prepareLightingData(lightingPanel);
+		lightingDataNeedsUpdate = false;
+	}
+	data.lighting = cachedLightingData;
+
+	//data.enableLighting = uiWindow.isLightingEnabled();
+	//data.lightIntensity = uiWindow.getLightingIntensity();
+	//data.lightColor = uiWindow.getLightingColor();
 
 	// Zone de dessin
 	data.drawingArea = uiWindow.getDrawingArea();
@@ -283,6 +350,16 @@ RenderDataQuad Application::prepareRenderDataQuad() {
 	// Options d'affichage
 	data.showBoundingBox = uiWindow.isShowBoundingBoxEnabled();
 	data.showWireframe = uiWindow.isWireframeEnabled();
+	data.showGrid = uiWindow.isGridEnabled(); // ✅ ADDED
+	data.showAxes = uiWindow.isAxesEnabled(); // ✅ ADDED
+
+	// Lighting data from panel
+	if (lightingDataNeedsUpdate) {
+		const LightingPanel & lightingPanel = uiWindow.getLightingPanel();
+		cachedLightingData = lightingController.prepareLightingData(lightingPanel);
+		lightingDataNeedsUpdate = false;
+	}
+	data.lighting = cachedLightingData;
 
 	return data;
 }

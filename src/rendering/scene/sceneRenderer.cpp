@@ -3,7 +3,13 @@
 #include "SceneRenderer.h"
 #include <algorithm>
 
-// ========== RENDU 2D ==========
+void SceneRenderer::setup() {
+	// 1. Initialiser le Shape3DRenderer pour charger le shader !
+	shape3DRenderer.setup();
+
+	ofLogNotice("SceneRenderer") << "Internal renderers initialized.";
+}
+	// ========== RENDU 2D ==========
 
 void SceneRenderer::draw2D(const RenderDataDraw2D & data) {
 	// Dessiner toutes les formes de la scne
@@ -41,7 +47,7 @@ static ofEasyCam & getActiveCam(ofEasyCam & internalCam, ofEasyCam * externalCam
 
 // ========== RENDU 3D ==========
 
-void SceneRenderer::draw3D(const RenderData3D & data) {
+/* void SceneRenderer::draw3D(const RenderData3D & data) {
 	// Use the provided drawing area as the viewport for 3D rendering
 	ofRectangle viewport = data.drawingArea;
 	if (viewport.width <= 0 || viewport.height <= 0) {
@@ -61,7 +67,7 @@ void SceneRenderer::draw3D(const RenderData3D & data) {
 	// Begin camera with explicit viewport
 	cam.begin(viewport);
 
-	if (data.enableLighting) {
+	/* if (data.enableLighting) {
 		ofLight light;
 		light.setDirectional();
 		light.setDiffuseColor(data.lightColor);
@@ -113,6 +119,8 @@ void SceneRenderer::draw3D(const RenderData3D & data) {
 		}
 	}
 
+	ofVec3f viewPos = cam.getPosition();
+
 	// Dessiner toutes les formes 3D (avec recentrage et mise à l'échelle globale)
 	if (hasVertices && scaleFactor != 1.0f) {
 		ofPushMatrix();
@@ -121,6 +129,110 @@ void SceneRenderer::draw3D(const RenderData3D & data) {
 		ofScale(scaleFactor, scaleFactor, scaleFactor);
 
 		for (const auto & shape : data.shapes) {
+			shape3DRenderer.drawShape3D(shape, data.lighting, viewPos);
+		}
+
+		ofPopMatrix();
+	} else {
+		// Aucun ajustement nécessaire
+		for (const auto & shape : data.shapes) {
+			shape3DRenderer.drawShape3D(shape, data.lighting, viewPos);
+		}
+	}
+
+	/* if (data.enableLighting) {
+		ofDisableLighting();
+	}
+
+	// End camera and restore full viewport
+	cam.end();
+	ofViewport(0, 0, ofGetWidth(), ofGetHeight());
+}*/
+
+/* GOOD ONE !!
+void SceneRenderer::draw3D(const RenderData3D & data) {
+	// Use the provided drawing area as the viewport for 3D rendering
+	ofRectangle viewport = data.drawingArea;
+	if (viewport.width <= 0 || viewport.height <= 0) {
+		// fallback to full window
+		viewport.set(0, 0, ofGetWidth(), ofGetHeight());
+	}
+
+	ofEasyCam & cam = getActiveCam(sceneCam, externalCam);
+
+	// Ensure camera aspect matches viewport
+	cam.setAspectRatio(viewport.width / viewport.height);
+
+	// Set viewport so subsequent drawing occurs inside the drawing area
+	ofViewport(viewport.x, viewport.y, viewport.width, viewport.height);
+
+	// Begin camera with explicit viewport
+	cam.begin(viewport);
+
+	// --- ANCIEN BLOC D'ÉCLAIRAGE (RESTAURÉ) ---
+	// Note : Ce bloc utilise l'éclairage interne d'OpenFrameworks.
+	if (data.enableLighting) {
+		ofLight light;
+		light.setDirectional();
+		light.setDiffuseColor(data.lightColor);
+		light.setSpecularColor(data.lightColor);
+		light.setPosition(300, 400, 500);
+		light.enable();
+		ofSetGlobalAmbientColor(data.lightColor * data.lightIntensity);
+	}
+	// ------------------------------------------
+
+	// Adapt grid/axis size to viewport
+	float viewSize = std::max(1.0f, std::min(viewport.width, viewport.height));
+	if (data.showGrid) {
+		ofPushStyle();
+		ofSetColor(80, 90, 110);
+		ofDrawGrid(viewSize, 10, true, true, true, true);
+		ofPopStyle();
+	}
+
+	if (data.showAxes) {
+		ofDrawAxis(viewSize * 0.5f);
+	}
+
+	// Couleur par dfaut pour les formes 3D
+	ofSetColor(255);
+
+	// Calculer la bounding box de la scène pour adapter l'échelle si nécessaire
+	bool hasVertices = false;
+	glm::vec3 sceneMin(FLT_MAX), sceneMax(-FLT_MAX);
+	for (const auto & shape : data.shapes) {
+		const ofMesh & m = shape.mesh3D;
+		for (std::size_t i = 0; i < m.getNumVertices(); ++i) {
+			const glm::vec3 & v = m.getVertex(i);
+			hasVertices = true;
+			sceneMin = glm::min(sceneMin, v);
+			sceneMax = glm::max(sceneMax, v);
+		}
+	}
+
+	float scaleFactor = 1.0f;
+	glm::vec3 sceneCenter(0.0f);
+	if (hasVertices) {
+		glm::vec3 extent = sceneMax - sceneMin;
+		float maxExtent = std::max(std::max(extent.x, extent.y), extent.z);
+		if (maxExtent > 0.0f) {
+			// Choose a target size based on the viewport so the scene fits visually
+			const float targetMaxSize = viewSize * 0.5f; // occupy about half of the viewport
+			scaleFactor = std::min(1.0f, targetMaxSize / maxExtent);
+			sceneCenter = (sceneMin + sceneMax) * 0.5f;
+		}
+	}
+
+	// Dessiner toutes les formes 3D (avec recentrage et mise à l'échelle globale)
+	if (hasVertices && scaleFactor != 1.0f) {
+		ofPushMatrix();
+		// Recentre la scène autour de l'origine puis applique l'échelle
+		ofTranslate(-sceneCenter.x, -sceneCenter.y, -sceneCenter.z);
+		ofScale(scaleFactor, scaleFactor, scaleFactor);
+
+		for (const auto & shape : data.shapes) {
+			// Appel à l'ancienne signature
 			shape3DRenderer.drawShape3D(shape);
 		}
 
@@ -128,12 +240,105 @@ void SceneRenderer::draw3D(const RenderData3D & data) {
 	} else {
 		// Aucun ajustement nécessaire
 		for (const auto & shape : data.shapes) {
+			// Appel à l'ancienne signature
 			shape3DRenderer.drawShape3D(shape);
 		}
 	}
 
+	// --- ANCIEN BLOC D'ÉCLAIRAGE (RESTAURÉ) ---
 	if (data.enableLighting) {
 		ofDisableLighting();
+	}
+	// ------------------------------------------
+
+	// End camera and restore full viewport
+	cam.end();
+	ofViewport(0, 0, ofGetWidth(), ofGetHeight());
+}*/
+
+void SceneRenderer::draw3D(const RenderData3D & data) {
+	// Use the provided drawing area as the viewport for 3D rendering
+	ofRectangle viewport = data.drawingArea;
+	if (viewport.width <= 0 || viewport.height <= 0) {
+		// fallback to full window
+		viewport.set(0, 0, ofGetWidth(), ofGetHeight());
+	}
+
+	ofEasyCam & cam = getActiveCam(sceneCam, externalCam);
+
+	// Ensure camera aspect matches viewport
+	cam.setAspectRatio(viewport.width / viewport.height);
+
+	// Set viewport so subsequent drawing occurs inside the drawing area
+	ofViewport(viewport.x, viewport.y, viewport.width, viewport.height);
+
+	// Begin camera with explicit viewport
+	cam.begin(viewport);
+
+
+	// Adapt grid/axis size to viewport
+	float viewSize = std::max(1.0f, std::min(viewport.width, viewport.height));
+	if (data.showGrid) {
+		ofPushStyle();
+		ofSetColor(80, 90, 110);
+		ofDrawGrid(viewSize, 10, true, true, true, true);
+		ofPopStyle();
+	}
+
+	if (data.showAxes) {
+		ofDrawAxis(viewSize * 0.5f);
+	}
+
+	// Couleur par dfaut pour les formes 3D
+	ofSetColor(255);
+
+	// Calculer la bounding box de la scène pour adapter l'échelle si nécessaire
+	bool hasVertices = false;
+	glm::vec3 sceneMin(FLT_MAX), sceneMax(-FLT_MAX);
+	for (const auto & shape : data.shapes) {
+		const ofMesh & m = shape.mesh3D;
+		for (std::size_t i = 0; i < m.getNumVertices(); ++i) {
+			const glm::vec3 & v = m.getVertex(i);
+			hasVertices = true;
+			sceneMin = glm::min(sceneMin, v);
+			sceneMax = glm::max(sceneMax, v);
+		}
+	}
+
+	float scaleFactor = 1.0f;
+	glm::vec3 sceneCenter(0.0f);
+	if (hasVertices) {
+		glm::vec3 extent = sceneMax - sceneMin;
+		float maxExtent = std::max(std::max(extent.x, extent.y), extent.z);
+		if (maxExtent > 0.0f) {
+			// Choose a target size based on the viewport so the scene fits visually
+			const float targetMaxSize = viewSize * 0.5f; // occupy about half of the viewport
+			scaleFactor = std::min(1.0f, targetMaxSize / maxExtent);
+			sceneCenter = (sceneMin + sceneMax) * 0.5f;
+		}
+	}
+	//ofVec3f viewPos = ofVec3f(0.0f, 0.0f, 0.0f);
+	ofVec3f viewPos =cam.getPosition();
+
+	// Dessiner toutes les formes 3D (avec recentrage et mise à l'échelle globale)
+	if (hasVertices && scaleFactor != 1.0f) {
+		ofPushMatrix();
+		// Recentre la scène autour de l'origine puis applique l'échelle
+		ofTranslate(-sceneCenter.x, -sceneCenter.y, -sceneCenter.z);
+		ofScale(scaleFactor, scaleFactor, scaleFactor);
+
+		for (const auto & shape : data.shapes) {
+			// Appel à l'ancienne signature
+			shape3DRenderer.drawShape3D(shape, data.lighting, viewPos);
+		}
+
+		ofPopMatrix();
+	} else {
+		// Aucun ajustement nécessaire
+		for (const auto & shape : data.shapes) {
+			// Appel à l'ancienne signature
+			shape3DRenderer.drawShape3D(shape, data.lighting, viewPos);
+		}
 	}
 
 	// End camera and restore full viewport
@@ -150,7 +355,10 @@ void SceneRenderer::drawQuadView(const RenderDataQuad & data) {
 			data.shapes,
 			data.cameras[i],
 			data.viewports[i],
-			data.cameraLabels[i]);
+			data.cameraLabels[i],
+			data.lighting,
+			data.showGrid,
+			data.showAxes);
 	}
 
 	// Restaurer le viewport complet
@@ -164,7 +372,10 @@ void SceneRenderer::drawSingleCameraView(
 	const std::vector<Shape> & shapes,
 	const CameraData & cameraData,
 	const ofRectangle & viewport,
-	const std::string & label) {
+	const std::string & label,
+	const LightingData & lighting,
+	bool showGrid,
+	bool showAxes) {
 	// Configurer le viewport pour cette vue
 	ofViewport(viewport.x, viewport.y, viewport.width, viewport.height);
 
@@ -175,10 +386,26 @@ void SceneRenderer::drawSingleCameraView(
 
 	// Dessiner avec cette camra
 	camera.begin(viewport);
+
+	// Adapt grid/axis size to viewport
+	float viewSize = std::max(1.0f, std::min(viewport.width, viewport.height));
+
+	if (showGrid) {
+		ofPushStyle();
+		ofSetColor(80, 90, 110);
+		ofDrawGrid(viewSize, 10, true, true, true, true);
+		ofPopStyle();
+	}
+
+	if (showAxes) {
+		ofDrawAxis(viewSize * 0.5f);
+	}
+
 	ofSetColor(255);
 
 	for (const auto & shape : shapes) {
-		shape3DRenderer.drawShape3D(shape);
+		//shape3DRenderer.drawShape3D(shape, lighting, camera.getPosition());
+		shape3DRenderer.drawShape3D(shape, lighting, camera.getPosition());
 	}
 
 	camera.end();

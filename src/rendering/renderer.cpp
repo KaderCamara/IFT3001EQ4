@@ -9,6 +9,7 @@ Renderer::Renderer() {
 
 void Renderer::setup() {
 	ofSetFrameRate(60);
+	sceneRenderer.setup();
 	ofLogNotice("Renderer") << "Setup complete";
 }
 

@@ -64,14 +64,8 @@
     <ClCompile Include="src\objects\shapeManager.cpp">
       <Filter>src\objects</Filter>
     </ClCompile>
-    <ClCompile Include="src\objects\sceneGraph.cpp">
-      <Filter>src\rendering</Filter>
-    </ClCompile>
     <ClCompile Include="src\objects\shapeManager3D.cpp">
       <Filter>src\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="src\rendering\camera\cameraManager.cpp">
-      <Filter>src\rendering</Filter>
     </ClCompile>
     <ClCompile Include="src\objects\BezierCurve.cpp">
       <Filter>src\objects</Filter>
@@ -82,39 +76,111 @@
     <ClCompile Include="src\objects\controlPointsManager.cpp">
       <Filter>src\objects</Filter>
     </ClCompile>
-    <ClCompile Include="src\utils\Model3DImportManager.cpp" />
-    <ClCompile Include="src\ui\panels\drawingPanel.cpp" />
-    <ClCompile Include="src\ui\panels\curvesPanel.cpp" />
-    <ClCompile Include="src\ui\panels\view3DPanel.cpp" />
-    <ClCompile Include="src\ui\panels\imagePanel.cpp" />
-    <ClCompile Include="src\ui\panels\transformPanel.cpp" />
-    <ClCompile Include="src\ui\panels\drawingParametersPanel.cpp" />
-    <ClCompile Include="src\controllers\sceneController.cpp" />
-    <ClCompile Include="src\rendering\curves\bezierCurveRenderer.cpp" />
-    <ClCompile Include="src\rendering\curves\controlPointsRenderer.cpp" />
-    <ClCompile Include="src\rendering\curves\curvesRenderer.cpp" />
-    <ClCompile Include="src\rendering\shapes\shape2DRenderer.cpp" />
-    <ClCompile Include="src\rendering\shapes\shape3DRenderer.cpp" />
-    <ClCompile Include="src\rendering\scene\sceneRenderer.cpp" />
-    <ClCompile Include="src\rendering\image\imageRenderer.cpp" />
-    <ClCompile Include="src\controllers\imageController.cpp" />
-    <ClCompile Include="src\controllers\curvesController.h" />
-    <ClCompile Include="src\controllers\transformController.cpp" />
-    <ClCompile Include="src\services\transformServices.cpp" />
-    <ClCompile Include="src\services\selectionService.cpp" />
-    <ClCompile Include="src\ui\panels\3dEdition\cameraPanel.cpp" />
-    <ClCompile Include="src\ui\panels\infoPanel.cpp" />
-    <ClCompile Include="src\ui\panels\3dEdition\lightingPanel.cpp" />
-    <ClCompile Include="src\ui\panels\3dEdition\geometry3DPanel.cpp" />
-    <ClCompile Include="src\ui\panels\3dEdition\rayTracingPanel.cpp" />
-    <ClCompile Include="src\ui\panels\3dEdition\texture3DPanel.cpp" />
-    <ClCompile Include="src\ui\panels\3dEdition\topologyPanel.cpp" />
-    <ClCompile Include="src\ui\panels\3dEdition\transformation3DPanel.cpp" />
-    <ClCompile Include="src\ui\panels\vectorEditionPanel.cpp" />
-    <ClCompile Include="src\ui\panels\3dEdition\sceneAssetsPanel.cpp" />
-    <ClCompile Include="src\ui\panels\view2DPanel.cpp" />
-    <ClCompile Include="src\objects\curveAnimator.cpp" />
-    <ClCompile Include="src\rendering\curves\AnimatedObjectRenderer.cpp" />
+    <ClCompile Include="src\controllers\imageController.cpp">
+      <Filter>src\controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\controllers\curvesController.cpp">
+      <Filter>src\controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\controllers\curvesController.h">
+      <Filter>src\controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\controllers\sceneController.cpp">
+      <Filter>src\controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\controllers\transformController.cpp">
+      <Filter>src\controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\objects\sceneGraph.cpp">
+      <Filter>src\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="src\rendering\camera\cameraManager.cpp">
+      <Filter>src\rendering\camera</Filter>
+    </ClCompile>
+    <ClCompile Include="src\rendering\curves\bezierCurveRenderer.cpp">
+      <Filter>src\rendering\curves</Filter>
+    </ClCompile>
+    <ClCompile Include="src\rendering\curves\controlPointsRenderer.cpp">
+      <Filter>src\rendering\curves</Filter>
+    </ClCompile>
+    <ClCompile Include="src\rendering\curves\curvesRenderer.cpp">
+      <Filter>src\rendering\curves</Filter>
+    </ClCompile>
+    <ClCompile Include="src\rendering\image\imageRenderer.cpp">
+      <Filter>src\rendering\image</Filter>
+    </ClCompile>
+    <ClCompile Include="src\rendering\scene\sceneRenderer.cpp">
+      <Filter>src\rendering\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="src\rendering\shapes\shape2DRenderer.cpp">
+      <Filter>src\rendering\shapes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\rendering\shapes\shape3DRenderer.cpp">
+      <Filter>src\rendering\shapes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\services\transformServices.cpp">
+      <Filter>src\services</Filter>
+    </ClCompile>
+    <ClCompile Include="src\services\selectionService.cpp">
+      <Filter>src\services</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui\panels\curvesPanel.cpp">
+      <Filter>src\ui\panels</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui\panels\drawingPanel.cpp">
+      <Filter>src\ui\panels</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui\panels\drawingParametersPanel.cpp">
+      <Filter>src\ui\panels</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui\panels\imagePanel.cpp">
+      <Filter>src\ui\panels</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui\panels\infoPanel.cpp">
+      <Filter>src\ui\panels</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui\panels\transformPanel.cpp">
+      <Filter>src\ui\panels</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui\panels\vectorEditionPanel.cpp">
+      <Filter>src\ui\panels</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui\panels\view3DPanel.cpp">
+      <Filter>src\ui\panels</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui\panels\3dEdition\cameraPanel.cpp">
+      <Filter>src\ui\panels\3dEdition</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui\panels\3dEdition\geometry3DPanel.cpp">
+      <Filter>src\ui\panels\3dEdition</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui\panels\3dEdition\lightingPanel.cpp">
+      <Filter>src\ui\panels\3dEdition</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui\panels\3dEdition\rayTracingPanel.cpp">
+      <Filter>src\ui\panels\3dEdition</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui\panels\3dEdition\sceneAssetsPanel.cpp">
+      <Filter>src\ui\panels\3dEdition</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui\panels\3dEdition\texture3DPanel.cpp">
+      <Filter>src\ui\panels\3dEdition</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui\panels\3dEdition\topologyPanel.cpp">
+      <Filter>src\ui\panels\3dEdition</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui\panels\3dEdition\transformation3DPanel.cpp">
+      <Filter>src\ui\panels\3dEdition</Filter>
+    </ClCompile>
+    <ClCompile Include="src\utils\Model3DImportManager.cpp">
+      <Filter>src\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\objects\lightingManager.cpp">
+      <Filter>src\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="src\controllers\lightingController.cpp">
+      <Filter>src\controllers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -170,6 +236,39 @@
     </Filter>
     <Filter Include="src\image">
       <UniqueIdentifier>{2e66e3bb-5ea7-4f58-b9b0-828b438b4923}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\controllers">
+      <UniqueIdentifier>{8046cde9-38a4-4a20-96c3-26f5b92629f5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\rendering\camera">
+      <UniqueIdentifier>{16e84faa-4319-489e-8384-47011c91c7ee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\rendering\curves">
+      <UniqueIdentifier>{af7d7187-3560-4d7c-8f08-fb369d41579b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\rendering\image">
+      <UniqueIdentifier>{5b4d9046-404c-402d-8f06-c74588e28a74}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\rendering\scene">
+      <UniqueIdentifier>{d0123ec4-eb32-44e0-a69d-1257410b342c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\rendering\shapes">
+      <UniqueIdentifier>{c9cc1406-e96a-4ce0-bca1-c8f993f5e639}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\services">
+      <UniqueIdentifier>{03e8d2b9-610c-4c2b-8036-e569713428ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ui\panels">
+      <UniqueIdentifier>{9ab70af0-d933-4b13-80f4-9522ff0b8b19}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ui\panels\3dEdition">
+      <UniqueIdentifier>{ebaff9eb-522c-421e-bfb6-78a68601811d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\utils">
+      <UniqueIdentifier>{474245bd-3de6-4808-a2f4-54be2dedb662}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\rendering\shaders">
+      <UniqueIdentifier>{c69af5ed-80fd-4697-9fe1-0ac03caa2d93}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -494,17 +593,11 @@
     <ClInclude Include="src\objects\shapeManager.h">
       <Filter>src\objects</Filter>
     </ClInclude>
-    <ClInclude Include="src\objects\sceneGraph.h">
-      <Filter>src\rendering</Filter>
-    </ClInclude>
     <ClInclude Include="src\objects\shapeManager3D.h">
       <Filter>src\objects</Filter>
     </ClInclude>
     <ClInclude Include="src\objects\shape.h">
       <Filter>src\objects</Filter>
-    </ClInclude>
-    <ClInclude Include="src\rendering\camera\cameraManager.h">
-      <Filter>src\rendering</Filter>
     </ClInclude>
     <ClInclude Include="src\objects\BezierCurve.h">
       <Filter>src\objects</Filter>
@@ -515,45 +608,119 @@
     <ClInclude Include="src\objects\controlPointsManager.h">
       <Filter>src\objects</Filter>
     </ClInclude>
-    <ClInclude Include="src\utils\Model3DImportManager.h" />
-    <ClInclude Include="src\ui\panels\drawingPanel.h" />
-    <ClInclude Include="src\ui\panels\curvesPanel.h" />
-    <ClInclude Include="src\ui\panels\view3DPanel.h" />
-    <ClInclude Include="src\ui\panels\imagePanel.h" />
-    <ClInclude Include="src\ui\panels\transformPanel.h" />
-    <ClInclude Include="src\ui\panels\drawingParametersPanel.h" />
-    <ClInclude Include="src\controllers\sceneController.h" />
-    <ClInclude Include="src\rendering\curves\bezierCurveRenderer.h" />
-    <ClInclude Include="src\rendering\curves\controlPointsRenderer.h" />
-    <ClInclude Include="src\rendering\curves\curvesRenderer.h" />
-    <ClInclude Include="src\rendering\shapes\shape2DRenderer.h" />
-    <ClInclude Include="src\rendering\shapes\shape3DRenderer.h" />
-    <ClInclude Include="src\rendering\scene\sceneRenderer.h" />
-    <ClInclude Include="src\rendering\image\imageRenderer.h" />
-    <ClInclude Include="src\controllers\imageController.h" />
-    <ClInclude Include="src\controllers\transformController.h" />
-    <ClInclude Include="src\rendering\renderData.h" />
-    <ClInclude Include="src\services\transformService.h" />
-    <ClInclude Include="src\services\selectionService.h" />
-    <ClInclude Include="src\ui\panels\3dEdition\cameraPanel.h" />
-    <ClInclude Include="src\ui\panels\infoPanel.h" />
-    <ClInclude Include="src\ui\panels\3dEdition\lightingPanel.h" />
-    <ClInclude Include="src\ui\panels\3dEdition\geometry3DPanel.h" />
-    <ClInclude Include="src\ui\panels\3dEdition\rayTracingPanel.h" />
-    <ClInclude Include="src\ui\panels\3dEdition\texture3DPanel.h" />
-    <ClInclude Include="src\ui\panels\3dEdition\topologyPanel.h" />
-    <ClInclude Include="src\ui\panels\3dEdition\transformation3DPanel.h" />
-    <ClInclude Include="src\ui\panels\vectorEditionPanel.h" />
-    <ClInclude Include="src\ui\panels\3dEdition\sceneAssetsPanel.h" />
-    <ClInclude Include="src\ui\panels\view2DPanel.h" />
-    <ClInclude Include="src\objects\curveAnimator.h" />
-    <ClInclude Include="src\rendering\curves\AnimatedObjectRenderer.h" />
+    <ClInclude Include="src\controllers\imageController.h">
+      <Filter>src\controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\controllers\sceneController.h">
+      <Filter>src\controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\controllers\transformController.h">
+      <Filter>src\controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\objects\sceneGraph.h">
+      <Filter>src\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="src\rendering\camera\cameraManager.h">
+      <Filter>src\rendering\camera</Filter>
+    </ClInclude>
+    <ClInclude Include="src\rendering\curves\bezierCurveRenderer.h">
+      <Filter>src\rendering\curves</Filter>
+    </ClInclude>
+    <ClInclude Include="src\rendering\curves\controlPointsRenderer.h">
+      <Filter>src\rendering\curves</Filter>
+    </ClInclude>
+    <ClInclude Include="src\rendering\curves\curvesRenderer.h">
+      <Filter>src\rendering\curves</Filter>
+    </ClInclude>
+    <ClInclude Include="src\rendering\image\imageRenderer.h">
+      <Filter>src\rendering\image</Filter>
+    </ClInclude>
+    <ClInclude Include="src\rendering\scene\sceneRenderer.h">
+      <Filter>src\rendering\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="src\rendering\shapes\shape2DRenderer.h">
+      <Filter>src\rendering\shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\rendering\shapes\shape3DRenderer.h">
+      <Filter>src\rendering\shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\rendering\renderData.h">
+      <Filter>src\rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\services\transformService.h">
+      <Filter>src\services</Filter>
+    </ClInclude>
+    <ClInclude Include="src\services\selectionService.h">
+      <Filter>src\services</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ui\panels\curvesPanel.h">
+      <Filter>src\ui\panels</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ui\panels\drawingPanel.h">
+      <Filter>src\ui\panels</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ui\panels\drawingParametersPanel.h">
+      <Filter>src\ui\panels</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ui\panels\imagePanel.h">
+      <Filter>src\ui\panels</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ui\panels\infoPanel.h">
+      <Filter>src\ui\panels</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ui\panels\transformPanel.h">
+      <Filter>src\ui\panels</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ui\panels\vectorEditionPanel.h">
+      <Filter>src\ui\panels</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ui\panels\3dEdition\cameraPanel.h">
+      <Filter>src\ui\panels\3dEdition</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ui\panels\3dEdition\geometry3DPanel.h">
+      <Filter>src\ui\panels\3dEdition</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ui\panels\3dEdition\lightingPanel.h">
+      <Filter>src\ui\panels\3dEdition</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ui\panels\3dEdition\rayTracingPanel.h">
+      <Filter>src\ui\panels\3dEdition</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ui\panels\3dEdition\sceneAssetsPanel.h">
+      <Filter>src\ui\panels\3dEdition</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ui\panels\3dEdition\texture3DPanel.h">
+      <Filter>src\ui\panels\3dEdition</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ui\panels\3dEdition\topologyPanel.h">
+      <Filter>src\ui\panels\3dEdition</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ui\panels\3dEdition\transformation3DPanel.h">
+      <Filter>src\ui\panels\3dEdition</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ui\panels\view3DPanel.h">
+      <Filter>src\ui\panels</Filter>
+    </ClInclude>
+    <ClInclude Include="src\utils\Model3DImportManager.h">
+      <Filter>src\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\objects\lightingManager.h">
+      <Filter>src\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="src\controllers\lightingController.h">
+      <Filter>src\controllers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="icon.rc" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitignore" />
-    <None Include="dll\x64\placeholder.dll" />
+    <None Include="src\rendering\shaders\lighting.frag">
+      <Filter>src\rendering\shaders</Filter>
+    </None>
+    <None Include="src\rendering\shaders\lighting.vert">
+      <Filter>src\rendering\shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

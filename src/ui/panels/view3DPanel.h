@@ -41,6 +41,7 @@ public:
 	bool isLightingEnabled() const { return sceneAssetsPanel.isLightingEnabled(); }
 	float getLightIntensity() const { return sceneAssetsPanel.getLightIntensity(); }
 	ofColor getLightColor() const { return sceneAssetsPanel.getLightColor(); }
+	const LightingPanel & getLightingPanel() const {return lightingPanel;}
 
 	bool isImport3DModelRequested() const { return sceneAssetsPanel.isImportRequested(); }
 	bool isClear3DModelRequested() const { return sceneAssetsPanel.isClearRequested(); }

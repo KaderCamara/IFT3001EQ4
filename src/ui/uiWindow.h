@@ -74,6 +74,8 @@ public:
 	bool isLightingEnabled() const { return view3DPanel.isLightingEnabled(); }
 	float getLightingIntensity() const { return view3DPanel.getLightIntensity(); }
 	ofColor getLightingColor() const { return view3DPanel.getLightColor(); }
+	const LightingPanel & getLightingPanel() const {return view3DPanel.getLightingPanel();}
+
 	bool is3DTabActive() const { return view3DActive; }
 
 	// CURVES (via View2DPanel)

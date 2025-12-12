@@ -229,6 +229,8 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\controllers\lightingController.cpp" />
+    <ClCompile Include="src\objects\lightingManager.cpp" />
     <ClCompile Include="src\app\application.cpp" />
     <ClCompile Include="src\controllers\curvesController.h" />
     <ClCompile Include="src\controllers\imageController.cpp" />
@@ -291,6 +293,8 @@
     <ClCompile Include="src\utils\Model3DImportManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\controllers\lightingController.h" />
+    <ClInclude Include="src\objects\lightingManager.h" />
     <ClInclude Include="src\app\application.h" />
     <ClInclude Include="src\controllers\imageController.h" />
     <ClInclude Include="src\controllers\sceneController.h" />
@@ -452,7 +456,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitignore" />
-    <None Include="dll\x64\placeholder.dll" />
+    <None Include="src\rendering\shaders\lighting.frag" />
+    <None Include="src\rendering\shaders\lighting.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ProjectExtensions>

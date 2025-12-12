@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "../../rendering/renderData.h"
 #include "../../objects/shape.h"
 #include "ofMain.h"
 
@@ -21,7 +22,9 @@ public:
 	/**
      * @brief Dessine une forme 3D (mesh) avec les options globales
      */
-	void drawShape3D(const Shape & s) const;
+	void setup();
+	void drawShape3D(const Shape & s, const LightingData & lighting, const ofVec3f & viewPos) const;
+	//void drawShape3D(const Shape & s) const;
 
 	void setShowBoundingBox(bool show) { showBoundingBox = show; };
 	void setShowWireframe(bool show) { showWireframe = show; };
@@ -31,9 +34,22 @@ private:
 	/**
      * @brief Calcule la bounding box d'un mesh (utilitaire)
      */
-	ofRectangle getMeshBoundingBox(const ofMesh & mesh);
 
 	bool showBoundingBox = false;
 	bool showWireframe = false;
 	bool showNormals = false;
+
+	ofShader lightingShader;
+
+	/**
+     * @brief Set shader uniforms for lighting
+     */
+	void setLightingUniforms(const LightingData & lighting, const ofVec3f & viewPos) const;
+
+	/**
+     * @brief Set shader uniforms for material
+     */
+	void setMaterialUniforms(const Material & material) const;
+
+	ofRectangle getMeshBoundingBox(const ofMesh & mesh) const;
 };

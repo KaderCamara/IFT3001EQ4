@@ -8,6 +8,8 @@
 #include "../../objects/BezierCurve.h"
 #include "BezierCurveRenderer.h"
 #include "ControlPointsRenderer.h"
+#include "AnimatedObjectRenderer.h"
+#include "../../objects/CurveAnimator.h"
 #include "ofMain.h"
 #include <vector>
 
@@ -40,7 +42,8 @@ public:
 	 */
 	void render(
 		const std::vector<glm::vec2> & controlPoints,
-		const std::vector<BezierCurve> & curves) const;
+		const std::vector<BezierCurve> & curves,
+		const CurveAnimator * animator = nullptr) const;
 
 	/**
 	 * @brief Dessine uniquement les points de contrôle
@@ -66,6 +69,7 @@ private:
 	// Renderers spécialisés (VIEW)
 	BezierCurveRenderer bezierRenderer;
 	ControlPointsRenderer controlPointsRenderer;
+	AnimatedObjectRenderer animatedObjectRenderer;
 
 	// Paramètres de style (configuration visuelle)
 	ofColor controlPointsColor = ofColor::red;

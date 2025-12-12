@@ -1,27 +1,14 @@
-// uiWindow.h
-// Classe orchestratrice de l'interface utilisateur
-// Gre les onglets et dlgue aux panels spcialiss
+// src/ui/uiWindow.h - MODIFICATIONS
 #pragma once
 #include "ofMain.h"
 #include "ofxGui.h"
 #include "panels/DrawingPanel.h"
 #include "panels/ImagePanel.h"
 #include "panels/InfoPanel.h"
+#include "panels/View2DPanel.h"
 #include "panels/View3DPanel.h"
-#include <vector>
 
-	/**
- * @class UIWindow
- * @brief Orchestrateur principal de l'interface utilisateur
- *
- * Responsabilits :
- * - Grer les onglets (Image, 2D Edition, 3D Edition)
- * - Dlguer aux panels spcialiss
- * - Grer la zone de dessin
- * - Afficher les messages de statut
- * - Grer le drag & drop de fichiers
- */
-	class UIWindow {
+class UIWindow {
 public:
 	UIWindow() = default;
 	~UIWindow() = default;
@@ -33,41 +20,33 @@ public:
 	void mouseReleased(int x, int y, int button);
 	void handleFileDragAndDrop(ofDragInfo dragInfo);
 
-public:
-	// ========== ACCESSEURS GNRAUX ==========
 	ofRectangle getDrawingArea() const { return drawingArea; }
 	ofRectangle getDrawDrawingArea() const { return drawDrawingArea; }
 	ofRectangle getCurvesDrawingArea() const { return curvesDrawingArea; }
 
-	// ========== DRAWING PANEL ==========
-	std::string getCurrentShape() const { return drawingPanel.getCurrentShape(); }
-	bool isSaveShapeRequested() const { return drawingPanel.isSaveShapeRequested(); }
-	bool isDeleteShapeRequested() const { return drawingPanel.isDeleteShapeRequested(); }
-	bool isSelectShapeRequested() const { return drawingPanel.isSelectionMode(); }
+	// DRAWING PANEL (via View2DPanel)
+	std::string getCurrentShape() const { return view2DPanel.getCurrentShape(); }
+	bool isSaveShapeRequested() const { return view2DPanel.isSaveShapeRequested(); }
+	bool isDeleteShapeRequested() const { return view2DPanel.isDeleteShapeRequested(); }
+	bool isSelectShapeRequested() const { return view2DPanel.isSelectShapeRequested(); }
+	float getLineWidth() const { return view2DPanel.getLineWidth(); }
+	ofColor getStrokeColor() const { return view2DPanel.getStrokeColor(); }
+	ofColor getFillColor() const { return view2DPanel.getFillColor(); }
+	ofColor getBackgroundColor() const { return view2DPanel.getBackgroundColor(); }
+	float getTranslateX() const { return view2DPanel.getTranslateX(); }
+	float getTranslateY() const { return view2DPanel.getTranslateY(); }
+	float getRotation() const { return view2DPanel.getRotation(); }
+	float getScale() const { return view2DPanel.getScale(); }
 
-	float getLineWidth() const { return drawingPanel.getLineWidth(); }
-	ofColor getStrokeColor() const { return drawingPanel.getStrokeColor(); }
-	ofColor getFillColor() const { return drawingPanel.getFillColor(); }
-	ofColor getBackgroundColor() const { return drawingPanel.getBackgroundColor(); }
-	bool isHSBMode() const { return drawingPanel.isHSBMode(); }
-	float getHue() const { return drawingPanel.getHue(); }
-	float getSaturation() const { return drawingPanel.getSaturation(); }
-	float getBrightness() const { return drawingPanel.getBrightness(); }
-
-	float getTranslateX() const { return drawingPanel.getTranslateX(); }
-	float getTranslateY() const { return drawingPanel.getTranslateY(); }
-	float getRotation() const { return drawingPanel.getRotation(); }
-	float getScale() const { return drawingPanel.getScale(); }
-
-	// ========== IMAGE PANEL ==========
+	// IMAGE PANEL
 	bool isImportImageRequested() const { return imagePanel.isImportImageRequested(); }
 	bool isClearImageRequested() const { return imagePanel.isClearImageRequested(); }
 
-	// ========== VIEW3D PANEL ==========
+	// VIEW3D PANEL
 	bool isImport3DModelRequested() const { return view3DPanel.isImport3DModelRequested(); }
 	bool isClear3DModelRequested() const { return view3DPanel.isClear3DModelRequested(); }
 	bool is3DviewRequested() const { return view3DActive; }
-	bool is2DviewRequested() const { return !view3DActive && !isQuadViewRequested(); }
+	bool is2DviewRequested() const { return view2DActive; }
 	bool isQuadViewRequested() const { return view3DPanel.isQuadViewRequested(); }
 	bool isShowBoundingBoxEnabled() const { return view3DPanel.isShowBoundingBoxToggled(); }
 	bool isWireframeEnabled() const { return view3DPanel.isShowWireframeToggled(); }
@@ -77,89 +56,55 @@ public:
 	bool isLightingEnabled() const { return view3DPanel.isLightingEnabled(); }
 	float getLightingIntensity() const { return view3DPanel.getLightIntensity(); }
 	ofColor getLightingColor() const { return view3DPanel.getLightColor(); }
-
 	bool is3DTabActive() const { return view3DActive; }
 
-	// ========== CURVES (INTEGRATED IN DRAWING) ==========
-	bool isPlacePointsMode() const { return drawingPanel.isPlacePointsMode(); }
-	bool isGenerateCurveRequested() const { return drawingPanel.isGenerateCurveRequested(); }
-	bool isClearCurvesRequested() const { return drawingPanel.isClearCurvesRequested(); }
-	bool isUndoPointRequested() const { return drawingPanel.isUndoPointRequested(); }
-	bool isClearPointsRequested() const { return drawingPanel.isClearPointsRequested(); }
+	// CURVES (via View2DPanel)
+	bool isPlacePointsMode() const { return view2DPanel.isPlacePointsMode(); }
+	bool isGenerateCurveRequested() const { return view2DPanel.isGenerateCurveRequested(); }
+	bool isClearCurvesRequested() const { return view2DPanel.isClearCurvesRequested(); }
+	bool isUndoPointRequested() const { return view2DPanel.isUndoPointRequested(); }
+	bool isClearPointsRequested() const { return view2DPanel.isClearPointsRequested(); }
+	bool isDrawModeActive() const { return view2DPanel.isDrawModeActive(); }
+	bool isCurvesModeActive() const { return view2DPanel.isCurvesModeActive(); }
+	void disablePlacePointsMode() { view2DPanel.disablePlacePointsMode(); }
+	void clearGenerateCurveRequest() { view2DPanel.clearGenerateCurveRequest(); }
+	void clearClearCurvesRequest() { view2DPanel.clearClearCurvesRequest(); }
+	void clearUndoPointRequest() { view2DPanel.clearUndoPointRequest(); }
+	void clearClearPointsRequest() { view2DPanel.clearClearPointsRequest(); }
 
-	bool isDrawModeActive() const { return current2DMode == TwoDMode::Draw; }
-	bool isCurvesModeActive() const { return current2DMode == TwoDMode::CurvesTools; }
-
-	void clearGenerateCurveRequest() { drawingPanel.clearRequests(); }
-	void clearClearCurvesRequest() { drawingPanel.clearRequests(); }
-	void clearUndoPointRequest() { drawingPanel.clearRequests(); }
-	void clearClearPointsRequest() { drawingPanel.clearRequests(); }
-
-	// ========== CONTRLE DES REQUTES ==========
 	void clearRequests();
 
-	// Status message public pour compatibilit
 	std::string statusMessage;
 
-	void disablePlacePointsMode() { drawingPanel.setPlacePointsMode(false); }
-
 private:
-	// ========== PANELS ==========
-	DrawingPanel drawingPanel;
 	ImagePanel imagePanel;
+	View2DPanel view2DPanel;
 	View3DPanel view3DPanel;
 	InfoPanel infoPanel;
 
-	enum class TwoDMode {
-		Draw,
-		CurvesTools
-	};
-
-	TwoDMode current2DMode = TwoDMode::Draw;
-
-	// Dropdown option for 2D mode
-	struct DropdownOption {
-		std::string label;
-		TwoDMode mode;
-		ofRectangle bounds;
-	};
-
-	std::vector<DropdownOption> drawDropdownOptions;
-	bool drawDropdownOpen = false;
-
-	// ========== ONGLETS ==========
 	struct TabButton {
 		std::string label;
 		ofRectangle bounds;
-		bool hovered = false;
 		bool active = false;
 	};
 
 	TabButton imageTab = { "Image", ofRectangle(0, 0, 100, 50) };
-	TabButton drawTab = { "2D EDITION", ofRectangle(100, 0, 140, 50) };
+	TabButton draw2DTab = { "2D EDITION", ofRectangle(100, 0, 140, 50) };
 	TabButton view3DTab = { "3D EDITION", ofRectangle(240, 0, 140, 50) };
 
-	// ========== ZONES UI ==========
 	ofRectangle drawingArea;
 	ofRectangle statusBox;
 	ofRectangle drawDrawingArea;
 	ofRectangle curvesDrawingArea;
 	float menuBarHeight = 50;
 
-	// ========== TAT GLOBAL ==========
+	bool view2DActive = false;
 	bool view3DActive = false;
 
-	// ========== MTHODES PRIVES ==========
 	void drawTabs();
-	void drawDrawDropdown();
-	// Draw dropdown options on top of sidebars (overlay)
-	void drawDrawDropdownOverlay();
 	void drawStatusBox();
 	void handleTabClick(int x, int y);
-	bool handleDrawDropdownClick(int x, int y);
-	void updateDropdownOptionBounds();
-	std::string getCurrent2DModeLabel() const;
 	void activateImageTab();
-	void activateDrawTab();
+	void activateDraw2DTab();
 	void activateView3DTab();
 };

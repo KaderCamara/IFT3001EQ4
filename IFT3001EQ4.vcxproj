@@ -284,6 +284,7 @@
     <ClCompile Include="src\ui\panels\infoPanel.cpp" />
     <ClCompile Include="src\ui\panels\transformPanel.cpp" />
     <ClCompile Include="src\ui\panels\vectorEditionPanel.cpp" />
+    <ClCompile Include="src\ui\panels\view2DPanel.cpp" />
     <ClCompile Include="src\ui\panels\view3DPanel.cpp" />
     <ClCompile Include="src\ui\uiWindow.cpp" />
     <ClCompile Include="src\utils\Model3DImportManager.cpp" />
@@ -430,6 +431,7 @@
     <ClInclude Include="src\ui\panels\infoPanel.h" />
     <ClInclude Include="src\ui\panels\transformPanel.h" />
     <ClInclude Include="src\ui\panels\vectorEditionPanel.h" />
+    <ClInclude Include="src\ui\panels\view2DPanel.h" />
     <ClInclude Include="src\ui\panels\view3DPanel.h" />
     <ClInclude Include="src\ui\uiWindow.h" />
     <ClInclude Include="src\utils\Model3DImportManager.h" />

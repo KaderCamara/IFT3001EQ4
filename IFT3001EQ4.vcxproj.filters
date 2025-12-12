@@ -113,6 +113,7 @@
     <ClCompile Include="src\ui\panels\3dEdition\transformation3DPanel.cpp" />
     <ClCompile Include="src\ui\panels\vectorEditionPanel.cpp" />
     <ClCompile Include="src\ui\panels\3dEdition\sceneAssetsPanel.cpp" />
+    <ClCompile Include="src\ui\panels\view2DPanel.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -543,6 +544,7 @@
     <ClInclude Include="src\ui\panels\3dEdition\transformation3DPanel.h" />
     <ClInclude Include="src\ui\panels\vectorEditionPanel.h" />
     <ClInclude Include="src\ui\panels\3dEdition\sceneAssetsPanel.h" />
+    <ClInclude Include="src\ui\panels\view2DPanel.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="icon.rc" />

@@ -2,7 +2,6 @@
 
 #include "DrawingParametersPanel.h"
 #include "TransformPanel.h"
-#include "VectorEditionPanel.h"
 #include "ofMain.h"
 #include "ofxGui.h"
 #include <string>
@@ -18,9 +17,8 @@ public:
 
 	void setup();
 	void update();
-	void draw(float sideMenuWidth, float menuBarHeight);
-	void drawDrawPanel(float sideMenuWidth, float menuBarHeight);
-	void drawCurvesToolsPanel(float sideMenuWidth, float menuBarHeight);
+	void draw(float x, float y, float width);
+	void drawDrawPanel(float x, float y, float width);
 
 	// State accessors
 	std::string getCurrentShape() const { return currentShape; }
@@ -78,7 +76,6 @@ private:
 	// Sub-panels
 	DrawingParametersPanel drawingParamsPanel;
 	TransformPanel transformPanel;
-	VectorEditionPanel vectorEditionPanel;
 
 	// ofxGui panels
 	ofxPanel drawMenuPanel;
@@ -102,6 +99,7 @@ private:
 	ofxButton clearCurvesButton;
 	ofxButton undoPointButton;
 	ofxButton clearPointsButton;
+	ofxButton backButton; // Retour button
 
 	// Export helpers
 	bool exportSequenceActive = false;
@@ -116,7 +114,6 @@ private:
 	void setCurrentShape(const std::string & shapeName);
 	void enableSelectionMode();
 	void handleExportSequence();
-	void drawLeftColumn(float sideMenuWidth, float menuBarHeight);
 
 	// Callbacks
 	void onDrawPointPressed();
@@ -135,4 +132,5 @@ private:
 	void onClearCurvesPressed();
 	void onUndoPointPressed();
 	void onClearPointsPressed();
+	void onBackPressed(); // Retour button callback
 };

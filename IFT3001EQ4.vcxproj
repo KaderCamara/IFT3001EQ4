@@ -291,6 +291,7 @@
     <ClCompile Include="src\utils\Model3DImportManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\image\imageFilters.h" />
     <ClInclude Include="src\controllers\lightingController.h" />
     <ClInclude Include="src\objects\lightingManager.h" />
     <ClInclude Include="src\app\application.h" />

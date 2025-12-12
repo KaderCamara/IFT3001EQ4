@@ -33,6 +33,9 @@ public:
 	bool isGenerateFromSamplesRequested() const { return generateFromSamplesRequested; }
 	bool isPaletteRequested() const { return paletteRequested; }
 	bool isHistogramRequested() const { return histogramRequested; }
+	bool isGrayscaleRequested() const { return grayscaleRequested; }
+	bool isSepiaRequested() const { return sepiaRequested; }
+	bool isInvertRequested() const { return invertRequested; }
 
 	// Contrôle du panel
 	void show() { isActive = true; }
@@ -57,10 +60,14 @@ private:
 	bool generateFromSamplesRequested = false;
 	bool paletteRequested = false;
 	bool histogramRequested = false;
+	bool grayscaleRequested = false;
+	bool sepiaRequested = false;
+	bool invertRequested = false;
 
 	// Panel ofxGui
 	ofxPanel imageMenuPanel;
 	ofxPanel imageGenerationPanel;
+	ofxPanel imageFiltersPanel;
 
 	// Boutons
 	ofxButton importImageButton;
@@ -72,6 +79,9 @@ private:
 	ofxButton generateFromSamplesButton;
 	ofxButton paletteButton;
 	ofxButton histogramButton;
+	ofxButton grayscaleButton;
+	ofxButton sepiaButton;
+	ofxButton invertButton;
 
 	// Callbacks
 	void onImportImagePressed();
@@ -83,4 +93,7 @@ private:
 	void onGenerateFromSamplesPressed();
 	void onPalettePressed();
 	void onHistogramPressed();
+	void onGrayscalePressed();
+	void onSepiaPressed();
+	void onInvertPressed();
 };

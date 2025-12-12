@@ -22,6 +22,13 @@ void ImagePanel::setup() {
 	imageGenerationPanel.add(paletteButton.setup("Build color palette"));
 	imageGenerationPanel.add(histogramButton.setup("Compute histogram"));
 
+	imageFiltersPanel.setup("Image Filters");
+	imageFiltersPanel.enableHeader();
+	imageFiltersPanel.minimize();
+	imageFiltersPanel.add(grayscaleButton.setup("Grayscale"));
+	imageFiltersPanel.add(sepiaButton.setup("Sepia"));
+	imageFiltersPanel.add(invertButton.setup("Invert"));
+
 	// Listeners
 	importImageButton.addListener(this, &ImagePanel::onImportImagePressed);
 	clearImageButton.addListener(this, &ImagePanel::onClearImagePressed);
@@ -30,6 +37,10 @@ void ImagePanel::setup() {
 	generateFromSamplesButton.addListener(this, &ImagePanel::onGenerateFromSamplesPressed);
 	paletteButton.addListener(this, &ImagePanel::onPalettePressed);
 	histogramButton.addListener(this, &ImagePanel::onHistogramPressed);
+
+	grayscaleButton.addListener(this, &ImagePanel::onGrayscalePressed);
+	sepiaButton.addListener(this, &ImagePanel::onSepiaPressed);
+	invertButton.addListener(this, &ImagePanel::onInvertPressed);
 }
 
 void ImagePanel::draw(float sideMenuWidth, float menuBarHeight) {
@@ -47,6 +58,12 @@ void ImagePanel::draw(float sideMenuWidth, float menuBarHeight) {
 	imageGenerationPanel.setPosition(x, y);
 	imageGenerationPanel.setSize(sideMenuWidth, imageGenerationPanel.getHeight());
 	imageGenerationPanel.draw();
+
+	//filtres
+	y += imageGenerationPanel.getHeight() + 10.0f;
+	imageFiltersPanel.setPosition(x, y);
+	imageFiltersPanel.setSize(sideMenuWidth, imageFiltersPanel.getHeight());
+	imageFiltersPanel.draw();
 }
 
 void ImagePanel::clearRequests() {
@@ -57,6 +74,9 @@ void ImagePanel::clearRequests() {
 	generateFromSamplesRequested = false;
 	paletteRequested = false;
 	histogramRequested = false;
+	grayscaleRequested = false;
+	sepiaRequested = false;
+	invertRequested = false;
 }
 
 void ImagePanel::reset() {
@@ -100,4 +120,19 @@ void ImagePanel::onPalettePressed() {
 void ImagePanel::onHistogramPressed() {
 	histogramRequested = true;
 	ofLogNotice("ImagePanel") << "Histogram requested";
+}
+
+ void ImagePanel::onGrayscalePressed() {
+	grayscaleRequested = true;
+	ofLogNotice("ImagePanel") << "Grayscale filter requested";
+}
+
+void ImagePanel::onSepiaPressed() {
+	sepiaRequested = true;
+	ofLogNotice("ImagePanel") << "Sepia filter requested";
+}
+
+void ImagePanel::onInvertPressed() {
+	invertRequested = true;
+	ofLogNotice("ImagePanel") << "Invert filter requested";
 }

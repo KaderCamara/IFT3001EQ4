@@ -28,9 +28,9 @@ bool ImageController::loadImage(const std::string & path) {
 	}
 
 	// Charger via le manager
-	imageManager.import();
+	bool success = imageManager.loadFromPath(path);
 
-	if (imageManager.isImageLoaded()) {
+	if (success) {
 		ofLogNotice("ImageController") << "Image loaded successfully: " << path;
 		return true;
 	} else {
@@ -95,3 +95,4 @@ std::string ImageController::getFileExtension(const std::string & path) const {
 
 	return ext;
 }
+

@@ -35,38 +35,55 @@ void CameraManager::setPerspectiveView(int viewIndex) {
 void CameraManager::lookAtScene(const std::vector<Shape> & shapes, bool isQuadView) {
 	if (shapes.empty()) return;
 
-	// pour avoir le centre de la scene
 	ofVec3f center;
 	float radius;
 	calculateSceneBounds(shapes, center, radius);
 
-	//la disctance plus grande avec les 4 vue car sinon c'est trop proche
 	float distance;
 	if (isQuadView) {
-		distance = radius * 30.0f;
-		if (distance < 3000.0f) distance = 3000.0f;
+		distance = radius * 3.0f;
+		if (distance < 500.0f) distance = 500.0f;
 	} else {
 		distance = radius * 15.0f;
 		if (distance < 1500.0f) distance = 1500.0f;
 	}
 
-	// Camera 0: Top view (looking down -Y axis)
+	// Different ortho scales for different cameras
+	float orthoScale = radius * 2.5f;
+	if (orthoScale < 300.0f) orthoScale = 300.0f;
+
+	// ✅ Larger scale for problematic cameras (1 and 3)
+	float orthoScaleLarge = radius * 3.5f;
+	if (orthoScaleLarge < 500.0f) orthoScaleLarge = 500.0f;
+
+	ofLogNotice("CameraManager") << "Center: " << center << " Radius: " << radius
+								 << " Distance: " << distance;
+
+	// Camera 0: Top view - WORKING
 	cameras[0].setPosition(center.x, center.y + distance, center.z);
-	cameras[0].lookAt(center);
+	cameras[0].lookAt(center, ofVec3f(0, 0, -1));
+	cameras[0].setScale(orthoScale);
 
-	// Camera 1: Front view (looking from -Z axis)
-	cameras[1].setPosition(center.x, center.y, center.z + distance);
-	cameras[1].lookAt(center);
+	// Camera 1: Front view - PROBLEMATIC - try larger scale and different distance
+	float frontDistance = distance * 1.2f; // ✅ Slightly farther
+	cameras[1].setPosition(center.x, center.y, center.z + frontDistance);
+	cameras[1].lookAt(center, ofVec3f(0, 1, 0));
+	cameras[1].setScale(orthoScaleLarge); // ✅ Larger scale
+	ofLogNotice("CameraManager") << "Camera 1 (Front): distance=" << frontDistance
+								 << " scale=" << orthoScaleLarge;
 
-	// Camera 2: Side view (looking from +X axis)
+	// Camera 2: Side view - WORKING
 	cameras[2].setPosition(center.x + distance, center.y, center.z);
-	cameras[2].lookAt(center);
+	cameras[2].lookAt(center, ofVec3f(0, 1, 0));
+	cameras[2].setScale(orthoScale);
 
-	// Camera 3: Bottom view (looking up +Y axis)
+	// Camera 3: Bottom view - PROBLEMATIC - try larger scale
 	cameras[3].setPosition(center.x, center.y - distance, center.z);
-	cameras[3].lookAt(center);
+	cameras[3].lookAt(center, ofVec3f(0, 0, 1));
+	cameras[3].setScale(orthoScaleLarge); // ✅ Larger scale
+	ofLogNotice("CameraManager") << "Camera 3 (Bottom): scale=" << orthoScaleLarge;
 
-	// Camera 4: Free camera - ONLY set target and distance, don't set position!
+	// Camera 4: Free camera
 	cameras[4].setTarget(center);
 	cameras[4].setDistance(distance);
 

@@ -62,11 +62,16 @@ public:
 	// ========== IMAGE PANEL ==========
 	bool isImportImageRequested() const { return imagePanel.isImportImageRequested(); }
 	bool isClearImageRequested() const { return imagePanel.isClearImageRequested(); }
+	bool isGrayscaleRequested() const { return imagePanel.isGrayscaleRequested(); }
+	bool isSepiaRequested() const { return imagePanel.isSepiaRequested(); }
+	bool isInvertRequested() const { return imagePanel.isInvertRequested(); }
+	bool isImageTabActive() const { return imageTab.active; }
+	ofRectangle getImageDrawingArea() const { return drawingArea; }
 
 	// ========== VIEW3D PANEL ==========
 	bool isImport3DModelRequested() const { return view3DPanel.isImport3DModelRequested(); }
 	bool isClear3DModelRequested() const { return view3DPanel.isClear3DModelRequested(); }
-	bool is3DviewRequested() const { return view3DActive; }
+	bool is3DviewRequested() const { return view3DActive && !isQuadViewRequested(); }
 	bool is2DviewRequested() const { return !view3DActive && !isQuadViewRequested(); }
 	bool isQuadViewRequested() const { return view3DPanel.isQuadViewRequested(); }
 	bool isShowBoundingBoxEnabled() const { return view3DPanel.isShowBoundingBoxToggled(); }

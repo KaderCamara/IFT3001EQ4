@@ -25,6 +25,8 @@ public:
 	float getMetallic() const { return static_cast<ofParameter<float>&>(const_cast<ofxFloatSlider&>(metallicity).getParameter()).get(); }
 	float getRoughness() const { return static_cast<ofParameter<float>&>(const_cast<ofxFloatSlider&>(roughness).getParameter()).get(); }
 	float getIOR() const { return static_cast<ofParameter<float>&>(const_cast<ofxFloatSlider&>(ior).getParameter()).get(); }
+	std::vector<ofLight> getActiveLights();
+
 
 private:
 	ofxPanel lightingPanel;

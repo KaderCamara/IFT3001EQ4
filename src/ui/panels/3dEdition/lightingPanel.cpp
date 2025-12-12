@@ -129,3 +129,35 @@ void LightingPanel::draw() {
 void LightingPanel::show() { visible = true; }
 void LightingPanel::hide() { visible = false; }
 bool LightingPanel::isVisible() const { return visible; }
+
+std::vector<ofLight> LightingPanel::getActiveLights() {
+	std::vector<ofLight> lights;
+
+	// Lumière du soleil
+	if (toggleSunLight) {
+		ofLight sun;
+		sun.setDirectional();
+		sun.setOrientation(ofVec3f(sunElevation, sunAzimuth, 0));
+		sun.setDiffuseColor(ofColor::white * sunIntensity);
+		lights.push_back(sun);
+	}
+
+	// Point lights
+	if (togglePointLight) {
+		ofLight pt;
+		pt.setPointLight();
+		pt.setDiffuseColor(ofColor::white * pointIntensity);
+		lights.push_back(pt);
+	}
+
+	// Spot lights
+	if (toggleSpotLight) {
+		ofLight spot;
+		spot.setSpotlight();
+		spot.setDiffuseColor(ofColor::white * spotIntensity);
+		spot.setSpotlightCutOff(spotAngle);
+		lights.push_back(spot);
+	}
+
+	return lights;
+}

@@ -12,6 +12,7 @@
 #include "../panels/3dEdition/transformation3DPanel.h"
 #include "ofMain.h"
 #include "ofxGui.h"
+#include <rendering/camera/cameraManager.h>
 
 /**
  * @class View3DPanel
@@ -56,6 +57,9 @@ public:
 	// Clear des requetes
 	void clearRequests();
 
+	void setCameraManager(CameraManager * camMgr) { cameraManager = camMgr; }
+	void setSceneShapes(std::vector<Shape> * shapes) { sceneShapes = shapes; }
+
 private:
 	enum class Section {
 		SceneAssets,
@@ -97,6 +101,9 @@ private:
 	TopologyPanel topologyPanel;
 	RayTracingPanel rayTracingPanel;
 	LightingPanel lightingPanel;
+	CameraManager * cameraManager = nullptr;
+	std::vector<Shape> * sceneShapes = nullptr;
+
 
 	// Callbacks
 	void onQuadViewPressed();

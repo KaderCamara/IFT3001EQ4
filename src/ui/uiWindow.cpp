@@ -1,6 +1,7 @@
 ﻿// uiWindow.cpp
 // Implémentation de l'orchestrateur UI
 #include "uiWindow.h"
+#include <rendering/camera/cameraManager.h>
 
 void UIWindow::setup() {
 	// Setup de tous les panels
@@ -8,6 +9,13 @@ void UIWindow::setup() {
 	imagePanel.setup();
 	view3DPanel.setup();
 	infoPanel.setup();
+
+	// Inject camera manager and shapes
+	static std::vector<Shape> sceneShapes;
+	view3DPanel.setCameraManager(&cameraManager);
+	view3DPanel.setSceneShapes(&sceneShapes);
+	cameraManager.setup();
+
 
 	// Options du menu déroulant pour la 2D
 	drawDropdownOptions.push_back({ "Draw", TwoDMode::Draw, ofRectangle() });
@@ -353,3 +361,4 @@ void UIWindow::clearRequests() {
 	imagePanel.clearRequests();
 	view3DPanel.clearRequests();
 }
+

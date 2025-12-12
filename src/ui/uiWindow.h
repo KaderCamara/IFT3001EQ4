@@ -100,6 +100,7 @@ public:
 
 	// Status message public pour compatibilit
 	std::string statusMessage;
+	CameraManager cameraManager;
 
 	void disablePlacePointsMode() { drawingPanel.setPlacePointsMode(false); }
 

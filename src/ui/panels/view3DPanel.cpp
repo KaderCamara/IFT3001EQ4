@@ -1,6 +1,7 @@
 // View3DPanel.cpp
 // Implementation du panel de vue 3D
 #include "View3DPanel.h"
+#include <rendering/camera/cameraManager.h> 
 
 View3DPanel::View3DPanel() { }
 
@@ -47,10 +48,18 @@ void View3DPanel::setup() {
 	textureButton.addListener(this, &View3DPanel::onTextureButton);
 	rayTracingButton.addListener(this, &View3DPanel::onRayTracingButton);
 	lightingButton.addListener(this, &View3DPanel::onLightingButton);
+
 }
 
 void View3DPanel::draw(float sideMenuWidth, float menuBarHeight) {
 	if (!isActive) return;
+
+	if (activeSection == Section::RayTracing && rayTracingPanel.isGlobalIlluminationEnabled()) {
+		if (this->cameraManager && sceneShapes) {
+			ofEasyCam & cam = this->cameraManager->getCurrentCamera();
+			rayTracingPanel.renderSceneWithGI(*sceneShapes, cam, lightingPanel);
+		}
+		}
 
 	float panelX = ofGetWidth() - sideMenuWidth;
 	float currentY = menuBarHeight;

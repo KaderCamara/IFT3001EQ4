@@ -2,6 +2,8 @@
 
 #include "ofMain.h"
 #include "ofxGui.h"
+#include "objects/shape.h"
+#include "lightingPanel.h"
 
 /**
  * @class RayTracingPanel
@@ -17,6 +19,13 @@ public:
 	void setWidth(float w);
 	float getHeight();
 	void draw();
+
+	bool isGlobalIlluminationEnabled() const;
+	int getBounceCount() const;
+
+	void renderSceneWithGI(const std::vector<Shape> & shapes,
+			ofEasyCam & camera,
+			const LightingPanel & lighting);
 
 private:
 	ofxPanel rayPanel;

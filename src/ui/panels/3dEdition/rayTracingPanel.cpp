@@ -1,4 +1,6 @@
 #include "rayTracingPanel.h"
+#include <objects/shape.h>
+
 
 void RayTracingPanel::setup() {
 	rayPanel.setup("Ray Tracing");
@@ -49,4 +51,29 @@ void RayTracingPanel::draw() {
 	rayPanel.setWidthElements(enforcedWidth);
 
 	if (visible) rayPanel.draw();
+}
+
+bool RayTracingPanel::isGlobalIlluminationEnabled() const {
+	return static_cast<ofParameter<bool> &>(const_cast<ofxToggle &>(toggleGlobalIllumination).getParameter()).get();
+}
+
+int RayTracingPanel::getBounceCount() const {
+	return static_cast<ofParameter<int> &>(const_cast<ofxIntSlider &>(bounceCount).getParameter()).get();
+}
+
+void RayTracingPanel::renderSceneWithGI(const std::vector<Shape> & shapes,
+	ofEasyCam & camera,
+	const LightingPanel & lighting) {
+	camera.begin();
+	std::vector<ofLight> lights = const_cast<LightingPanel &>(lighting).getActiveLights();
+	for (auto & light : lights)
+		light.enable();
+
+	for (const auto & shape : shapes) {
+		shape.mesh3D.draw();
+	}
+
+	for (auto & light : lights)
+		light.disable();
+	camera.end();
 }

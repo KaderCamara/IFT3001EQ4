@@ -13,12 +13,6 @@ void ImageManager::update() {
     // image update logic (if any)
 }
 
-void ImageManager::draw() {
-    if (imageLoaded) {
-        importedImage.draw(300, 50, importedImage.getWidth() * 0.5, importedImage.getHeight() * 0.5);
-    }
-}
-
 void ImageManager::loadFromDrag(ofDragInfo dragInfo) {
 	std::string path = dragInfo.files[0].string();
 	ofFile file(path);

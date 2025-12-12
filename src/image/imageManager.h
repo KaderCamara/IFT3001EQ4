@@ -8,9 +8,10 @@ class ImageManager {
 
 		void import();
 		void update();
-		void draw();
 		void clear();
 		void loadFromDrag(ofDragInfo dragInfo);
+		bool isImageLoaded() const { return imageLoaded; }
+		const ofImage & getImage() const { return importedImage; }
 
 	private:
 		ofImage importedImage;

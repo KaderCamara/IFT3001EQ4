@@ -1,199 +1,135 @@
+// src/ui/uiWindow.h - MODIFICATIONS
 #pragma once
-// Classe s'occupant du design du UI ( buttons, menu etc )
-
-#pragma once
-
 #include "ofMain.h"
 #include "ofxGui.h"
-#include "../image/imageManager.h"
-#include "rendering/sceneGraph.h"
-#include "rendering/renderer.h"
+#include "panels/DrawingPanel.h"
+#include "panels/ImagePanel.h"
+#include "panels/InfoPanel.h"
+#include "panels/View2DPanel.h"
+#include "panels/View3DPanel.h"
 
-class UIWindow  {
+class UIWindow {
 public:
+	UIWindow() = default;
+	~UIWindow() = default;
 
 	void setup();
-	void draw();
 	void update();
-	void handleFileDragAndDrop(ofDragInfo dragInfo);
+	void draw();
 	void mousePressed(int x, int y, int button);
 	void mouseReleased(int x, int y, int button);
+	void handleFileDragAndDrop(ofDragInfo dragInfo);
+
 	ofRectangle getDrawingArea() const { return drawingArea; }
-	std::string getCurrentShape() const { return currentShape; }
-	bool isSelectShapeRequested() const { return selectShape; }
-	bool isSaveShapeRequested() const { return saveShape; }
-	bool isDeleteShapeRequested() const { return deleteShape; }
-	bool is3DviewRequested() const { return showView3D; }
-	bool is2DviewRequested() const { return showDrawMenu; }
-	bool isQuadViewRequested() const { return showQuadView; }
+	ofRectangle getDrawDrawingArea() const { return drawDrawingArea; }
+	ofRectangle getCurvesDrawingArea() const { return curvesDrawingArea; }
+
+	// DRAWING PANEL (via View2DPanel)
+	std::string getCurrentShape() const { return view2DPanel.getCurrentShape(); }
+	bool isSaveShapeRequested() const { return view2DPanel.isSaveShapeRequested(); }
+	bool isDeleteShapeRequested() const { return view2DPanel.isDeleteShapeRequested(); }
+	bool isSelectShapeRequested() const { return view2DPanel.isSelectShapeRequested(); }
+	float getLineWidth() const { return view2DPanel.getLineWidth(); }
+	ofColor getStrokeColor() const { return view2DPanel.getStrokeColor(); }
+	ofColor getFillColor() const { return view2DPanel.getFillColor(); }
+
+	// Transform accessors required by Application
+	float getTranslateX() const { return view2DPanel.getTranslateX(); }
+	float getTranslateY() const { return view2DPanel.getTranslateY(); }
+	float getRotation() const { return view2DPanel.getRotation(); }
+	float getScale() const { return view2DPanel.getScale(); }
+
+	// Return background color depending on active tab: Image has its own default background
+	ofColor getBackgroundColor() const {
+		if (imageTab.active) {
+			// Image mode uses a neutral darker background to better show images
+			return ofColor(20, 20, 20);
+		}
+		// Default to the 2D view background when 2D view is active
+		if (view2DPanel.isVisible()) {
+			return view2DPanel.getBackgroundColor();
+		}
+		// Fallback background
+		return ofColor(180, 200, 220);
+	}
+
+	// Expose active tab states
+	bool isImageTabActive() const { return imageTab.active; }
+
+	// IMAGE PANEL
+	bool isImportImageRequested() const { return imagePanel.isImportImageRequested(); }
+	bool isClearImageRequested() const { return imagePanel.isClearImageRequested(); }
+
+	// VIEW3D PANEL
+	bool isImport3DModelRequested() const { return view3DPanel.isImport3DModelRequested(); }
+	bool isClear3DModelRequested() const { return view3DPanel.isClear3DModelRequested(); }
+	bool is3DviewRequested() const { return view3DActive; }
+	bool is2DviewRequested() const { return view2DActive; }
+	bool isQuadViewRequested() const { return view3DPanel.isQuadViewRequested(); }
+	bool isShowBoundingBoxEnabled() const { return view3DPanel.isShowBoundingBoxToggled(); }
+	bool isWireframeEnabled() const { return view3DPanel.isShowWireframeToggled(); }
+	bool isGridEnabled() const { return view3DPanel.isGridEnabled(); }
+	bool isAxesEnabled() const { return view3DPanel.isAxesEnabled(); }
+	bool isNormalsEnabled() const { return view3DPanel.isNormalsEnabled(); }
+	bool isLightingEnabled() const { return view3DPanel.isLightingEnabled(); }
+	float getLightingIntensity() const { return view3DPanel.getLightIntensity(); }
+	ofColor getLightingColor() const { return view3DPanel.getLightColor(); }
+	const LightingPanel & getLightingPanel() const {return view3DPanel.getLightingPanel();}
+
+	bool is3DTabActive() const { return view3DActive; }
+
+	// CURVES (via View2DPanel)
+	bool isPlacePointsMode() const { return view2DPanel.isPlacePointsMode(); }
+	bool isGenerateCurveRequested() const { return view2DPanel.isGenerateCurveRequested(); }
+	bool isClearCurvesRequested() const { return view2DPanel.isClearCurvesRequested(); }
+	bool isUndoPointRequested() const { return view2DPanel.isUndoPointRequested(); }
+	bool isClearPointsRequested() const { return view2DPanel.isClearPointsRequested(); }
+	bool isDrawModeActive() const { return view2DPanel.isDrawModeActive(); }
+	bool isCurvesModeActive() const { return view2DPanel.isCurvesModeActive(); }
+	void disablePlacePointsMode() { view2DPanel.disablePlacePointsMode(); }
+	void clearGenerateCurveRequest() { view2DPanel.clearGenerateCurveRequest(); }
+	void clearClearCurvesRequest() { view2DPanel.clearClearCurvesRequest(); }
+	void clearUndoPointRequest() { view2DPanel.clearUndoPointRequest(); }
+	void clearClearPointsRequest() { view2DPanel.clearClearPointsRequest(); }
+
 	void clearRequests();
-	bool view3DRequested = false;
-	bool view2DRequested = false;
-	bool quadViewRequested = false;
-	float getLineWidth() const { return lineWidth; }
-	ofColor getStrokeColor() const { return strokeColor; }
-	ofColor getFillColor() const { return fillColor; }
-	ofColor getBackgroundColor() const { return backgroundColor; }
-	bool isHSBMode() const { return useHSB; }
-	float getHue() const { return hue; }
-	float getSaturation() const { return saturation; }
-	float getBrightness() const { return brightness; }
 
-	// Transformation getters
-	float getTranslateX() const { return translateX; }
-	float getTranslateY() const { return translateY; }
-	float getRotation() const { return rotation; }
-	float getScale() const { return scaleFactor; }
+	std::string statusMessage;
 
-	// 3D IMPORT
-
-	bool isImport3DModelRequested() const { return import3DModelRequested; }
-	void clearImport3DModelRequest() { import3DModelRequested = false; }
-	void onImport3DModelPressed();
-	bool isClear3DModelRequested() const { return clear3DModelRequested; }
-	void clearClear3DModelRequest() { clear3DModelRequested = false; }
-	void onClear3DModelPressed();
-	bool showBoundingBox = false;
-	bool showWireframe = false; 
-	bool getShowBoundingBox() const { return showBoundingBox; }
-	bool getShowWireframe() const { return showWireframe; }
-
+	bool isPlayAnimationRequested() const { return view2DPanel.isPlayAnimationRequested(); }
+	bool isStopAnimationRequested() const { return view2DPanel.isStopAnimationRequested(); }
+	void clearPlayAnimationRequest() { view2DPanel.clearRequests(); }
+	void clearStopAnimationRequest() { view2DPanel.clearRequests(); }
 
 private:
+	ImagePanel imagePanel;
+	View2DPanel view2DPanel;
+	View3DPanel view3DPanel;
+	InfoPanel infoPanel;
 
 	struct TabButton {
-		string label;
+		std::string label;
 		ofRectangle bounds;
-		bool hovered = false;
 		bool active = false;
 	};
 
-	CameraManager cameraManager;
-
-	//drawing area
-	ofRectangle drawingArea;
-
-	//panels of the menu choices
-	ofxPanel imageMenuPanel;
-	ofxPanel drawMenuPanel;
-	ofxPanel view3DMenuPanel;
-	ofxPanel deletePanel;
-	ofxPanel view3DPanel;
-
-	//image tab elements
-	ofxButton importImageButton;
-	ofxButton clearButton;
-	bool showImageMenu = false;
-	void onImportImagePressed();
-	void onClearImagePressed();
-	void onImageTabPressed();
-
-	//draw tab elements
-	ofxButton drawPointButton;
-	ofxButton drawLineButton;
-	ofxButton drawTriangleButton;
-	ofxButton drawSquareButton;
-	ofxButton drawRectangleButton;
-	ofxButton drawCircleButton;
-	ofxButton saveShapeButton;
-	ofxButton deleteShapeButton;
-	ofxButton selectionButton;
-	ofxButton exportSequenceButton;
-	ofxButton exportImageButton;
-	ofxButton showBoundingBoxButton;
-	ofxButton wireframeButton;
-	std::string currentShape = "none";
-	bool showDrawMenu = false;
-	bool saveShape = false;
-	bool deleteShape = false;
-	bool selectShape = false;
-	void onDrawAPointPressed();
-	void onDrawALinePressed();
-	void onDrawATrianglePressed();
-	void onDrawASquarePressed();
-	void onDrawARectanglePressed();
-	void onDrawACirclePressed();
-	void onDrawTabPressed();
-	void onDeleteShapePressed();
-	void onSaveShapePressed();
-	void onSelectionPressed();
-	void onShowBoundingBoxPressed();
-	void onWireframePressed();
-
-
-	//view3D
-	void onView3DTabPressed();
-	bool showView3D = false;
-	bool show3DMenu = false; 
-	//view quad
-	bool showQuadView = false;
-	ofxButton quadViewButton;
-	ofxLabel cameraTitle;
-	ofxLabel cameraInstructions1;
-	ofxLabel cameraInstructions2;
-	void onQuadViewButtonPressed();
-
-	//general
-	ofTrueTypeFont font;
-	ImageManager imageManager;
-	SceneGraph sceneGraph;
-	//float SideMenuwidth = 200;
-	float menuBarHeight = 50;
-	float buttonsWidth = 100;
-	float buttonsWidthMargin = 10;
-
-	//tabs
 	TabButton imageTab = { "Image", ofRectangle(0, 0, 100, 50) };
-	TabButton drawTab = { "Draw", ofRectangle(100, 0, 100, 50) };
-	TabButton view3DTab = { "3D view", ofRectangle(200, 0, 100, 50) };
+	TabButton draw2DTab = { "2D EDITION", ofRectangle(100, 0, 140, 50) };
+	TabButton view3DTab = { "3D EDITION", ofRectangle(240, 0, 140, 50) };
 
-	// status box
-	float statusTimer = 0.0f;
-	std::string statusMessage;
+	ofRectangle drawingArea;
 	ofRectangle statusBox;
+	ofRectangle drawDrawingArea;
+	ofRectangle curvesDrawingArea;
+	float menuBarHeight = 50;
 
-	// Export
-	ofFbo exportFbo;
-	std::string exportFolder = "export";
-	bool exportSequence = false;
-	int exportFrameCount = 0;
-	int maxFrames = 100;
-	float exportInterval = 0.5f;
-	float exportTimer = 0.0f;
+	bool view2DActive = false;
+	bool view3DActive = false;
 
-	void onExportSequencePressed();
-	void exportCurrentFrame();
-	void onExportImagePressed();
-	void exportScene();
-	// --- Drawing parameters panel ---
-	ofxPanel drawParamsPanel;
-	ofParameter<float> lineWidth;
-	ofParameter<ofColor> strokeColor;
-	ofParameter<ofColor> fillColor;
-	ofParameter<ofColor> backgroundColor;
-	ofParameter<bool> useHSB;
-	ofParameter<float> hue;
-	ofParameter<float> saturation;
-	ofParameter<float> brightness;
-
-	// Transformation attributes
-	ofxPanel transformPanel;
-	ofParameter<float> translateX, translateY;
-	ofParameter<float> rotation;
-	ofParameter<float> scaleFactor;
-
-	// Bouton d'importation 3D
-	ofxButton import3DModelButton;
-	bool import3DModelRequested = false;
-	ofxButton clear3DModelButton;
-	bool clear3DModelRequested = false;
-	//
-	float prochainY = 0.0f;
-	// vidual feedback
-	ofColor feedbackColor = ofColor::white;
-	float feedbackAlpha = 255.0f;
-	bool feedbackFlash = false;
-	float feedbackTimer = 0.0f;
-	float feedbackFlashDuration = 0.5f;
-	
+	void drawTabs();
+	void drawStatusBox();
+	void handleTabClick(int x, int y);
+	void activateImageTab();
+	void activateDraw2DTab();
+	void activateView3DTab();
 };

@@ -8,7 +8,8 @@ CurvesRenderer::CurvesRenderer() {
 
 void CurvesRenderer::render(
 	const std::vector<glm::vec2> & controlPoints,
-	const std::vector<BezierCurve> & curves) const {
+	const std::vector<BezierCurve> & curves,
+	const CurveAnimator * animator) const {
 	// Dessiner dans l'ordre : points de contrôle puis courbes
 	// (pour que les courbes soient au-dessus des segments de contrôle)
 
@@ -17,6 +18,10 @@ void CurvesRenderer::render(
 
 	// 2. Dessiner les courbes de Bézier
 	renderCurvesOnly(curves);
+
+	 if (animator && animator->isPlaying()) {
+		animatedObjectRenderer.render(animator->getAnimatedObject());
+	}
 }
 
 void CurvesRenderer::renderControlPointsOnly(const std::vector<glm::vec2> & controlPoints) const {

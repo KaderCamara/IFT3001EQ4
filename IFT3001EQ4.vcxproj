@@ -94,7 +94,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
       <RandomizedBaseAddress>true</RandomizedBaseAddress>
       <AdditionalDependencies>%(AdditionalDependencies);libassimpD.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories);..\..\..\addons\ofxAssimpModelLoader\libs\assimp\lib\vs\x64\Debug</AdditionalLibraryDirectories>
@@ -232,7 +232,6 @@
     <ClCompile Include="src\controllers\lightingController.cpp" />
     <ClCompile Include="src\objects\lightingManager.cpp" />
     <ClCompile Include="src\app\application.cpp" />
-    <ClCompile Include="src\controllers\curvesController.cpp" />
     <ClCompile Include="src\controllers\curvesController.h" />
     <ClCompile Include="src\controllers\imageController.cpp" />
     <ClCompile Include="src\controllers\sceneController.cpp" />
@@ -255,10 +254,12 @@
     <ClCompile Include="..\..\..\addons\ofxGui\src\ofxToggle.cpp" />
     <ClCompile Include="src\objects\BezierCurve.cpp" />
     <ClCompile Include="src\objects\controlPointsManager.cpp" />
+    <ClCompile Include="src\objects\curveAnimator.cpp" />
     <ClCompile Include="src\objects\curveManager.cpp" />
     <ClCompile Include="src\objects\shapeManager3D.cpp" />
     <ClCompile Include="src\objects\shapeManager.cpp" />
     <ClCompile Include="src\rendering\camera\cameraManager.cpp" />
+    <ClCompile Include="src\rendering\curves\AnimatedObjectRenderer.cpp" />
     <ClCompile Include="src\rendering\curves\bezierCurveRenderer.cpp" />
     <ClCompile Include="src\rendering\curves\controlPointsRenderer.cpp" />
     <ClCompile Include="src\rendering\curves\curvesRenderer.cpp" />
@@ -286,6 +287,7 @@
     <ClCompile Include="src\ui\panels\infoPanel.cpp" />
     <ClCompile Include="src\ui\panels\transformPanel.cpp" />
     <ClCompile Include="src\ui\panels\vectorEditionPanel.cpp" />
+    <ClCompile Include="src\ui\panels\view2DPanel.cpp" />
     <ClCompile Include="src\ui\panels\view3DPanel.cpp" />
     <ClCompile Include="src\ui\uiWindow.cpp" />
     <ClCompile Include="src\utils\Model3DImportManager.cpp" />
@@ -401,11 +403,13 @@
     <ClInclude Include="..\..\..\addons\ofxGui\src\ofxToggle.h" />
     <ClInclude Include="src\objects\BezierCurve.h" />
     <ClInclude Include="src\objects\controlPointsManager.h" />
+    <ClInclude Include="src\objects\curveAnimator.h" />
     <ClInclude Include="src\objects\curveManager.h" />
     <ClInclude Include="src\objects\shape.h" />
     <ClInclude Include="src\objects\shapeManager3D.h" />
     <ClInclude Include="src\objects\shapeManager.h" />
     <ClInclude Include="src\rendering\camera\cameraManager.h" />
+    <ClInclude Include="src\rendering\curves\AnimatedObjectRenderer.h" />
     <ClInclude Include="src\rendering\curves\bezierCurveRenderer.h" />
     <ClInclude Include="src\rendering\curves\controlPointsRenderer.h" />
     <ClInclude Include="src\rendering\curves\curvesRenderer.h" />
@@ -434,6 +438,7 @@
     <ClInclude Include="src\ui\panels\infoPanel.h" />
     <ClInclude Include="src\ui\panels\transformPanel.h" />
     <ClInclude Include="src\ui\panels\vectorEditionPanel.h" />
+    <ClInclude Include="src\ui\panels\view2DPanel.h" />
     <ClInclude Include="src\ui\panels\view3DPanel.h" />
     <ClInclude Include="src\ui\uiWindow.h" />
     <ClInclude Include="src\utils\Model3DImportManager.h" />

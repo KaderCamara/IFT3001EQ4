@@ -6,6 +6,8 @@ DrawingPanel::DrawingPanel() {
 }
 
 void DrawingPanel::setup() {
+	isActive = true;
+
 	// Setup du menu principal de dessin
 	drawMenuPanel.setup("Drawing tool");
 	drawMenuPanel.enableHeader();
@@ -20,6 +22,7 @@ void DrawingPanel::setup() {
 	drawMenuPanel.add(selectionButton.setup("Select/Interact"));
 	drawMenuPanel.add(exportSequenceButton.setup("Export Sequence"));
 	drawMenuPanel.add(exportImageButton.setup("Export Image"));
+	drawMenuPanel.add(backButton.setup("Retour"));
 
 	// Listeners
 	drawPointButton.addListener(this, &DrawingPanel::onDrawPointPressed);
@@ -32,6 +35,7 @@ void DrawingPanel::setup() {
 	selectionButton.addListener(this, &DrawingPanel::onSelectionPressed);
 	exportSequenceButton.addListener(this, &DrawingPanel::onExportSequencePressed);
 	exportImageButton.addListener(this, &DrawingPanel::onExportImagePressed);
+	backButton.addListener(this, &DrawingPanel::onBackPressed);
 
 	// Panel de suppression
 	deletePanel.setup("Delete");
@@ -57,76 +61,37 @@ void DrawingPanel::setup() {
 	// Setup des panels dédiés
 	drawingParamsPanel.setup();
 	transformPanel.setup();
-	vectorEditionPanel.setup();
 }
 
 void DrawingPanel::update() {
 	// Logique d'update si nécessaire (export séquence, etc.)
 }
 
-void DrawingPanel::draw(float sideMenuWidth, float menuBarHeight) {
-	drawDrawPanel(sideMenuWidth, menuBarHeight);
+void DrawingPanel::draw(float x, float y, float width) {
+    drawDrawPanel(x, y, width);
 }
 
-void DrawingPanel::drawDrawPanel(float sideMenuWidth, float menuBarHeight) {
-	if (!isActive) return;
+void DrawingPanel::drawDrawPanel(float x, float y, float width) {
+    if (!this->isActive) return;
 
-	// Right side: main draw menu
-	float rightX = ofGetWidth() - sideMenuWidth;
-	float rightY = menuBarHeight;
-	drawMenuPanel.setPosition(rightX, rightY);
-	drawMenuPanel.setSize(sideMenuWidth, ofGetHeight() - menuBarHeight);
-	drawMenuPanel.draw();
+    // Right side: main draw menu
+    float rightX = x;
+    float rightY = y;
+    drawMenuPanel.setPosition(rightX, rightY);
+    drawMenuPanel.setSize(width, ofGetHeight() - rightY);
+    drawMenuPanel.draw();
 
-	// Place drawing parameters under the Drawing tool panel (right column)
-	float paramsY = menuBarHeight + drawMenuPanel.getHeight() + 10.0f;
-	drawingParamsPanel.draw(rightX, paramsY, sideMenuWidth);
+    // Place drawing parameters under the Drawing tool panel (right column)
+    float paramsY = rightY + drawMenuPanel.getHeight() + 10.0f;
+    drawingParamsPanel.draw(rightX, paramsY, width);
 
-	// Delete panel shown when in selection mode (right under parameters)
-	if (selectionMode) {
-		float deleteY = paramsY + drawingParamsPanel.getHeight() + 10.0f;
-		deletePanel.setPosition(rightX, deleteY);
-		deletePanel.draw();
-	}
-
-	drawLeftColumn(sideMenuWidth, menuBarHeight);
+    // Delete panel shown when in selection mode (right under parameters)
+    if (this->selectionMode) {
+        float deleteY = paramsY + drawingParamsPanel.getHeight() + 10.0f;
+        deletePanel.setPosition(rightX, deleteY);
+        deletePanel.draw();
+    }
 }
-
-void DrawingPanel::drawCurvesToolsPanel(float sideMenuWidth, float menuBarHeight) {
-	if (!isActive) return;
-
-	// Right side: curves tools only
-	float rightX = ofGetWidth() - sideMenuWidth;
-	float rightY = menuBarHeight;
-	curvesPanel.setPosition(rightX, rightY);
-	curvesPanel.setSize(sideMenuWidth, curvesPanel.getHeight());
-	curvesPanel.draw();
-
-	drawLeftColumn(sideMenuWidth, menuBarHeight);
-}
-
-void DrawingPanel::drawLeftColumn(float sideMenuWidth, float menuBarHeight) {
-	// Left side: pin vector tools to the left edge
-	float leftX = 0.0f; // flush to left edge
-	float leftWidth = sideMenuWidth; // match sidebar width
-	float nextY = menuBarHeight;
-
-	// Vector tools at top-left
-	vectorEditionPanel.setPosition(leftX, nextY);
-	vectorEditionPanel.setWidth(leftWidth);
-	vectorEditionPanel.draw();
-	nextY += vectorEditionPanel.getHeight() + 10.0f;
-
-	// Transform panel appears under the left column when in selection mode
-	if (selectionMode) {
-		float windowWidth = ofGetWidth();
-		float windowHeight = ofGetHeight() - menuBarHeight;
-		transformPanel.show();
-		transformPanel.draw(leftX, nextY, leftWidth, windowWidth, windowHeight);
-	} else {
-		transformPanel.hide();
-	}
-	}
 
 void DrawingPanel::reset() {
 	// Réinitialiser l'état du panel lors du changement d'onglet
@@ -242,4 +207,9 @@ void DrawingPanel::onUndoPointPressed() {
 void DrawingPanel::onClearPointsPressed() {
 	clearPointsRequested = true;
 	ofLogNotice("DrawingPanel") << "Clear points requested";
+}
+
+void DrawingPanel::onBackPressed() {
+    // On notifie le View2DPanel de revenir à la navigation
+    // (à implémenter via un callback ou accès direct si possible)
 }

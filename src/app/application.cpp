@@ -13,12 +13,15 @@ void Application::setup() {
 	imageController.setup();
 	curvesController.setup();
 	transformController.setup();
+	lightingController.setup(); 
 
 	// ✅ PLUS BESOIN d'injecter les Controllers dans le Renderer
 	// Le Renderer est maintenant une VIEW pure
 
 	// Configuration du TransformController
 	transformController.setSceneGraph(&sceneController.getSceneGraph());
+	const LightingPanel & lightingPanel = uiWindow.getLightingPanel();
+	cachedLightingData = lightingController.prepareLightingData(lightingPanel);
 
 	ofLogNotice("Application") << "Setup complete - MVC architecture initialized";
 }
@@ -49,8 +52,10 @@ void Application::update() {
 
 	if (uiWindow.isQuadViewRequested()) {
 		sceneController.setViewQuadMode();
+		lightingDataNeedsUpdate = true;
 	} else if (uiWindow.is3DviewRequested()) {
 		sceneController.setView3DMode();
+		lightingDataNeedsUpdate = true;
 	} else if (uiWindow.is2DviewRequested()) {
 		sceneController.setView2DMode();
 	}
@@ -98,6 +103,7 @@ void Application::update() {
 		if (!importedShapes.empty()) {
 			sceneController.addShapesToScene(importedShapes);
 			sceneController.setView3DMode();
+			lightingDataNeedsUpdate = true;  
 			ofLogNotice("Application") << "Successfully imported "
 									   << importedShapes.size() << " 3D shape(s)";
 		}
@@ -327,6 +333,13 @@ RenderData3D Application::prepareRenderData3D() {
 	if (lightingDataNeedsUpdate) {
 		const LightingPanel & lightingPanel = uiWindow.getLightingPanel();
 		cachedLightingData = lightingController.prepareLightingData(lightingPanel);
+		lightingDataNeedsUpdate = false;
+	}
+	data.lighting = cachedLightingData;
+
+	//data.enableLighting = uiWindow.isLightingEnabled();
+	//data.lightIntensity = uiWindow.getLightingIntensity();
+	//data.lightColor = uiWindow.getLightingColor();
 
 	// Zone de dessin
 	data.drawingArea = uiWindow.getDrawingArea();
@@ -374,6 +387,13 @@ RenderDataQuad Application::prepareRenderDataQuad() {
 	// Options d'affichage
 	data.showBoundingBox = uiWindow.isShowBoundingBoxEnabled();
 	data.showWireframe = uiWindow.isWireframeEnabled();
+	// Lighting data from panel
+	if (lightingDataNeedsUpdate) {
+		const LightingPanel & lightingPanel = uiWindow.getLightingPanel();
+		cachedLightingData = lightingController.prepareLightingData(lightingPanel);
+		lightingDataNeedsUpdate = false;
+	}
+	data.lighting = cachedLightingData;
 
 	return data;
 }

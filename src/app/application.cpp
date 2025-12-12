@@ -13,15 +13,12 @@ void Application::setup() {
 	imageController.setup();
 	curvesController.setup();
 	transformController.setup();
-	lightingController.setup(); 
 
 	// ✅ PLUS BESOIN d'injecter les Controllers dans le Renderer
 	// Le Renderer est maintenant une VIEW pure
 
 	// Configuration du TransformController
 	transformController.setSceneGraph(&sceneController.getSceneGraph());
-	const LightingPanel & lightingPanel = uiWindow.getLightingPanel();
-	cachedLightingData = lightingController.prepareLightingData(lightingPanel);
 
 	ofLogNotice("Application") << "Setup complete - MVC architecture initialized";
 }
@@ -49,25 +46,13 @@ void Application::update() {
 	}
 
 	// ========== GESTION DES VUES ==========
-	bool isQuadView = uiWindow.isQuadViewRequested();
-	bool is3DView = uiWindow.is3DviewRequested();
-	bool is2DView = uiWindow.is2DviewRequested();
-	if (isQuadView && !wasQuadView) {
+
+	if (uiWindow.isQuadViewRequested()) {
 		sceneController.setViewQuadMode();
-		lightingDataNeedsUpdate = true;
-		wasQuadView = true;
-		was3DView = false;
-		ofLogNotice("Application") << "View changed to QUAD - lighting update scheduled";
-	} else if (is3DView && !was3DView) {
+	} else if (uiWindow.is3DviewRequested()) {
 		sceneController.setView3DMode();
-		lightingDataNeedsUpdate = true;
-		was3DView = true;
-		wasQuadView = false;
-		ofLogNotice("Application") << "View changed to 3D - lighting update scheduled";
-	} else if (is2DView) {
+	} else if (uiWindow.is2DviewRequested()) {
 		sceneController.setView2DMode();
-		wasQuadView = false;
-		was3DView = false;
 	}
 
 	// ========== GESTION DES COURBES ==========
@@ -92,6 +77,19 @@ void Application::update() {
 		uiWindow.clearClearCurvesRequest();
 	}
 
+	if (uiWindow.isPlayAnimationRequested()) {
+		curvesController.startAnimation();
+		uiWindow.clearPlayAnimationRequest();
+	}
+
+	if (uiWindow.isStopAnimationRequested()) {
+		curvesController.stopAnimation();
+		uiWindow.clearStopAnimationRequest();
+	}
+
+	// Update animation chaque frame
+	curvesController.updateAnimation(ofGetLastFrameTime());
+
 	// ========== IMPORT 3D ==========
 
 	if (uiWindow.isImport3DModelRequested()) {
@@ -100,7 +98,6 @@ void Application::update() {
 		if (!importedShapes.empty()) {
 			sceneController.addShapesToScene(importedShapes);
 			sceneController.setView3DMode();
-			lightingDataNeedsUpdate = true;  
 			ofLogNotice("Application") << "Successfully imported "
 									   << importedShapes.size() << " 3D shape(s)";
 		}
@@ -111,49 +108,6 @@ void Application::update() {
 		std::vector<Shape> filteredShapes = model3DImportManager.removeAll3DModels(currentShapes);
 		sceneController.setAllShapes(filteredShapes);
 	}
-
-
-	//////// check
-
-
-	const LightingPanel & lightingPanel = uiWindow.getLightingPanel();
-
-	// Track key lighting states
-	static bool lastSunEnabled = false;
-	static bool lastPointEnabled = false;
-	static bool lastSpotEnabled = false;
-	static bool lastPhongEnabled = false;
-	static int lastMaterialCount = 0;
-
-	bool sunEnabled = lightingPanel.isSunLightEnabled();
-	bool pointEnabled = lightingPanel.isPointLightEnabled();
-	bool spotEnabled = lightingPanel.isSpotLightEnabled();
-	bool phongEnabled = lightingPanel.isPhongEnabled();
-	int materialCount = lightingPanel.getMaterialCount();
-
-	// Detect changes
-	if (sunEnabled != lastSunEnabled || pointEnabled != lastPointEnabled || spotEnabled != lastSpotEnabled || phongEnabled != lastPhongEnabled || materialCount != lastMaterialCount) {
-
-		lightingDataNeedsUpdate = true;
-
-		ofLogNotice("Application") << "Lighting panel changed - update scheduled "
-								   << "(Sun:" << sunEnabled << " Point:" << pointEnabled
-								   << " Spot:" << spotEnabled << " Phong:" << phongEnabled
-								   << " Material:" << materialCount << ")";
-
-		// Update tracking
-		lastSunEnabled = sunEnabled;
-		lastPointEnabled = pointEnabled;
-		lastSpotEnabled = spotEnabled;
-		lastPhongEnabled = phongEnabled;
-		lastMaterialCount = materialCount;
-	}
-
-
-
-
-
-	//////////////////
 
 	// Clear des requêtes UI
 	uiWindow.clearRequests();
@@ -183,6 +137,27 @@ void Application::draw() {
 		uiWindow.getTranslateY(),
 		uiWindow.getRotation(),
 		uiWindow.getScale());
+
+	// If the Image tab is active, render only the image area and UI.
+	if (uiWindow.isImageTabActive()) {
+		// Draw image-specific background
+		ofPushStyle();
+		ofSetColor(uiWindow.getBackgroundColor());
+		const ofRectangle drawing = uiWindow.getDrawingArea();
+		ofDrawRectangle(drawing.x, drawing.y, drawing.width, drawing.height);
+		ofPopStyle();
+
+		// Render the image if available
+		if (imageController.hasImage()) {
+			renderer.getImageRenderer().renderInBounds(imageController.getImage(), drawing, true);
+		}
+
+		// Draw the UI overlay and return early — do not draw editor canvases
+		ofDisableDepthTest();
+		uiWindow.draw();
+		ofEnableDepthTest();
+		return;
+	}
 
 	// ========== PRÉPARER LES RENDERDATA ET POUSSER AU RENDERER ==========
 	// ✅ L'Application (CONTROLLER) prépare les données
@@ -258,13 +233,14 @@ RenderDataDraw2D Application::prepareRenderDataDraw2D() {
 RenderDataCurves2D Application::prepareRenderDataCurves2D() {
 	RenderDataCurves2D data;
 
-	// Courbes de Bézier
 	const ControlPointsManager & cpm = curvesController.getControlPointsManager();
 	const CurveManager & cm = curvesController.getCurveManager();
 	data.controlPoints = cpm.getControlPoints();
 	data.curves = cm.getCurves();
 
-	// Paramètres visuels dédiés aux courbes (on conserve les paramètres de trait actuels)
+	// AJOUTER:
+	data.animator = &curvesController.getAnimator();
+
 	data.lineWidth = uiWindow.getLineWidth();
 	data.strokeColor = uiWindow.getStrokeColor();
 	data.backgroundColor = uiWindow.getBackgroundColor();
@@ -292,17 +268,9 @@ RenderData3D Application::prepareRenderData3D() {
 	data.showGrid = uiWindow.isGridEnabled();
 	data.showAxes = uiWindow.isAxesEnabled();
 	data.showNormals = uiWindow.isNormalsEnabled();
-
-	if (lightingDataNeedsUpdate) {
-		const LightingPanel & lightingPanel = uiWindow.getLightingPanel();
-		cachedLightingData = lightingController.prepareLightingData(lightingPanel);
-		lightingDataNeedsUpdate = false;
-	}
-	data.lighting = cachedLightingData;
-
-	//data.enableLighting = uiWindow.isLightingEnabled();
-	//data.lightIntensity = uiWindow.getLightingIntensity();
-	//data.lightColor = uiWindow.getLightingColor();
+	data.enableLighting = uiWindow.isLightingEnabled();
+	data.lightIntensity = uiWindow.getLightingIntensity();
+	data.lightColor = uiWindow.getLightingColor();
 
 	// Zone de dessin
 	data.drawingArea = uiWindow.getDrawingArea();
@@ -350,16 +318,6 @@ RenderDataQuad Application::prepareRenderDataQuad() {
 	// Options d'affichage
 	data.showBoundingBox = uiWindow.isShowBoundingBoxEnabled();
 	data.showWireframe = uiWindow.isWireframeEnabled();
-	data.showGrid = uiWindow.isGridEnabled(); // ✅ ADDED
-	data.showAxes = uiWindow.isAxesEnabled(); // ✅ ADDED
-
-	// Lighting data from panel
-	if (lightingDataNeedsUpdate) {
-		const LightingPanel & lightingPanel = uiWindow.getLightingPanel();
-		cachedLightingData = lightingController.prepareLightingData(lightingPanel);
-		lightingDataNeedsUpdate = false;
-	}
-	data.lighting = cachedLightingData;
 
 	return data;
 }

@@ -324,9 +324,9 @@ RenderData3D Application::prepareRenderData3D() {
 	data.showGrid = uiWindow.isGridEnabled();
 	data.showAxes = uiWindow.isAxesEnabled();
 	data.showNormals = uiWindow.isNormalsEnabled();
-	data.enableLighting = uiWindow.isLightingEnabled();
-	data.lightIntensity = uiWindow.getLightingIntensity();
-	data.lightColor = uiWindow.getLightingColor();
+	if (lightingDataNeedsUpdate) {
+		const LightingPanel & lightingPanel = uiWindow.getLightingPanel();
+		cachedLightingData = lightingController.prepareLightingData(lightingPanel);
 
 	// Zone de dessin
 	data.drawingArea = uiWindow.getDrawingArea();

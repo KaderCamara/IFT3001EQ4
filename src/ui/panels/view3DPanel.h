@@ -57,8 +57,13 @@ public:
 	// Clear des requetes
 	void clearRequests();
 
-	void setCameraManager(CameraManager * camMgr) { cameraManager = camMgr; }
+	void setCameraManager(CameraManager * manager) { cameraManager = manager; }
 	void setSceneShapes(std::vector<Shape> * shapes) { sceneShapes = shapes; }
+
+	std::vector<Shape> * getSceneShapes() { return sceneShapes; }
+	CameraManager * getCameraManager() { return cameraManager; }
+	RayTracingPanel & getRayTracingPanel() { return rayTracingPanel; }
+	LightingPanel & getLightingPanel() { return lightingPanel; }
 
 private:
 	enum class Section {
@@ -116,4 +121,6 @@ private:
 	void onTextureButton();
 	void onRayTracingButton();
 	void onLightingButton();
+
+
 };

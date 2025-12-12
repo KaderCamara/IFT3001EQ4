@@ -25,7 +25,7 @@ public:
 	float getMetallic() const { return static_cast<ofParameter<float>&>(const_cast<ofxFloatSlider&>(metallicity).getParameter()).get(); }
 	float getRoughness() const { return static_cast<ofParameter<float>&>(const_cast<ofxFloatSlider&>(roughness).getParameter()).get(); }
 	float getIOR() const { return static_cast<ofParameter<float>&>(const_cast<ofxFloatSlider&>(ior).getParameter()).get(); }
-	std::vector<ofLight> getActiveLights();
+	std::vector<ofLight *> getActiveLights();
 
 
 private:
@@ -81,4 +81,10 @@ private:
 	float enforcedY = 0.f;
 	float enforcedWidth = 220.f;
 	bool visible = true;
+
+	ofLight sunLight;
+	ofLight pointLight;
+	ofLight spotLight;
+
+	std::vector<ofLight *> activeLights;
 };

@@ -103,6 +103,7 @@ public:
 	CameraManager cameraManager;
 
 	void disablePlacePointsMode() { drawingPanel.setPlacePointsMode(false); }
+	View3DPanel & getView3DPanel() { return view3DPanel; }
 
 private:
 	// ========== PANELS ==========

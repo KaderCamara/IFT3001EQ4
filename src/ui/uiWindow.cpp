@@ -10,6 +10,7 @@ void UIWindow::setup() {
 	view3DPanel.setup();
 	infoPanel.setup();
 
+
 	// Inject camera manager and shapes
 	static std::vector<Shape> sceneShapes;
 	view3DPanel.setCameraManager(&cameraManager);
@@ -142,16 +143,36 @@ void UIWindow::draw() {
 	// Delimiter for 3D view: draw a visible border where the 3D view will be rendered
 	// Only show when the 3D panel is active and visible
 	if (view3DActive && view3DPanel.isVisible()) {
+
+		// 1️⃣ Rendu réel de la scène 3D
+		ofEasyCam & cam = view3DPanel.getCameraManager()->getCurrentCamera();
+		cam.begin(drawingArea);
+
+		if (view3DPanel.getRayTracingPanel().isGlobalIlluminationEnabled()) {
+			view3DPanel.getRayTracingPanel().renderSceneWithGI(
+				*view3DPanel.getSceneShapes(),
+				cam,
+				view3DPanel.getLightingPanel());
+		} else {
+			for (const auto & shape : *view3DPanel.getSceneShapes()) {
+				shape.mesh3D.draw();
+			}
+		}
+
+		cam.end();
+
+		// 2️⃣ Dessiner le cadre et le label par-dessus
 		ofPushStyle();
 		ofNoFill();
 		ofSetColor(180, 200, 255);
 		ofSetLineWidth(3);
 		ofDrawRectangle(drawingArea.x + 2, drawingArea.y + 2, drawingArea.width - 4, drawingArea.height - 4);
-		// label
+
 		ofSetColor(200);
 		ofDrawBitmapString("3D VIEW", drawingArea.x + 10, drawingArea.y + 20);
 		ofPopStyle();
 	}
+
 
 	if (current2DMode == TwoDMode::Draw) {
 		drawingPanel.drawDrawPanel(sideMenuWidth, menuBarHeight);

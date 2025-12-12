@@ -130,34 +130,31 @@ void LightingPanel::show() { visible = true; }
 void LightingPanel::hide() { visible = false; }
 bool LightingPanel::isVisible() const { return visible; }
 
-std::vector<ofLight> LightingPanel::getActiveLights() {
-	std::vector<ofLight> lights;
+std::vector<ofLight *> LightingPanel::getActiveLights() {
+	activeLights.clear();
 
-	// Lumière du soleil
 	if (toggleSunLight) {
-		ofLight sun;
-		sun.setDirectional();
-		sun.setOrientation(ofVec3f(sunElevation, sunAzimuth, 0));
-		sun.setDiffuseColor(ofColor::white * sunIntensity);
-		lights.push_back(sun);
+		sunLight.setDirectional();
+		sunLight.setOrientation(glm::vec3(static_cast<float>(sunElevation), static_cast<float>(sunAzimuth), 0.0f));
+		sunLight.setDiffuseColor(ofColor::white * sunIntensity);
+		activeLights.push_back(&sunLight);
 	}
 
-	// Point lights
 	if (togglePointLight) {
-		ofLight pt;
-		pt.setPointLight();
-		pt.setDiffuseColor(ofColor::white * pointIntensity);
-		lights.push_back(pt);
+		pointLight.setPointLight();
+		pointLight.setDiffuseColor(ofColor::white * pointIntensity);
+		pointLight.setPosition(200, 200, 200);
+		activeLights.push_back(&pointLight);
 	}
 
-	// Spot lights
 	if (toggleSpotLight) {
-		ofLight spot;
-		spot.setSpotlight();
-		spot.setDiffuseColor(ofColor::white * spotIntensity);
-		spot.setSpotlightCutOff(spotAngle);
-		lights.push_back(spot);
+		spotLight.setSpotlight();
+		spotLight.setDiffuseColor(ofColor::white * spotIntensity);
+		spotLight.setSpotlightCutOff(spotAngle);
+		spotLight.setPosition(0, 0, 300);
+		spotLight.lookAt({ 0, 0, 0 });
+		activeLights.push_back(&spotLight);
 	}
 
-	return lights;
+	return activeLights;
 }

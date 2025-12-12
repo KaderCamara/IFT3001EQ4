@@ -55,10 +55,13 @@ void View3DPanel::draw(float sideMenuWidth, float menuBarHeight) {
 	if (!isActive) return;
 
 	if (activeSection == Section::RayTracing && rayTracingPanel.isGlobalIlluminationEnabled()) {
-		if (this->cameraManager && sceneShapes) {
-			ofEasyCam & cam = this->cameraManager->getCurrentCamera();
-			rayTracingPanel.renderSceneWithGI(*sceneShapes, cam, lightingPanel);
-		}
+			if (this->cameraManager && sceneShapes) {
+				ofEasyCam & cam = this->cameraManager->getCurrentCamera();
+
+				cam.begin();
+				rayTracingPanel.renderSceneWithGI(*sceneShapes, cam, lightingPanel);
+				cam.end(); 
+			}
 		}
 
 	float panelX = ofGetWidth() - sideMenuWidth;

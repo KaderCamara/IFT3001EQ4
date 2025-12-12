@@ -141,11 +141,38 @@ void Application::draw() {
 		renderer.drawQuad(data);
 
 	} else if (sceneController.is3DView()) {
-		// Préparer les données pour le rendu 3D
-		RenderData3D data = prepareRenderData3D();
+			// Préparer les données pour le rendu 3D
+			RenderData3D data = prepareRenderData3D();
 
-		// Pousser au renderer
-		renderer.draw3D(data);
+			// Récupérer les objets nécessaires
+			CameraManager & cameraManager = sceneController.getCameraManager();
+			ofEasyCam & cam = cameraManager.getCurrentCamera();
+			std::vector<Shape> & shapes = sceneController.getSceneGraph().shapes;
+
+			bool usedGI = false;
+			if (uiWindow.is3DTabActive()) {
+				View3DPanel & vpanel = uiWindow.getView3DPanel(); // add getter if missing
+				RayTracingPanel & rt = vpanel.getRayTracingPanel();
+				LightingPanel & lp = vpanel.getLightingPanel();
+
+				if (rt.isGlobalIlluminationEnabled()) {
+					ofLogNotice("Application") << "Using Global Illumination rendering";
+
+					cam.begin(data.drawingArea);
+
+					rt.renderSceneWithGI(shapes, cam, lp);
+
+					cam.end();
+
+					usedGI = true;
+				}
+			}
+
+			if (!usedGI) {
+				renderer.draw3D(data);
+			}
+		
+
 
 	} else if (sceneController.is2DView()) {
 		if (uiWindow.isDrawModeActive()) {

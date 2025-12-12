@@ -61,19 +61,34 @@ int RayTracingPanel::getBounceCount() const {
 	return static_cast<ofParameter<int> &>(const_cast<ofxIntSlider &>(bounceCount).getParameter()).get();
 }
 
-void RayTracingPanel::renderSceneWithGI(const std::vector<Shape> & shapes,
-	ofEasyCam & camera,
+void RayTracingPanel::renderSceneWithGI(
+	const std::vector<Shape> & shapes,
+	ofEasyCam & cam,
 	const LightingPanel & lighting) {
-	camera.begin();
-	std::vector<ofLight> lights = const_cast<LightingPanel &>(lighting).getActiveLights();
-	for (auto & light : lights)
-		light.enable();
+	// NE PAS refaire cam.begin() ici (c’est déjà fait par View3DPanel)
 
-	for (const auto & shape : shapes) {
-		shape.mesh3D.draw();
+	ofEnableDepthTest();
+	ofEnableLighting();
+
+	// Obtenir les lumières réelles (pointeurs)
+	auto & lightPanelNonConst = const_cast<LightingPanel &>(lighting);
+	std::vector<ofLight *> lights = lightPanelNonConst.getActiveLights();
+
+	// Activer les lumières
+	for (auto * l : lights) {
+		if (l) l->enable();
 	}
 
-	for (auto & light : lights)
-		light.disable();
-	camera.end();
+	// --- DRAW 3D ---
+	for (const auto & s : shapes) {
+		s.mesh3D.drawFaces(); // meilleur shading
+	}
+
+	// Désactiver lumières
+	for (auto * l : lights) {
+		if (l) l->disable();
+	}
+
+	ofDisableLighting();
+	ofDisableDepthTest();
 }

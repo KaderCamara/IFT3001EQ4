@@ -189,7 +189,7 @@ void Shape3DRenderer::setLightingUniforms(const LightingData & lighting, const o
 		glm::vec4 lightPositionViewSpace = viewMatrix * glm::vec4(glm::vec3(light.position), 1.0f);
 		lightingShader.setUniform3f(prefix + "Position", lightPositionViewSpace.x, lightPositionViewSpace.y, lightPositionViewSpace.z);
 		glm::vec4 lightDirectionViewSpace = viewMatrix * glm::vec4(glm::vec3(light.direction), 0.0f);
-		lightingShader.setUniform3f(prefix + "Direction", light.direction.x, light.direction.y, light.direction.z);
+		lightingShader.setUniform3f(prefix + "Direction", lightDirectionViewSpace.x, lightDirectionViewSpace.y, lightDirectionViewSpace.z);
 
 		lightingShader.setUniform1f(prefix + "ConstantAtt", light.constantAttenuation);
 		lightingShader.setUniform1f(prefix + "LinearAtt", light.linearAttenuation);

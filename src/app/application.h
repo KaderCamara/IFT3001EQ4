@@ -10,6 +10,7 @@
 #include "../rendering/RenderData.h"
 #include "../rendering/Renderer.h"
 #include "../ui/uiWindow.h"
+#include "../controllers/lightingController.h" 
 #include "../utils/Model3DImportManager.h"
 #include "ofMain.h"
 
@@ -62,6 +63,7 @@ private:
 	CurvesController curvesController; // Logique courbes
 	ImageController imageController; // Logique images
 	TransformController transformController; // Logique transformations
+	LightingController lightingController; // Logique lumiere et illumination
 
 	// ========== VIEW ==========
 	Renderer renderer; // Rendu (VIEW pure)
@@ -119,4 +121,8 @@ private:
 	glm::vec2 last3DMouse = { 0, 0 };
 	float orbitSpeed = 0.25f;
 	float panSpeed = 0.7f;
+	bool lightingDataNeedsUpdate = true;
+	LightingData cachedLightingData;
+	bool wasQuadView = false;
+	bool was3DView = false;
 };

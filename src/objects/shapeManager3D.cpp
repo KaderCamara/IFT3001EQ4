@@ -1,4 +1,4 @@
-#include "ShapeManager3D.h"
+﻿#include "ShapeManager3D.h"
 
 ofMesh ShapeManager3D::to3DDraw(const Shape & shape) {
 	ofMesh mesh;
@@ -18,7 +18,6 @@ ofMesh ShapeManager3D::to3DDraw(const Shape & shape) {
 
 ofMesh ShapeManager3D::to3DCube(const Shape & shape, ofMesh mesh) {
 	float width, height;
-
 	if (shape.type == "square") {
 		float side = abs(shape.end.x - shape.start.x);
 		width = side;
@@ -27,6 +26,7 @@ ofMesh ShapeManager3D::to3DCube(const Shape & shape, ofMesh mesh) {
 		width = abs(shape.end.x - shape.start.x);
 		height = abs(shape.end.y - shape.start.y);
 	}
+
 	float centerX = (shape.start.x + shape.end.x) / 2.0f;
 	float centerY = (shape.start.y + shape.end.y) / 2.0f;
 	float depth = std::min(width, height);
@@ -54,6 +54,35 @@ ofMesh ShapeManager3D::to3DCube(const Shape & shape, ofMesh mesh) {
 
 	for (int i = 0; i < 36; i++)
 		mesh.addIndex(faces[i]);
+
+	// ✅ GENERATE NORMALS FOR LIGHTING!
+	// This calculates per-face normals for proper cube lighting
+	for (int i = 0; i < mesh.getNumVertices(); i++) {
+		mesh.addNormal(glm::vec3(0, 0, 0)); // Initialize with zeros
+	}
+
+	// Calculate face normals and average them per vertex
+	for (int i = 0; i < mesh.getNumIndices(); i += 3) {
+		int i0 = mesh.getIndex(i);
+		int i1 = mesh.getIndex(i + 1);
+		int i2 = mesh.getIndex(i + 2);
+
+		glm::vec3 v0 = mesh.getVertex(i0);
+		glm::vec3 v1 = mesh.getVertex(i1);
+		glm::vec3 v2 = mesh.getVertex(i2);
+
+		// ✅ FLIP THE NORMAL DIRECTION
+		glm::vec3 normal = glm::normalize(glm::cross(v2 - v0, v1 - v0));
+
+		mesh.getNormals()[i0] += normal;
+		mesh.getNormals()[i1] += normal;
+		mesh.getNormals()[i2] += normal;
+	}
+
+	// Normalize all normals
+	for (auto & n : mesh.getNormals()) {
+		n = glm::normalize(n);
+	}
 
 	return mesh;
 }

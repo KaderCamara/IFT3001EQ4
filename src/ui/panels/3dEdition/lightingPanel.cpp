@@ -42,6 +42,11 @@ void LightingPanel::setup() {
 	spotIntensity.setup("Spot Intensity", 1.2f, 0.0f, 5.0f);
 	spotAngle.setup("Spot Angle", 30.0f, 1.0f, 90.0f);
 
+	lblNonRealistic.setup("-- Non-Realistic Shading --", "");
+	toggleFlat.setup("Flat Shading", false);
+	toggleCel.setup("Cel/Toon Shading", false);
+	toggleGooch.setup("Gooch Shading", false);
+
 	lblModern.setup("-- Illumination Moderne --", "");
 	togglePBR.setup("PBR shading", false); // ✅ DISABLED
 	metallicity.setup("Metallic", 0.5f, 0.0f, 1.0f);
@@ -93,6 +98,11 @@ void LightingPanel::setup() {
 	//lightingPanel.add(&toggleMicrofacets);
 	//lightingPanel.add(&toggleEnvLighting);
 	//lightingPanel.add(&ior);
+
+	lightingPanel.add(&lblNonRealistic);
+	lightingPanel.add(&toggleFlat);
+	lightingPanel.add(&toggleCel);
+	lightingPanel.add(&toggleGooch);
 
 	lightingPanel.add(&lblColorControls);
 	lightingPanel.add(&exposureSlider);

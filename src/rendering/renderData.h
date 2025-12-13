@@ -128,9 +128,9 @@ struct LightingData {
 		PHONG,
 		BLINN_PHONG,
 		PBR,
-		FLAT, // 7.5 Non-realistic
-		CEL_SHADING, // 7.5 Non-realistic
-		GOOCH // 7.5 Non-realistic
+		FLAT,
+		CEL, 
+		GOOCH 
 	};
 	ShadingModel currentModel = ShadingModel::PHONG;
 
@@ -234,63 +234,7 @@ struct RenderDataImage {
 };
 
 
-/**
- * @struct LightingData
- * @brief Pure lighting data for rendering (MODEL)
- */
-/* struct LightingData {
-	// Global settings
-	bool useEnvironmentMap = true;
-	bool useHDRI = true;
-	bool castShadows = true;
-	bool useAmbientOcclusion = true;
-	bool useBloom = false;
 
-	// Classic illumination models
-	bool useLambert = true;
-	bool useGouraud = true;
-	bool usePhong = true;
-	bool useBlinnPhong = true;
-	int materialCount = 2;
-
-	// Light types enabled
-	bool usePointLights = true;
-	bool useDirectionalLights = true;
-	bool useSpotLights = true;
-	bool useAreaLights = false;
-
-	// Sun/Directional light
-	bool sunEnabled = true;
-	float sunIntensity = 1.0f;
-	float sunAzimuth = 45.0f;
-	float sunElevation = 35.0f;
-	ofVec3f sunDirection; // calculated from azimuth/elevation
-
-	// Point light
-	bool pointLightEnabled = true;
-	float pointIntensity = 0.7f;
-	ofVec3f pointPosition = ofVec3f(200, 200, 200);
-
-	// Spot light
-	bool spotLightEnabled = false;
-	float spotIntensity = 1.2f;
-	float spotAngle = 30.0f;
-	ofVec3f spotPosition = ofVec3f(0, 300, 0);
-	ofVec3f spotDirection = ofVec3f(0, -1, 0);
-
-	// PBR parameters
-	bool usePBR = true;
-	float metallic = 0.5f;
-	float roughness = 0.4f;
-	bool useMicrofacets = true;
-	bool useEnvLighting = true;
-	float ior = 1.45f;
-
-	// Color/Tone
-	float exposure = 1.0f;
-	float temperature = 0.0f;
-	float contrast = 1.0f;
-};*/
 
 
 

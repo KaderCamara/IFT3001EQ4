@@ -13,12 +13,15 @@ void Application::setup() {
 	imageController.setup();
 	curvesController.setup();
 	transformController.setup();
+	lightingController.setup(); 
 
 	// ✅ PLUS BESOIN d'injecter les Controllers dans le Renderer
 	// Le Renderer est maintenant une VIEW pure
 
 	// Configuration du TransformController
 	transformController.setSceneGraph(&sceneController.getSceneGraph());
+	const LightingPanel & lightingPanel = uiWindow.getLightingPanel();
+	cachedLightingData = lightingController.prepareLightingData(lightingPanel);
 
 	ofLogNotice("Application") << "Setup complete - MVC architecture initialized";
 }
@@ -49,8 +52,10 @@ void Application::update() {
 
 	if (uiWindow.isQuadViewRequested()) {
 		sceneController.setViewQuadMode();
+		lightingDataNeedsUpdate = true;
 	} else if (uiWindow.is3DviewRequested()) {
 		sceneController.setView3DMode();
+		lightingDataNeedsUpdate = true;
 	} else if (uiWindow.is2DviewRequested()) {
 		sceneController.setView2DMode();
 	}
@@ -98,6 +103,7 @@ void Application::update() {
 		if (!importedShapes.empty()) {
 			sceneController.addShapesToScene(importedShapes);
 			sceneController.setView3DMode();
+			lightingDataNeedsUpdate = true;  
 			ofLogNotice("Application") << "Successfully imported "
 									   << importedShapes.size() << " 3D shape(s)";
 		}
@@ -107,6 +113,62 @@ void Application::update() {
 		std::vector<Shape> currentShapes = sceneController.getAllShapes();
 		std::vector<Shape> filteredShapes = model3DImportManager.removeAll3DModels(currentShapes);
 		sceneController.setAllShapes(filteredShapes);
+	}
+
+
+	//////// check
+
+
+	const LightingPanel & lightingPanel = uiWindow.getLightingPanel();
+
+	// Track key lighting states
+	static bool lastSunEnabled = false;
+	//static bool lastPointEnabled = false;
+	//static bool lastSpotEnabled = false;
+	static bool lastPhongEnabled = false;
+	static int lastMaterialCount = 0;
+	static bool lastLambertEnabled = false;
+	static bool lastGouraudEnabled = false;
+	static bool lastBlinnPhongEnabled = false;
+	static bool lastFlatEnabled = false;
+	static bool lastCelEnabled = false;
+	static bool lastGoochEnabled = false;
+
+	bool sunEnabled = lightingPanel.isSunLightEnabled();
+	//bool pointEnabled = lightingPanel.isPointLightEnabled();
+	//bool spotEnabled = lightingPanel.isSpotLightEnabled();
+	bool phongEnabled = lightingPanel.isPhongEnabled();
+	int materialCount = lightingPanel.getMaterialCount();
+	bool LambertEnabled = lightingPanel.isLambertEnabled();
+	bool GoureaudEnabled = lightingPanel.isGouraudEnabled();
+	bool BlinnPhongEnabled = lightingPanel.isBlinnPhongEnabled();
+	bool FlatEnabled = lightingPanel.isFlatEnabled();
+	bool CelEnabled = lightingPanel.isCelEnabled();
+	bool GoochEnabled = lightingPanel.isGoochEnabled();
+
+	// Detect changes
+	if (sunEnabled != lastSunEnabled || LambertEnabled != lastLambertEnabled || GoureaudEnabled != lastGouraudEnabled || BlinnPhongEnabled != lastBlinnPhongEnabled
+		|| phongEnabled != lastPhongEnabled || materialCount != lastMaterialCount || FlatEnabled != lastFlatEnabled || CelEnabled != lastCelEnabled || GoochEnabled != lastGoochEnabled) {
+
+		lightingDataNeedsUpdate = true;
+
+		ofLogNotice("Application") << "Lighting panel changed - update scheduled "
+								   << "(Sun:" << sunEnabled << " Lambert:" << LambertEnabled
+								   << " Goureaud:" << GoureaudEnabled << " BlinnPhong:" << BlinnPhongEnabled
+								   << " Phong:" << phongEnabled << " Flat:" << FlatEnabled
+								   << " Cel:" << CelEnabled << " Gooch:" << GoochEnabled
+								   << " Material:" << materialCount << ")";
+
+		// Update tracking
+		lastSunEnabled = sunEnabled;
+		lastPhongEnabled = phongEnabled;
+		lastMaterialCount = materialCount;
+		lastLambertEnabled = LambertEnabled;
+		lastGouraudEnabled = GoureaudEnabled;
+		lastBlinnPhongEnabled = BlinnPhongEnabled;
+		lastFlatEnabled = FlatEnabled;
+		lastCelEnabled = CelEnabled;
+		lastGoochEnabled = GoochEnabled;
 	}
 
 	// Clear des requêtes UI
@@ -269,9 +331,16 @@ RenderData3D Application::prepareRenderData3D() {
 	data.showGrid = uiWindow.isGridEnabled();
 	data.showAxes = uiWindow.isAxesEnabled();
 	data.showNormals = uiWindow.isNormalsEnabled();
-	data.enableLighting = uiWindow.isLightingEnabled();
-	data.lightIntensity = uiWindow.getLightingIntensity();
-	data.lightColor = uiWindow.getLightingColor();
+	if (lightingDataNeedsUpdate) {
+		const LightingPanel & lightingPanel = uiWindow.getLightingPanel();
+		cachedLightingData = lightingController.prepareLightingData(lightingPanel);
+		lightingDataNeedsUpdate = false;
+	}
+	data.lighting = cachedLightingData;
+
+	//data.enableLighting = uiWindow.isLightingEnabled();
+	//data.lightIntensity = uiWindow.getLightingIntensity();
+	//data.lightColor = uiWindow.getLightingColor();
 
 	// Zone de dessin
 	data.drawingArea = uiWindow.getDrawingArea();
@@ -319,6 +388,13 @@ RenderDataQuad Application::prepareRenderDataQuad() {
 	// Options d'affichage
 	data.showBoundingBox = uiWindow.isShowBoundingBoxEnabled();
 	data.showWireframe = uiWindow.isWireframeEnabled();
+	// Lighting data from panel
+	if (lightingDataNeedsUpdate) {
+		const LightingPanel & lightingPanel = uiWindow.getLightingPanel();
+		cachedLightingData = lightingController.prepareLightingData(lightingPanel);
+		lightingDataNeedsUpdate = false;
+	}
+	data.lighting = cachedLightingData;
 
 	return data;
 }

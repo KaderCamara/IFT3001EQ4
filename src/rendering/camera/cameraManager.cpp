@@ -1,4 +1,4 @@
-#include "CameraManager.h"
+﻿#include "CameraManager.h"
 
 void CameraManager::setup() {
 	for (int i = 0; i < 5; i++) {
@@ -74,7 +74,7 @@ void CameraManager::lookAtScene(const std::vector<Shape> & shapes, bool isQuadVi
 }
 
 
-void CameraManager::calculateSceneBounds(const std::vector<Shape> & shapes,
+/* void CameraManager::calculateSceneBounds(const std::vector<Shape> & shapes,
 	ofVec3f & center, float & radius) {
 	if (shapes.empty()) {
 		center = ofVec3f(0, 0, 0);
@@ -124,6 +124,86 @@ void CameraManager::calculateSceneBounds(const std::vector<Shape> & shapes,
 		const auto & vertices = s.mesh3D.getVertices();
 		for (const auto & v : vertices) {
 			float dist = (v - center).length();
+			if (dist > radius) {
+				radius = dist;
+			}
+		}
+	}
+
+	cout << "Scene radius: " << radius << endl;
+
+	if (radius < 50.0f) {
+		radius = 50.0f;
+	}
+}*/
+
+void CameraManager::calculateSceneBounds(const std::vector<Shape> & shapes,
+	ofVec3f & center, float & radius) {
+	if (shapes.empty()) {
+		center = ofVec3f(0, 0, 0);
+		radius = 100.0f;
+		return;
+	}
+
+	ofVec3f minPt(FLT_MAX, FLT_MAX, FLT_MAX);
+	ofVec3f maxPt(-FLT_MAX, -FLT_MAX, -FLT_MAX);
+	int totalVertices = 0;
+
+	for (const auto & s : shapes) {
+		const auto & vertices = s.mesh3D.getVertices();
+		if (vertices.empty()) {
+			cout << "WARNING: Shape has no vertices in mesh!" << endl;
+			continue;
+		}
+
+		// ✅ BUILD TRANSFORMATION MATRIX FOR THIS SHAPE
+		glm::mat4 transform = glm::mat4(1.0f);
+		transform = glm::translate(transform, glm::vec3(s.translation.x, s.translation.y, 0.0f));
+		transform = glm::rotate(transform, glm::radians(s.rotation), glm::vec3(0, 0, 1));
+		transform = glm::scale(transform, glm::vec3(s.scale, s.scale, s.scale));
+
+		totalVertices += vertices.size();
+
+		for (const auto & v : vertices) {
+			// ✅ TRANSFORM VERTEX TO WORLD SPACE
+			glm::vec4 worldV = transform * glm::vec4(v, 1.0f);
+			glm::vec3 transformedV = glm::vec3(worldV);
+
+			minPt.x = std::min(minPt.x, transformedV.x);
+			minPt.y = std::min(minPt.y, transformedV.y);
+			minPt.z = std::min(minPt.z, transformedV.z);
+
+			maxPt.x = std::max(maxPt.x, transformedV.x);
+			maxPt.y = std::max(maxPt.y, transformedV.y);
+			maxPt.z = std::max(maxPt.z, transformedV.z);
+		}
+	}
+
+	if (totalVertices == 0) {
+		cout << "ERROR: No vertices found in any shape mesh!" << endl;
+		center = ofVec3f(256, 256, 0);
+		radius = 200.0f;
+		return;
+	}
+
+	center = (minPt + maxPt) * 0.5f;
+	cout << "Scene bounds: min(" << minPt << ") max(" << maxPt << ") center(" << center << ")" << endl;
+
+	radius = 0;
+	for (const auto & s : shapes) {
+		// ✅ BUILD TRANSFORMATION MATRIX AGAIN FOR RADIUS CALCULATION
+		glm::mat4 transform = glm::mat4(1.0f);
+		transform = glm::translate(transform, glm::vec3(s.translation.x, s.translation.y, 0.0f));
+		transform = glm::rotate(transform, glm::radians(s.rotation), glm::vec3(0, 0, 1));
+		transform = glm::scale(transform, glm::vec3(s.scale, s.scale, s.scale));
+
+		const auto & vertices = s.mesh3D.getVertices();
+		for (const auto & v : vertices) {
+			// ✅ TRANSFORM TO WORLD SPACE
+			glm::vec4 worldV = transform * glm::vec4(v, 1.0f);
+			glm::vec3 transformedV = glm::vec3(worldV);
+
+			float dist = glm::distance(transformedV, glm::vec3(center.x, center.y, center.z));
 			if (dist > radius) {
 				radius = dist;
 			}

@@ -236,25 +236,29 @@ void Application::draw() {
 		uiWindow.getRotation(),
 		uiWindow.getScale());
 
-	// If the Image tab is active, render only the image area and UI.
 	if (uiWindow.isImageTabActive()) {
-		// Draw image-specific background
-		ofPushStyle();
-		ofSetColor(uiWindow.getBackgroundColor());
-		const ofRectangle drawing = uiWindow.getDrawingArea();
-		ofDrawRectangle(drawing.x, drawing.y, drawing.width, drawing.height);
-		ofPopStyle();
-
-		// Render the image if available
+		// ✅ RENDER IMAGE TAB
 		if (imageController.hasImage()) {
-			renderer.getImageRenderer().renderInBounds(imageController.getImage(), drawing, true);
+			ofRectangle imageArea = uiWindow.getImageDrawingArea();
+			const ofImage & img = imageController.getImage();
+			ofPushStyle();
+			ofSetColor(uiWindow.getBackgroundColor());
+			ofDrawRectangle(imageArea);
+			ofPopStyle();
+			imageRenderer.renderInBounds(img, imageArea, true);
+		} else {
+			ofRectangle imageArea = uiWindow.getImageDrawingArea();
+			ofPushStyle();
+			ofSetColor(uiWindow.getBackgroundColor());
+			ofDrawRectangle(imageArea);
+			ofSetColor(150);
+			std::string msg = "No image loaded. Use Import or drag & drop an image.";
+			float textWidth = msg.length() * 8;
+			ofDrawBitmapString(msg,
+				imageArea.x + (imageArea.width - textWidth) / 2,
+				imageArea.y + imageArea.height / 2);
+			ofPopStyle();
 		}
-
-		// Draw the UI overlay and return early — do not draw editor canvases
-		ofDisableDepthTest();
-		uiWindow.draw();
-		ofEnableDepthTest();
-		return;
 	}
 
 	// ========== PRÉPARER LES RENDERDATA ET POUSSER AU RENDERER ==========
@@ -413,56 +417,6 @@ RenderData3D Application::prepareRenderData3D() {
 	return data;
 }
 
-/* RenderDataQuad Application::prepareRenderDataQuad() {
-	RenderDataQuad data;
-
-	// Récupérer les formes
-	const SceneGraph & sceneGraph = sceneController.getSceneGraph();
-	data.shapes = sceneGraph.shapes;
-
-	// Récupérer le CameraManager
-	CameraManager & cameraManager = sceneController.getCameraManager();
-
-	// Mettre à jour les caméras si nécessaire
-	if (cameraManager.needsUpdate()) {
-		cameraManager.lookAtScene(sceneGraph.shapes, true);
-	}
-
-	// Calculer les viewports pour les 4 vues
-	ofRectangle drawingArea = uiWindow.getDrawingArea();
-	int w = drawingArea.width;
-	int h = drawingArea.height;
-	int halfW = w / 2;
-	int halfH = h / 2;
-	int offsetX = drawingArea.x;
-	int offsetY = drawingArea.y;
-
-	data.viewports[0].set(offsetX, offsetY, halfW, halfH); // Top
-	data.viewports[1].set(offsetX + halfW, offsetY, halfW, halfH); // Front
-	data.viewports[2].set(offsetX, offsetY + halfH, halfW, halfH); // Side
-	data.viewports[3].set(offsetX + halfW, offsetY + halfH, halfW, halfH); // Bottom
-
-	// Extraire les données des 4 caméras
-	for (int i = 0; i < 4; ++i) {
-		int originalIndex = cameraManager.getCurrentCameraIndex();
-		cameraManager.setPerspectiveView(i);
-		data.cameras[i] = extractCameraData(cameraManager.getCurrentCamera());
-		cameraManager.setPerspectiveView(originalIndex);
-	}
-
-	// Options d'affichage
-	data.showBoundingBox = uiWindow.isShowBoundingBoxEnabled();
-	data.showWireframe = uiWindow.isWireframeEnabled();
-	// Lighting data from panel
-	if (lightingDataNeedsUpdate) {
-		const LightingPanel & lightingPanel = uiWindow.getLightingPanel();
-		cachedLightingData = lightingController.prepareLightingData(lightingPanel);
-		lightingDataNeedsUpdate = false;
-	}
-	data.lighting = cachedLightingData;
-
-	return data;
-}*/
 
 RenderDataQuad Application::prepareRenderDataQuad() {
 	RenderDataQuad data;

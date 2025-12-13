@@ -42,7 +42,6 @@ void Shape3DRenderer::drawShape3D(const Shape & s, const LightingData & lighting
 		glm::mat4 modelViewProjectionMatrix = projectionMatrix * modelViewMatrix;
 		lightingShader.setUniformMatrix4f("modelViewProjectionMatrix", modelViewProjectionMatrix);
 
-		// 4. Matrice Normale (CRITIQUE)
 		lightingShader.setUniformMatrix4f("modelViewMatrix", ofGetCurrentMatrix(OF_MATRIX_MODELVIEW));
 		lightingShader.setUniformMatrix3f("normalMatrix", ofGetCurrentNormalMatrix());
 

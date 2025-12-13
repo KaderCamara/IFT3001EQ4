@@ -119,6 +119,8 @@ static ofEasyCam & getActiveCam(ofEasyCam & internalCam, ofEasyCam * externalCam
 		}
 	}
 
+
+
 	ofVec3f viewPos = cam.getPosition();
 
 	// Dessiner toutes les formes 3D (avec recentrage et mise à l'échelle globale)
@@ -329,7 +331,13 @@ void SceneRenderer::draw3D(const RenderData3D & data) {
 
 		for (const auto & shape : data.shapes) {
 			// Appel à l'ancienne signature
-			shape3DRenderer.drawShape3D(shape, data.lighting, viewPos);
+			shape3DRenderer.drawShape3D(
+				shape,
+				data.lighting,
+				viewPos,
+				data.enableGlobalIllumination, // toggle GI depuis ton panel
+				data.lightBounces // nombre de rebonds
+			);
 		}
 
 		ofPopMatrix();
@@ -337,7 +345,13 @@ void SceneRenderer::draw3D(const RenderData3D & data) {
 		// Aucun ajustement nécessaire
 		for (const auto & shape : data.shapes) {
 			// Appel à l'ancienne signature
-			shape3DRenderer.drawShape3D(shape, data.lighting, viewPos);
+			shape3DRenderer.drawShape3D(
+				shape,
+				data.lighting,
+				viewPos,
+				data.enableGlobalIllumination, // toggle GI depuis ton panel
+				data.lightBounces // nombre de rebonds
+			);
 		}
 	}
 

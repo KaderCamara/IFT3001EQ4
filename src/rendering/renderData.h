@@ -1,4 +1,5 @@
 ﻿// RenderData.h
+// RenderData.h
 // Structures de données PURES pour le passage Controller → View
 // Ces structures sont le contrat MVC entre les Controllers et les Renderers
 #pragma once
@@ -187,6 +188,11 @@ struct RenderData3D {
 	float lightIntensity = 1.0f;
 	ofColor lightColor = ofColor::white;
 	LightingData lighting;
+
+	
+    // Illumination globale
+	bool enableGlobalIllumination = false;
+	int lightBounces = 1;
 
 	// Zone de dessin
 	ofRectangle drawingArea;

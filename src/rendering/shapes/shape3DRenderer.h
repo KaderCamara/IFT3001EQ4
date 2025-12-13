@@ -23,7 +23,11 @@ public:
      * @brief Dessine une forme 3D (mesh) avec les options globales
      */
 	void setup();
-	void drawShape3D(const Shape & s, const LightingData & lighting, const ofVec3f & viewPos) const;
+	void drawShape3D(const Shape & s,
+		const LightingData & lighting,
+		const ofVec3f & viewPos,
+		bool enableGlobalIllumination = false,
+		int lightBounces = 1) const;
 	//void drawShape3D(const Shape & s) const;
 
 	void setShowBoundingBox(bool show) { showBoundingBox = show; };
@@ -52,4 +56,5 @@ private:
 	void setMaterialUniforms(const Material & material) const;
 
 	ofRectangle getMeshBoundingBox(const ofMesh & mesh) const;
+
 };

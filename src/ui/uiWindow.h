@@ -78,6 +78,7 @@ public:
 	//float getLightingIntensity() const { return view3DPanel.getLightIntensity(); }
 	//ofColor getLightingColor() const { return view3DPanel.getLightColor(); }
 	const LightingPanel & getLightingPanel() const {return view3DPanel.getLightingPanel();}
+	const RayTracingPanel & getRayTracingPanel() const { return view3DPanel.getRayTracingPanel(); }
 
 	bool is3DTabActive() const { return view3DActive; }
 

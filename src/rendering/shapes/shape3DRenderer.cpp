@@ -16,53 +16,46 @@ void Shape3DRenderer::setup() {
 }
 
 
-void Shape3DRenderer::drawShape3D(const Shape & s, const LightingData & lighting, const ofVec3f & viewPos) const {
+void Shape3DRenderer::drawShape3D(const Shape & s,
+	const LightingData & lighting,
+	const ofVec3f & viewPos,
+	bool enableGlobalIllumination,
+	int lightBounces) const {
 	if (!s.is3D || s.mesh3D.getNumVertices() == 0) return;
+
 	ofMesh & mesh3D = const_cast<ofMesh &>(s.mesh3D);
 
 	ofPushMatrix();
 
-	// Apply transformations
+	// Transformations
 	ofTranslate(s.translation.x, s.translation.y, 0);
 	ofRotateZDeg(s.rotation);
 	ofScale(s.scale, s.scale, s.scale);
 
-	bool useLightingShader = (lighting.currentModel != LightingData::ShadingModel::NONE);
+	bool useLightingShader = (lighting.currentModel != LightingData::ShadingModel::NONE) || enableGlobalIllumination;
 
-	if (useLightingShader) { // Add a check if shading is desired
+
+
+if (useLightingShader) {
 		lightingShader.begin();
+
+		// Passer les paramètres de Ray Tracing / GI
+		lightingShader.setUniform1i("u_enableGlobalIllumination", enableGlobalIllumination ? 1 : 0);
+		lightingShader.setUniform1i("u_lightBounces", lightBounces);
+
 		lightingShader.setUniform1i("u_shadingModel", static_cast<int>(lighting.currentModel));
-		glm::mat4 modelViewMatrix = ofGetCurrentMatrix(OF_MATRIX_MODELVIEW); // 🛑 Utiliser la constante
-		lightingShader.setUniformMatrix4f("modelViewMatrix", modelViewMatrix);
+		lightingShader.setUniform3f("u_viewPos", viewPos.x, viewPos.y, viewPos.z);
 
-		// 2. Matrice Projection
-		glm::mat4 projectionMatrix = ofGetCurrentMatrix(OF_MATRIX_PROJECTION); // 🛑 Utiliser la constante
-
-		// 3. Matrice ModelViewProjection
-		glm::mat4 modelViewProjectionMatrix = projectionMatrix * modelViewMatrix;
-		lightingShader.setUniformMatrix4f("modelViewProjectionMatrix", modelViewProjectionMatrix);
-
-		// 4. Matrice Normale (CRITIQUE)
-		lightingShader.setUniformMatrix4f("modelViewMatrix", ofGetCurrentMatrix(OF_MATRIX_MODELVIEW));
-		lightingShader.setUniformMatrix3f("normalMatrix", ofGetCurrentNormalMatrix());
-
-		// Set lighting and material uniforms
 		setLightingUniforms(lighting, viewPos);
 		setMaterialUniforms(lighting.getCurrentMaterial());
-
-		// We don't need ofSetColor(255) when using the shader,
-		// as the material diffuse/ambient color controls it.
 	} else {
-		// If no lighting is active, use a simple default color
 		ofSetColor(255);
 	}
 
-	// Draw the mesh
-	if (showWireframe) {
-		s.mesh3D.drawWireframe();
-	} else {
-		s.mesh3D.draw();
-	}
+	if (showWireframe)
+		mesh3D.drawWireframe();
+	else
+		mesh3D.draw();
 
 	if (showNormals && mesh3D.hasNormals()) {
 		ofPushStyle();
@@ -78,11 +71,9 @@ void Shape3DRenderer::drawShape3D(const Shape & s, const LightingData & lighting
 		ofPopStyle();
 	}
 
-	if (useLightingShader) {
-		lightingShader.end();
-	}
+	if (useLightingShader) lightingShader.end();
 
-	// Draw bounding box if enabled
+	// Bounding box
 	if (showBoundingBox) {
 		glm::vec3 min(FLT_MAX), max(-FLT_MAX);
 		for (const auto & v : mesh3D.getVertices()) {
@@ -99,63 +90,6 @@ void Shape3DRenderer::drawShape3D(const Shape & s, const LightingData & lighting
 	ofPopMatrix();
 }
 
-/* GOOD ONE !!
-void Shape3DRenderer::drawShape3D(const Shape & s) const {
-	ofMesh & mesh3D = const_cast<ofMesh &>(s.mesh3D);
-
-	// Si vous aviez des transformations par forme, assurez-vous qu'elles sont ici si elles manquent.
-	ofPushMatrix();
-	ofTranslate(s.translation.x, s.translation.y, 0);
-	ofRotateZDeg(s.rotation);
-	ofScale(s.scale, s.scale, s.scale);
-
-	// Dessiner le mesh
-	if (showWireframe) {
-		mesh3D.drawWireframe();
-	} else {
-		mesh3D.draw();
-	}
-
-	if (showNormals && mesh3D.hasNormals()) {
-		ofPushStyle();
-		ofSetColor(ofColor::cyan);
-		const auto & normals = mesh3D.getNormals();
-		const auto & verts = mesh3D.getVertices();
-		std::size_t count = std::min(normals.size(), verts.size());
-		for (std::size_t i = 0; i < count; ++i) {
-			const glm::vec3 & v = verts[i];
-			const glm::vec3 & n = glm::normalize(normals[i]);
-			ofDrawLine(v, v + n * 10.0f);
-		}
-		ofPopStyle();
-	}
-
-	// Dessiner la bounding box si active
-	if (showBoundingBox) {
-		glm::vec3 min(FLT_MAX), max(-FLT_MAX);
-		// Assurez-vous d'avoir des sommets avant de boucler
-		if (mesh3D.getNumVertices() > 0) {
-			min = mesh3D.getVertex(0);
-			max = mesh3D.getVertex(0);
-			for (const auto & v : mesh3D.getVertices()) {
-				min = glm::min(min, v);
-				max = glm::max(max, v);
-			}
-		}
-
-		ofPushStyle();
-		ofNoFill();
-		ofSetColor(ofColor::green);
-		// C'est la bonne façon de dessiner la BB en 3D
-		ofDrawBox((min + max) * 0.5f,
-			max.x - min.x,
-			max.y - min.y,
-			max.z - min.z);
-		ofPopStyle();
-	}
-
-	ofPopMatrix(); // Si vous aviez un push/pop au début
-}*/
 
 
 void Shape3DRenderer::setLightingUniforms(const LightingData & lighting, const ofVec3f & viewPos) const {

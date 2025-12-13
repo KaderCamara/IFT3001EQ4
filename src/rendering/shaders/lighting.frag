@@ -70,6 +70,10 @@ uniform vec3 u_globalAmbient;
 uniform float u_exposure;
 uniform float u_contrast;
 
+//globalillumination
+uniform bool u_enableGlobalIllumination; // active ou non GI
+uniform int u_lightBounces;               // nombre de rebonds
+
 // ========== LIGHTING CALCULATIONS ==========
 
 vec3 calculateDiffuseLambert(vec3 normal, vec3 lightDir, vec3 lightColor, float intensity) {
@@ -170,6 +174,33 @@ vec3 processLight(
     return result;
 }
 
+vec3 calculateGlobalIllumination(vec3 normal, vec3 viewDir) {
+    // Simple approximation: average contribution from all lights based on normal
+    vec3 indirect = vec3(0.0);
+    
+    if (u_numLights == 0) return indirect;
+    
+    for (int i = 0; i < u_numLights; ++i) {
+        vec3 lightDir;
+        vec3 lightColor;
+        float intensity;
+
+        if (i == 0) { lightDir = normalize(-u_light0Direction); lightColor = u_light0Color / 255.0; intensity = u_light0Intensity; }
+        else if (i == 1) { lightDir = normalize(u_light1Position - v_fragPos); lightColor = u_light1Color / 255.0; intensity = u_light1Intensity; }
+        else if (i == 2) { lightDir = normalize(u_light2Position - v_fragPos); lightColor = u_light2Color / 255.0; intensity = u_light2Intensity; }
+        else { lightDir = normalize(u_light3Position - v_fragPos); lightColor = u_light3Color / 255.0; intensity = u_light3Intensity; }
+
+        // Simple bounce: diffuse-like contribution
+        float diff = max(dot(normal, lightDir), 0.0);
+        indirect += diff * lightColor * 0.2; // 0.2 = approx bounce factor
+    }
+
+    // Apply additional bounces if >1
+    indirect *= 0.2 * float(u_lightBounces);
+
+    return indirect;
+}
+
 // ========== NON-REALISTIC SHADING ==========
 
 vec3 celShading(vec3 color, vec3 normal, vec3 viewDir) {
@@ -213,9 +244,16 @@ vec3 goochShading(vec3 normal) {
 void main() {
     vec3 normal = normalize(v_normal);
     vec3 viewDir = normalize(u_viewPos - v_fragPos);
-    
-    // ✅ FIX: Start with globalAmbient directly (not multiplied by materialAmbient)
+
+    // Initialisation
     vec3 finalColor = u_globalAmbient / 255.0;  // Convert from 0-255 to 0-1
+
+    // Global illumination
+    if (u_enableGlobalIllumination) {
+        finalColor += calculateGlobalIllumination(normal, viewDir);
+    }
+
+
     
     // ========== FLAT SHADING ==========
     if (u_shadingModel == 5) {

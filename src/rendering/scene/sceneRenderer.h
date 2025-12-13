@@ -69,6 +69,9 @@ public:
 	 */
 	void setExternalCamera(ofEasyCam * cam) { externalCam = cam; }
 
+	void setGlobalIlluminationEnabled(bool enabled) { globalIlluminationEnabled = enabled; }
+	void setLightBounceCount(int bounces) { lightBounces = bounces; }
+
 private:
 	// ========== RENDERERS SPÉCIALISÉS (VIEW) ==========
 	Shape2DRenderer shape2DRenderer;
@@ -99,6 +102,9 @@ private:
 		const LightingData & lighting,
 		bool showGrid,
 		bool showAxes);
+
+	bool globalIlluminationEnabled = false;
+	int lightBounces = 1;
 
 	/**
 	 * @brief Dessine les séparateurs de la vue quad

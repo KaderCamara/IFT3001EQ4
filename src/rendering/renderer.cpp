@@ -74,7 +74,9 @@ void Renderer::draw3D(const RenderData3D & data) {
 
 	// Ne plus dessiner le rectangle de fond délimitant la zone 3D
 	// (remplacé par le rendu direct de la scène 3D par sceneRenderer)
-
+	sceneRenderer.setGlobalIlluminationEnabled(data.enableGlobalIllumination);
+	sceneRenderer.setLightBounceCount(data.lightBounces);
+	sceneRenderer.draw3D(data);
 	// Configurer les options 3D
 	sceneRenderer.set3DDisplayOptions(data.showBoundingBox, data.showWireframe, data.showNormals);
 

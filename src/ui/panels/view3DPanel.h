@@ -42,7 +42,7 @@ public:
 	//float getLightIntensity() const { return sceneAssetsPanel.getLightIntensity(); }
 	//ofColor getLightColor() const { return sceneAssetsPanel.getLightColor(); }
 	const LightingPanel & getLightingPanel() const {return lightingPanel;}
-
+	const RayTracingPanel & getRayTracingPanel() const { return rayTracingPanel; }
 	bool isImport3DModelRequested() const { return sceneAssetsPanel.isImportRequested(); }
 	bool isClear3DModelRequested() const { return sceneAssetsPanel.isClearRequested(); }
 

@@ -48,5 +48,18 @@ void RayTracingPanel::draw() {
 	rayPanel.setPosition(enforcedX, enforcedY);
 	rayPanel.setWidthElements(enforcedWidth);
 
-	if (visible) rayPanel.draw();
+if (visible) rayPanel.draw();
+}
+
+bool RayTracingPanel::isGlobalIlluminationEnabled() const {
+	return static_cast<ofParameter<bool> &>(
+		const_cast<ofxToggle &>(toggleGlobalIllumination).getParameter())
+		.get();
+}
+
+// Getter const pour le nombre de rebonds
+int RayTracingPanel::getBounceCount() const {
+	return static_cast<ofParameter<int> &>(
+		const_cast<ofxIntSlider &>(bounceCount).getParameter())
+		.get();
 }

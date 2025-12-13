@@ -18,6 +18,10 @@ public:
 	float getHeight();
 	void draw();
 
+	bool isGlobalIlluminationEnabled() const;
+
+	int getBounceCount() const;
+
 private:
 	ofxPanel rayPanel;
 	float enforcedX = 0.0f;

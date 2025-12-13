@@ -21,6 +21,8 @@ void Application::setup() {
 	// Configuration du TransformController
 	transformController.setSceneGraph(&sceneController.getSceneGraph());
 	const LightingPanel & lightingPanel = uiWindow.getLightingPanel();
+	const RayTracingPanel & RayTracingPanel = uiWindow.getRayTracingPanel();
+
 	cachedLightingData = lightingController.prepareLightingData(lightingPanel);
 
 	ofLogNotice("Application") << "Setup complete - MVC architecture initialized";
@@ -324,7 +326,9 @@ RenderData3D Application::prepareRenderData3D() {
 	//data.lightColor = uiWindow.getLightingColor();
 
 	// Zone de dessin
-	data.drawingArea = uiWindow.getDrawingArea();
+	const RayTracingPanel & rayPanel = uiWindow.getRayTracingPanel();
+	data.enableGlobalIllumination = rayPanel.isGlobalIlluminationEnabled();
+	data.lightBounces = rayPanel.getBounceCount();
 
 	return data;
 }

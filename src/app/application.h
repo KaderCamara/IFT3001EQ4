@@ -12,7 +12,9 @@
 #include "../ui/uiWindow.h"
 #include "../controllers/lightingController.h" 
 #include "../utils/Model3DImportManager.h"
+#include "../image/imageFilters.h"
 #include "ofMain.h"
+#include "../rendering/image/imageRenderer.h"
 
 /**
  * @class Application
@@ -63,6 +65,8 @@ private:
 	ImageController imageController; // Logique images
 	TransformController transformController; // Logique transformations
 	LightingController lightingController; // Logique lumiere et illumination
+	ImageFilters imageFilters; // les filtres
+	ImageRenderer imageRenderer;//images
 
 	// ========== VIEW ==========
 	Renderer renderer; // Rendu (VIEW pure)

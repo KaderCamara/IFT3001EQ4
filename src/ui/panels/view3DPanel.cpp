@@ -113,7 +113,7 @@ void View3DPanel::draw(float sideMenuWidth, float menuBarHeight) {
 }
 
 void View3DPanel::clearRequests() {
-	quadViewRequested = false;
+	//quadViewRequested = false;
 	sceneAssetsPanel.clearRequests();
 }
 

@@ -117,9 +117,41 @@ void Application::update() {
 		sceneController.setAllShapes(filteredShapes);
 	}
 
+	///////// images ///////////////
+
+	if (uiWindow.isImportImageRequested()) {
+		if (imageController.importImage()) {
+			uiWindow.statusMessage = "Image imported successfully";
+		} else {
+			uiWindow.statusMessage = "Failed to import image";
+		}
+	}
+	if (uiWindow.isClearImageRequested()) {
+		imageController.clearImage();
+		uiWindow.statusMessage = "Image cleared";
+		ofLogNotice("Application") << "Image cleared";
+	}
+	if (uiWindow.isGrayscaleRequested()) {
+		ofImage& img = imageController.getImage();
+		imageFilters.applyGrayscale(img);
+		uiWindow.statusMessage = "Grayscale filter applied";
+	}
+
+	if (uiWindow.isSepiaRequested()) {
+		ofImage& img = imageController.getImage();
+		imageFilters.applySepia(img);
+		uiWindow.statusMessage = "Sepia filter applied";
+	}
+
+	if (uiWindow.isInvertRequested()) {
+		ofImage& img = imageController.getImage();
+		imageFilters.applyInvert(img);
+		uiWindow.statusMessage = "Invert filter applied";
+		
+	}
 
 
-	//////// check
+	//////// check lights
 
 
 	const LightingPanel & lightingPanel = uiWindow.getLightingPanel();
@@ -173,10 +205,6 @@ void Application::update() {
 		lastCelEnabled = CelEnabled;
 		lastGoochEnabled = GoochEnabled;
 	}
-
-
-
-
 
 	//////////////////
 
@@ -238,6 +266,30 @@ void Application::draw() {
 		} else if (uiWindow.isCurvesModeActive()) {
 			RenderDataCurves2D data = prepareRenderDataCurves2D();
 			renderer.drawCurvesCanvas(data);
+		}
+	}
+	if (uiWindow.isImageTabActive()) {
+		// ✅ RENDER IMAGE TAB
+		if (imageController.hasImage()) {
+			ofRectangle imageArea = uiWindow.getImageDrawingArea();
+			const ofImage & img = imageController.getImage();
+			ofPushStyle();
+			ofSetColor(uiWindow.getBackgroundColor());
+			ofDrawRectangle(imageArea);
+			ofPopStyle();
+			imageRenderer.renderInBounds(img, imageArea, true);
+		} else {
+			ofRectangle imageArea = uiWindow.getImageDrawingArea();
+			ofPushStyle();
+			ofSetColor(uiWindow.getBackgroundColor());
+			ofDrawRectangle(imageArea);
+			ofSetColor(150);
+			std::string msg = "No image loaded. Use Import or drag & drop an image.";
+			float textWidth = msg.length() * 8; 
+			ofDrawBitmapString(msg,
+				imageArea.x + (imageArea.width - textWidth) / 2,
+				imageArea.y + imageArea.height / 2);
+			ofPopStyle();
 		}
 	}
 
@@ -385,6 +437,63 @@ RenderDataQuad Application::prepareRenderDataQuad() {
 	data.showAxes = uiWindow.isAxesEnabled(); // ✅ ADDED
 
 	// Lighting data from panel
+	if (lightingDataNeedsUpdate) {
+		const LightingPanel & lightingPanel = uiWindow.getLightingPanel();
+		cachedLightingData = lightingController.prepareLightingData(lightingPanel);
+		lightingDataNeedsUpdate = false;
+	}
+	data.lighting = cachedLightingData;
+
+	return data;
+}*/
+
+RenderDataQuad Application::prepareRenderDataQuad() {
+	RenderDataQuad data;
+
+	const SceneGraph & sceneGraph = sceneController.getSceneGraph();
+	data.shapes = sceneGraph.shapes;
+
+	CameraManager & cameraManager = sceneController.getCameraManager();
+	cameraManager.lookAtScene(sceneGraph.shapes, true);
+
+	// Viewports
+	ofRectangle drawingArea = uiWindow.getDrawingArea();
+	int w = drawingArea.width;
+	int h = drawingArea.height;
+	int halfW = w / 2;
+	int halfH = h / 2;
+	int offsetX = drawingArea.x;
+	int offsetY = drawingArea.y;
+
+	data.viewports[0].set(offsetX, offsetY, halfW, halfH);
+	data.viewports[1].set(offsetX + halfW, offsetY, halfW, halfH);
+	data.viewports[2].set(offsetX, offsetY + halfH, halfW, halfH);
+	data.viewports[3].set(offsetX + halfW, offsetY + halfH, halfW, halfH);
+
+	// Extract camera data with DEBUG
+	int originalIndex = cameraManager.getCurrentCameraIndex();
+
+	for (int i = 0; i < 4; ++i) {
+		cameraManager.setPerspectiveView(i);
+		ofEasyCam & cam = cameraManager.getCurrentCamera();
+
+		// ✅ DEBUG: Print camera state
+		ofLogNotice("QuadView") << "=== CAMERA " << i << " ===";
+		ofLogNotice("QuadView") << "Position: " << cam.getPosition();
+		ofLogNotice("QuadView") << "Target: " << cam.getTarget().getPosition();
+		ofLogNotice("QuadView") << "Up: " << cam.getUpDir();
+		ofLogNotice("QuadView") << "IsOrtho: " << (cam.getOrtho() ? "YES" : "NO");
+
+		data.cameras[i] = extractCameraData(cam);
+	}
+
+	cameraManager.setPerspectiveView(originalIndex);
+
+	data.showBoundingBox = uiWindow.isShowBoundingBoxEnabled();
+	data.showWireframe = uiWindow.isWireframeEnabled();
+	data.showGrid = uiWindow.isGridEnabled();
+	data.showAxes = uiWindow.isAxesEnabled();
+
 	if (lightingDataNeedsUpdate) {
 		const LightingPanel & lightingPanel = uiWindow.getLightingPanel();
 		cachedLightingData = lightingController.prepareLightingData(lightingPanel);

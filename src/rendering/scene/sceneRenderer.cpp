@@ -1,4 +1,4 @@
-// SceneRenderer.cpp
+ï»¿// SceneRenderer.cpp
 // Implmentation du renderer de scne MVC PUR (VIEW uniquement)
 #include "SceneRenderer.h"
 #include <algorithm>
@@ -93,7 +93,7 @@ static ofEasyCam & getActiveCam(ofEasyCam & internalCam, ofEasyCam * externalCam
 	// Couleur par dfaut pour les formes 3D
 	ofSetColor(255);
 
-	// Calculer la bounding box de la scène pour adapter l'échelle si nécessaire
+	// Calculer la bounding box de la scÃ¨ne pour adapter l'Ã©chelle si nÃ©cessaire
 	bool hasVertices = false;
 	glm::vec3 sceneMin(FLT_MAX), sceneMax(-FLT_MAX);
 	for (const auto & shape : data.shapes) {
@@ -121,10 +121,10 @@ static ofEasyCam & getActiveCam(ofEasyCam & internalCam, ofEasyCam * externalCam
 
 	ofVec3f viewPos = cam.getPosition();
 
-	// Dessiner toutes les formes 3D (avec recentrage et mise à l'échelle globale)
+	// Dessiner toutes les formes 3D (avec recentrage et mise Ã  l'Ã©chelle globale)
 	if (hasVertices && scaleFactor != 1.0f) {
 		ofPushMatrix();
-		// Recentre la scène autour de l'origine puis applique l'échelle
+		// Recentre la scÃ¨ne autour de l'origine puis applique l'Ã©chelle
 		ofTranslate(-sceneCenter.x, -sceneCenter.y, -sceneCenter.z);
 		ofScale(scaleFactor, scaleFactor, scaleFactor);
 
@@ -134,7 +134,7 @@ static ofEasyCam & getActiveCam(ofEasyCam & internalCam, ofEasyCam * externalCam
 
 		ofPopMatrix();
 	} else {
-		// Aucun ajustement nécessaire
+		// Aucun ajustement nÃ©cessaire
 		for (const auto & shape : data.shapes) {
 			shape3DRenderer.drawShape3D(shape, data.lighting, viewPos);
 		}
@@ -169,8 +169,8 @@ void SceneRenderer::draw3D(const RenderData3D & data) {
 	// Begin camera with explicit viewport
 	cam.begin(viewport);
 
-	// --- ANCIEN BLOC D'ÉCLAIRAGE (RESTAURÉ) ---
-	// Note : Ce bloc utilise l'éclairage interne d'OpenFrameworks.
+	// --- ANCIEN BLOC D'Ã‰CLAIRAGE (RESTAURÃ‰) ---
+	// Note : Ce bloc utilise l'Ã©clairage interne d'OpenFrameworks.
 	if (data.enableLighting) {
 		ofLight light;
 		light.setDirectional();
@@ -198,7 +198,7 @@ void SceneRenderer::draw3D(const RenderData3D & data) {
 	// Couleur par dfaut pour les formes 3D
 	ofSetColor(255);
 
-	// Calculer la bounding box de la scène pour adapter l'échelle si nécessaire
+	// Calculer la bounding box de la scÃ¨ne pour adapter l'Ã©chelle si nÃ©cessaire
 	bool hasVertices = false;
 	glm::vec3 sceneMin(FLT_MAX), sceneMax(-FLT_MAX);
 	for (const auto & shape : data.shapes) {
@@ -224,28 +224,28 @@ void SceneRenderer::draw3D(const RenderData3D & data) {
 		}
 	}
 
-	// Dessiner toutes les formes 3D (avec recentrage et mise à l'échelle globale)
+	// Dessiner toutes les formes 3D (avec recentrage et mise Ã  l'Ã©chelle globale)
 	if (hasVertices && scaleFactor != 1.0f) {
 		ofPushMatrix();
-		// Recentre la scène autour de l'origine puis applique l'échelle
+		// Recentre la scÃ¨ne autour de l'origine puis applique l'Ã©chelle
 		ofTranslate(-sceneCenter.x, -sceneCenter.y, -sceneCenter.z);
 		ofScale(scaleFactor, scaleFactor, scaleFactor);
 
 		for (const auto & shape : data.shapes) {
-			// Appel à l'ancienne signature
+			// Appel Ã  l'ancienne signature
 			shape3DRenderer.drawShape3D(shape);
 		}
 
 		ofPopMatrix();
 	} else {
-		// Aucun ajustement nécessaire
+		// Aucun ajustement nÃ©cessaire
 		for (const auto & shape : data.shapes) {
-			// Appel à l'ancienne signature
+			// Appel Ã  l'ancienne signature
 			shape3DRenderer.drawShape3D(shape);
 		}
 	}
 
-	// --- ANCIEN BLOC D'ÉCLAIRAGE (RESTAURÉ) ---
+	// --- ANCIEN BLOC D'Ã‰CLAIRAGE (RESTAURÃ‰) ---
 	if (data.enableLighting) {
 		ofDisableLighting();
 	}
@@ -292,7 +292,7 @@ void SceneRenderer::draw3D(const RenderData3D & data) {
 	// Couleur par dfaut pour les formes 3D
 	ofSetColor(255);
 
-	// Calculer la bounding box de la scène pour adapter l'échelle si nécessaire
+	// Calculer la bounding box de la scÃ¨ne pour adapter l'Ã©chelle si nÃ©cessaire
 	bool hasVertices = false;
 	glm::vec3 sceneMin(FLT_MAX), sceneMax(-FLT_MAX);
 	for (const auto & shape : data.shapes) {
@@ -320,23 +320,23 @@ void SceneRenderer::draw3D(const RenderData3D & data) {
 	//ofVec3f viewPos = ofVec3f(0.0f, 0.0f, 0.0f);
 	ofVec3f viewPos =cam.getPosition();
 
-	// Dessiner toutes les formes 3D (avec recentrage et mise à l'échelle globale)
+	// Dessiner toutes les formes 3D (avec recentrage et mise Ã  l'Ã©chelle globale)
 	if (hasVertices && scaleFactor != 1.0f) {
 		ofPushMatrix();
-		// Recentre la scène autour de l'origine puis applique l'échelle
+		// Recentre la scÃ¨ne autour de l'origine puis applique l'Ã©chelle
 		ofTranslate(-sceneCenter.x, -sceneCenter.y, -sceneCenter.z);
 		ofScale(scaleFactor, scaleFactor, scaleFactor);
 
 		for (const auto & shape : data.shapes) {
-			// Appel à l'ancienne signature
+			// Appel Ã  l'ancienne signature
 			shape3DRenderer.drawShape3D(shape, data.lighting, viewPos);
 		}
 
 		ofPopMatrix();
 	} else {
-		// Aucun ajustement nécessaire
+		// Aucun ajustement nÃ©cessaire
 		for (const auto & shape : data.shapes) {
-			// Appel à l'ancienne signature
+			// Appel Ã  l'ancienne signature
 			shape3DRenderer.drawShape3D(shape, data.lighting, viewPos);
 		}
 	}
@@ -368,7 +368,7 @@ void SceneRenderer::drawQuadView(const RenderDataQuad & data) {
 	drawQuadViewSeparators(data);
 }
 
-void SceneRenderer::drawSingleCameraView(
+/* void SceneRenderer::drawSingleCameraView(
 	const std::vector<Shape> & shapes,
 	const CameraData & cameraData,
 	const ofRectangle & viewport,
@@ -406,6 +406,99 @@ void SceneRenderer::drawSingleCameraView(
 	for (const auto & shape : shapes) {
 		//shape3DRenderer.drawShape3D(shape, lighting, camera.getPosition());
 		shape3DRenderer.drawShape3D(shape, lighting, camera.getPosition());
+	}
+
+	camera.end();
+
+	// Dessiner le label de la vue
+	ofPushStyle();
+	ofSetColor(0);
+	ofDrawBitmapString(label, viewport.x + 10, viewport.y + 20);
+	ofPopStyle();
+}*/
+
+
+void SceneRenderer::drawSingleCameraView(
+	const std::vector<Shape> & shapes,
+	const CameraData & cameraData,
+	const ofRectangle & viewport,
+	const std::string & label,
+	const LightingData & lighting,
+	bool showGrid,
+	bool showAxes) {
+	ofViewport(viewport.x, viewport.y, viewport.width, viewport.height);
+	ofCamera camera;
+	applyCameraData(camera, cameraData);
+	camera.setAspectRatio(viewport.width / viewport.height);
+	camera.begin(viewport);
+	float viewSize = std::max(1.0f, std::min(viewport.width, viewport.height));
+
+	if (showGrid) {
+		ofPushStyle();
+		ofSetColor(80, 90, 110);
+		ofDrawGrid(viewSize, 10, true, true, true, true);
+		ofPopStyle();
+	}
+
+	if (showAxes) {
+		ofDrawAxis(viewSize * 0.5f);
+	}
+
+	ofSetColor(255);
+
+	bool hasVertices = false;
+	glm::vec3 sceneMin(FLT_MAX), sceneMax(-FLT_MAX);
+
+	for (const auto & shape : shapes) {
+		const ofMesh & m = shape.mesh3D;
+		if (m.getNumVertices() == 0) continue;
+		glm::mat4 transform = glm::mat4(1.0f);
+		transform = glm::translate(transform, glm::vec3(shape.translation.x, shape.translation.y, 0.0f));
+		transform = glm::rotate(transform, glm::radians(shape.rotation), glm::vec3(0, 0, 1));
+		transform = glm::scale(transform, glm::vec3(shape.scale, shape.scale, shape.scale));
+
+		for (std::size_t i = 0; i < m.getNumVertices(); ++i) {
+			const glm::vec3 & v = m.getVertex(i);
+
+			// âœ… TRANSFORM VERTEX TO WORLD SPACE
+			glm::vec4 worldV = transform * glm::vec4(v, 1.0f);
+			glm::vec3 transformedV = glm::vec3(worldV);
+
+			hasVertices = true;
+			sceneMin = glm::min(sceneMin, transformedV);
+			sceneMax = glm::max(sceneMax, transformedV);
+		}
+	}
+
+	float scaleFactor = 1.0f;
+	glm::vec3 sceneCenter(0.0f);
+
+	if (hasVertices) {
+		glm::vec3 extent = sceneMax - sceneMin;
+		float maxExtent = std::max(std::max(extent.x, extent.y), extent.z);
+		if (maxExtent > 0.0f) {
+			const float targetMaxSize = viewSize * 0.5f;
+			scaleFactor = std::min(1.0f, targetMaxSize / maxExtent);
+			sceneCenter = (sceneMin + sceneMax) * 0.5f;
+		}
+	}
+
+	// Apply recentering and scaling (matching regular 3D view)
+	if (hasVertices && scaleFactor != 1.0f) {
+		ofPushMatrix();
+		ofTranslate(-sceneCenter.x, -sceneCenter.y, -sceneCenter.z);
+		ofScale(scaleFactor, scaleFactor, scaleFactor);
+
+		for (const auto & shape : shapes) {
+			shape3DRenderer.drawShape3D(shape, lighting, camera.getPosition());
+		}
+
+		ofPopMatrix();
+	} else {
+		// No recentering needed
+		for (const auto & shape : shapes) {
+			shape3DRenderer.drawShape3D(shape, lighting, camera.getPosition());
+		}
 	}
 
 	camera.end();

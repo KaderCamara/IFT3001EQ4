@@ -1,5 +1,5 @@
 // Shape2DRenderer.h
-// Renderer spécialisé pour les formes 2D (VIEW)
+// Renderer spï¿½cialisï¿½ pour les formes 2D (VIEW)
 
 #pragma once
 
@@ -10,9 +10,9 @@
  * @class Shape2DRenderer
  * @brief Responsable du rendu des formes 2D (VIEW pure)
  *
- * - Dessine les formes 2D présentes dans la scène
+ * - Dessine les formes 2D prï¿½sentes dans la scï¿½ne
  * - Dessine la forme temporaire (preview) pendant le dessin
- * - Gère le style (sélection, contour, etc.)
+ * - Gï¿½re le style (sï¿½lection, contour, etc.)
  */
 class Shape2DRenderer {
 public:
@@ -20,10 +20,21 @@ public:
 	~Shape2DRenderer() = default;
 
 	/**
-     * @brief Dessine une forme 2D de la scène
-     * @param s Shape à dessiner
-     * @param isSelected true si la forme est sélectionnée
-     * @param lineWidth épaisseur de ligne courante
+     * @brief Dessine une forme 2D de la scï¿½ne
+     * @param s Shape ï¿½ dessiner
+     * @param isSelected true si la forme est sï¿½lectionnï¿½e
+     * @param isHovered true si la forme est survolï¿½e
+     * @param lineWidth ï¿½paisseur de ligne courante
      */
-	void drawShape2D(const Shape & s, bool isSelected, float lineWidth) const;
+	void drawShape2D(const Shape & s, bool isSelected, bool isHovered, float lineWidth) const;
+
+	/**
+	 * @brief Dessine la forme de preview en utilisant des paramÃ¨tres visuels fournis
+	 * @param s Shape Ã  dessiner
+	 * @param strokeColor couleur du contour Ã  utiliser pour le preview
+	 * @param fillColor couleur de remplissage Ã  utiliser pour le preview
+	 * @param lineWidth Ã©paisseur de ligne Ã  utiliser pour le preview
+	 * @param isHovered true si la preview doit Ãªtre rendue comme survolÃ©e (optionnel)
+	 */
+	void drawPreviewShape2D(const Shape & s, const ofColor & strokeColor, const ofColor & fillColor, float lineWidth, bool isHovered = false) const;
 };

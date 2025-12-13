@@ -212,6 +212,7 @@ RenderDataDraw2D Application::prepareRenderDataDraw2D() {
 	// Formes de la scène
 	data.shapes = sceneGraph.shapes;
 	data.selectedIndices = sceneGraph.selectedIndices;
+	data.hoveredShapeIndex = sceneController.getHoveredShapeIndex();
 
 	// Forme en cours de création (preview)
 	if (sceneController.getCurrentShape() != "none" && (sceneController.isDrawing() || sceneController.hasUnsavedShape())) {
@@ -397,6 +398,12 @@ void Application::mousePressed(int x, int y, int button) {
 
 	if (uiWindow.isDrawModeActive() && uiWindow.getDrawDrawingArea().inside(x, y)) {
 		sceneController.setCurrentShape(uiWindow.getCurrentShape());
+		// Appliquer les paramètres de dessin en temps réel
+		sceneController.setDrawingParameters(
+			uiWindow.getLineWidth(),
+			uiWindow.getStrokeColor(),
+			uiWindow.getFillColor()
+		);
 		sceneController.handleMousePressed(x, y, button, uiWindow.getDrawDrawingArea());
 	} else if (uiWindow.isCurvesModeActive() && uiWindow.getCurvesDrawingArea().inside(x, y)) {
 		if (uiWindow.isPlacePointsMode()) {
@@ -433,6 +440,12 @@ void Application::mouseReleased(int x, int y, int button) {
 void Application::mouseDragged(int x, int y, int button) {
 	if (uiWindow.isDrawModeActive() && uiWindow.getDrawDrawingArea().inside(x, y)) {
 		if (sceneController.isDrawing()) {
+			// Appliquer les paramètres de dessin en temps réel pendant le drag
+			sceneController.setDrawingParameters(
+				uiWindow.getLineWidth(),
+				uiWindow.getStrokeColor(),
+				uiWindow.getFillColor()
+			);
 			sceneController.handleMouseDragged(x, y, button, uiWindow.getDrawDrawingArea());
 		}
 	} else if (uiWindow.is3DTabActive() && uiWindow.getDrawingArea().inside(x, y)) {
@@ -442,6 +455,13 @@ void Application::mouseDragged(int x, int y, int button) {
 		} else {
 			handle3DMouseDragged(x, y, button);
 		}
+	}
+}
+
+void Application::mouseMoved(int x, int y) {
+	// Gérer le hover sur les formes 2D
+	if (uiWindow.isDrawModeActive() && uiWindow.getDrawDrawingArea().inside(x, y)) {
+		sceneController.handleMouseMoved(x, y);
 	}
 }
 

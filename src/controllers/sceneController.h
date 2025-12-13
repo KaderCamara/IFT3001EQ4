@@ -67,6 +67,14 @@ public:
 	void handleMouseReleased(int x, int y, int button);
 	void handleMouseDragged(int x, int y, int button, const ofRectangle & drawingArea);
 	void handleKeyPressed(int key);
+	void handleMouseMoved(int x, int y);
+
+	// ========== GESTION DES PARAMÈTRES DE DESSIN ==========
+
+	/**
+	 * @brief Met à jour les paramètres de dessin en temps réel
+	 */
+	void setDrawingParameters(float lineWidth, ofColor strokeColor, ofColor fillColor);
 
 	// ========== GESTION DES TRANSFORMATIONS ==========
 
@@ -103,6 +111,7 @@ public:
 	bool isDrawing() const { return drawing; }
 	bool isShapeSelected() const { return !sceneGraph.selectedIndices.empty(); }
 	bool hasUnsavedShape() const { return unsavedShapeExists; }
+	int getHoveredShapeIndex() const { return hoveredShapeIndex; }
 
 private:
 	// ========== MODELS ==========
@@ -129,6 +138,9 @@ private:
 	// Forme en cours de création
 	std::string currentShape = "none";
 	ofPoint startPoint, endPoint;
+
+	// Hover sur formes
+	int hoveredShapeIndex = -1;
 
 	// ========== MÉTHODES PRIVÉES ==========
 

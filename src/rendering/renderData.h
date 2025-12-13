@@ -19,6 +19,7 @@ struct RenderDataDraw2D {
 	// Formes de la scène
 	std::vector<Shape> shapes;
 	std::vector<int> selectedIndices;
+	int hoveredShapeIndex = -1; // Index de la forme survolée (-1 si aucune)
 
 	// Forme en cours de création (preview)
 	Shape currentPreview;

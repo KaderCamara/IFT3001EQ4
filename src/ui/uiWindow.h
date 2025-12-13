@@ -53,9 +53,6 @@ public:
 		return ofColor(180, 200, 220);
 	}
 
-	// Expose active tab states
-	bool isImageTabActive() const { return imageTab.active; }
-
 	// IMAGE PANEL
 	bool isImportImageRequested() const { return imagePanel.isImportImageRequested(); }
 	bool isClearImageRequested() const { return imagePanel.isClearImageRequested(); }

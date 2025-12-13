@@ -62,25 +62,25 @@ void CameraManager::lookAtScene(const std::vector<Shape> & shapes, bool isQuadVi
 	// Camera 0: Top view - WORKING
 	cameras[0].setPosition(center.x, center.y + distance, center.z);
 	cameras[0].lookAt(center, ofVec3f(0, 0, -1));
-	cameras[0].setScale(orthoScale);
+	//cameras[0].setScale(orthoScale);
 
 	// Camera 1: Front view - PROBLEMATIC - try larger scale and different distance
 	float frontDistance = distance * 1.2f; // ✅ Slightly farther
 	cameras[1].setPosition(center.x, center.y, center.z + frontDistance);
 	cameras[1].lookAt(center, ofVec3f(0, 1, 0));
-	cameras[1].setScale(orthoScaleLarge); // ✅ Larger scale
+	//cameras[1].setScale(orthoScaleLarge); // ✅ Larger scale
 	ofLogNotice("CameraManager") << "Camera 1 (Front): distance=" << frontDistance
 								 << " scale=" << orthoScaleLarge;
 
 	// Camera 2: Side view - WORKING
 	cameras[2].setPosition(center.x + distance, center.y, center.z);
 	cameras[2].lookAt(center, ofVec3f(0, 1, 0));
-	cameras[2].setScale(orthoScale);
+	//cameras[2].setScale(orthoScale);
 
 	// Camera 3: Bottom view - PROBLEMATIC - try larger scale
 	cameras[3].setPosition(center.x, center.y - distance, center.z);
 	cameras[3].lookAt(center, ofVec3f(0, 0, 1));
-	cameras[3].setScale(orthoScaleLarge); // ✅ Larger scale
+	//cameras[3].setScale(orthoScaleLarge); // ✅ Larger scale
 	ofLogNotice("CameraManager") << "Camera 3 (Bottom): scale=" << orthoScaleLarge;
 
 	// Camera 4: Free camera

@@ -13,7 +13,8 @@ void Application::setup() {
 	imageController.setup();
 	curvesController.setup();
 	transformController.setup();
-	lightingController.setup(); 
+	lightingController.setup();
+	connectTexturePanelToRenderer();
 
 	// ✅ PLUS BESOIN d'injecter les Controllers dans le Renderer
 	// Le Renderer est maintenant une VIEW pure
@@ -38,6 +39,10 @@ void Application::update() {
 
 	if (uiWindow.isDeleteShapeRequested()) {
 		sceneController.deleteSelectedShapes();
+	}
+
+	if (uiWindow.is3DTabActive()) {
+		uiWindow.getView3DPanel().getTexturePanel().update();
 	}
 
 	// ========== GESTION DES MODES ==========
@@ -111,6 +116,7 @@ void Application::update() {
 		std::vector<Shape> filteredShapes = model3DImportManager.removeAll3DModels(currentShapes);
 		sceneController.setAllShapes(filteredShapes);
 	}
+
 
 
 	//////// check
@@ -327,6 +333,12 @@ RenderData3D Application::prepareRenderData3D() {
 	data.drawingArea = uiWindow.getDrawingArea();
 
 	return data;
+}
+
+void Application::connectTexturePanelToRenderer() {
+	Texture3DPanel & texturePanel = uiWindow.getView3DPanel().getTexturePanel();
+	texturePanel.setRenderer(&renderer);
+	ofLogNotice("Application") << "Texture panel connected to renderer";
 }
 
 RenderDataQuad Application::prepareRenderDataQuad() {

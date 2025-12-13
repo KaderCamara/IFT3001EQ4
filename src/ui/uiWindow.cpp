@@ -32,8 +32,7 @@ void UIWindow::update() {
 		view3DActive && !view3DPanel.isQuadViewRequested(),
 		view3DPanel.isQuadViewRequested(),
 		drawingArea,
-		statusMessage
-	);
+		statusMessage);
 }
 
 void UIWindow::draw() {

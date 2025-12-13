@@ -69,6 +69,16 @@ public:
 	 */
 	void setExternalCamera(ofEasyCam * cam) { externalCam = cam; }
 
+	// ========== TEXTURE PROCÉDURALE ==========
+	/**
+     * @brief Définit la texture procédurale pour le Shape3DRenderer interne
+     * @param tex Texture procédurale à appliquer aux objets 3D
+     */
+	void setProceduralTexture3D(const ofTexture & tex) {
+		shape3DRenderer.setProceduralTexture(tex);
+	}
+
+
 private:
 	// ========== RENDERERS SPÉCIALISÉS (VIEW) ==========
 	Shape2DRenderer shape2DRenderer;

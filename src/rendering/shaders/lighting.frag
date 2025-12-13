@@ -17,7 +17,7 @@ uniform int u_shadingModel; // 0=Lambert, 1=Gouraud, 2=Phong, 3=Blinn-Phong, 4=P
 // Lights (up to 4)
 uniform int u_numLights;
 
-// Light uniforms (same as before)
+// Light uniforms
 uniform int u_light0Type;
 uniform vec3 u_light0Color;
 uniform float u_light0Intensity;
@@ -61,6 +61,10 @@ uniform float u_light3LinearAtt;
 uniform float u_light3QuadraticAtt;
 uniform float u_light3SpotCutoff;
 uniform float u_light3SpotExponent;
+
+// ✅ FIX: Utiliser int au lieu de bool pour compatibilité GLSL 120
+uniform sampler2D uProceduralTexture;
+uniform int uUseProceduralTexture;  // ✅ Changé de bool à int
 
 // Global settings
 uniform vec3 u_viewPos;
@@ -188,10 +192,10 @@ vec3 celShading(vec3 color, vec3 normal, vec3 viewDir) {
     // Add edge detection for outlines
     float edge = max(0.0, dot(normal, viewDir));
     if (edge < 0.3) {
-        return vec3(0.0); // Black outline
+        return vec3(0.0);
     }
     
-    return color * max(intensity, 0.2); // Minimum 20% brightness
+    return color * max(intensity, 0.2);
 }
 
 vec3 goochShading(vec3 normal) {
@@ -203,9 +207,8 @@ vec3 goochShading(vec3 normal) {
     
     float t = (dot(normal, lightDir) + 1.0) * 0.5;
     
-    // Warm color (lit areas) and cool color (shadow areas)
-    vec3 warmColor = vec3(1.0, 0.8, 0.4);  // Warm yellow-orange
-    vec3 coolColor = vec3(0.2, 0.3, 0.7);  // Cool blue
+    vec3 warmColor = vec3(1.0, 0.8, 0.4);
+    vec3 coolColor = vec3(0.2, 0.3, 0.7);
     
     return mix(coolColor, warmColor, t);
 }
@@ -213,22 +216,46 @@ vec3 goochShading(vec3 normal) {
 void main() {
     vec3 normal = normalize(v_normal);
     vec3 viewDir = normalize(u_viewPos - v_fragPos);
+
+    // ✅ Récupérer la texture procédurale
+    vec3 texColor = vec3(1.0); // Blanc par défaut
+    bool hasProceduralTexture = false;
     
-    // ✅ FIX: Start with globalAmbient directly (not multiplied by materialAmbient)
-    vec3 finalColor = u_globalAmbient / 255.0;  // Convert from 0-255 to 0-1
+    if (uUseProceduralTexture == 1) {
+        texColor = texture2D(uProceduralTexture, v_texCoord).rgb;
+        hasProceduralTexture = true;
+    }
+    
+    vec3 baseColor = u_materialDiffuse;
+    
+    // Start with globalAmbient
+    vec3 finalColor = u_globalAmbient / 255.0;
+    
+    // ✅ AJOUT: Si texture procédurale ET pas de lumière, garantir un minimum
+    if (hasProceduralTexture && u_numLights == 0) {
+        finalColor = max(finalColor, vec3(0.2)); // Minimum 20% de luminosité
+    }
     
     // ========== FLAT SHADING ==========
     if (u_shadingModel == 5) {
-        // Just use material diffuse color with ambient
-        finalColor = finalColor + u_materialDiffuse;
+        finalColor = finalColor + baseColor;
+        if (hasProceduralTexture) {
+            finalColor *= texColor;
+        }
     }
-    // ========== CEL/TOON SHADING (7.5) ==========
+    // ========== CEL/TOON SHADING ==========
     else if (u_shadingModel == 6) {
-        finalColor = celShading(u_materialDiffuse, normal, viewDir);
+        finalColor = celShading(baseColor, normal, viewDir);
+        if (hasProceduralTexture) {
+            finalColor *= texColor;
+        }
     }
-    // ========== GOOCH SHADING (7.5) ==========
+    // ========== GOOCH SHADING ==========
     else if (u_shadingModel == 7) {
         finalColor = goochShading(normal);
+        if (hasProceduralTexture) {
+            finalColor *= texColor;
+        }
     }
     // ========== REALISTIC SHADING ==========
     else {
@@ -256,8 +283,13 @@ void main() {
                                        u_light3ConstantAtt, u_light3LinearAtt, u_light3QuadraticAtt, u_light3SpotCutoff, u_light3SpotExponent,
                                        normal, viewDir);
         }
+        
+        // ✅ Appliquer la texture procédurale
+        if (hasProceduralTexture) {
+            finalColor *= texColor;
+        }
     }
-    
+
     // Tone mapping
     finalColor = finalColor * u_exposure;
     finalColor = (finalColor - 0.5) * u_contrast + 0.5;

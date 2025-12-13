@@ -34,6 +34,7 @@ ofMesh ShapeManager3D::to3DCube(const Shape & shape, ofMesh mesh) {
 	float halfW = width / 2.0f;
 	float halfH = height / 2.0f;
 
+	// Vertices
 	mesh.addVertex({ centerX - halfW, centerY - halfH, -halfZ });
 	mesh.addVertex({ centerX + halfW, centerY - halfH, -halfZ });
 	mesh.addVertex({ centerX + halfW, centerY + halfH, -halfZ });
@@ -43,6 +44,18 @@ ofMesh ShapeManager3D::to3DCube(const Shape & shape, ofMesh mesh) {
 	mesh.addVertex({ centerX + halfW, centerY + halfH, halfZ });
 	mesh.addVertex({ centerX - halfW, centerY + halfH, halfZ });
 
+	// ✅ AJOUT: Coordonnées UV pour chaque sommet
+	// Mappage simple: chaque face va de (0,0) à (1,1)
+	mesh.addTexCoord(glm::vec2(0, 0));
+	mesh.addTexCoord(glm::vec2(1, 0));
+	mesh.addTexCoord(glm::vec2(1, 1));
+	mesh.addTexCoord(glm::vec2(0, 1));
+	mesh.addTexCoord(glm::vec2(0, 0));
+	mesh.addTexCoord(glm::vec2(1, 0));
+	mesh.addTexCoord(glm::vec2(1, 1));
+	mesh.addTexCoord(glm::vec2(0, 1));
+
+	// Indices
 	int faces[] = {
 		0, 1, 2, 0, 2, 3, // front
 		4, 7, 6, 4, 6, 5, // back
@@ -51,17 +64,14 @@ ofMesh ShapeManager3D::to3DCube(const Shape & shape, ofMesh mesh) {
 		1, 5, 6, 1, 6, 2, // right
 		0, 3, 7, 0, 7, 4 // left
 	};
-
 	for (int i = 0; i < 36; i++)
 		mesh.addIndex(faces[i]);
 
-	// ✅ GENERATE NORMALS FOR LIGHTING!
-	// This calculates per-face normals for proper cube lighting
+	// Normales (votre code existant)
 	for (int i = 0; i < mesh.getNumVertices(); i++) {
-		mesh.addNormal(glm::vec3(0, 0, 0)); // Initialize with zeros
+		mesh.addNormal(glm::vec3(0, 0, 0));
 	}
 
-	// Calculate face normals and average them per vertex
 	for (int i = 0; i < mesh.getNumIndices(); i += 3) {
 		int i0 = mesh.getIndex(i);
 		int i1 = mesh.getIndex(i + 1);
@@ -71,15 +81,12 @@ ofMesh ShapeManager3D::to3DCube(const Shape & shape, ofMesh mesh) {
 		glm::vec3 v1 = mesh.getVertex(i1);
 		glm::vec3 v2 = mesh.getVertex(i2);
 
-		// ✅ FLIP THE NORMAL DIRECTION
 		glm::vec3 normal = glm::normalize(glm::cross(v2 - v0, v1 - v0));
-
 		mesh.getNormals()[i0] += normal;
 		mesh.getNormals()[i1] += normal;
 		mesh.getNormals()[i2] += normal;
 	}
 
-	// Normalize all normals
 	for (auto & n : mesh.getNormals()) {
 		n = glm::normalize(n);
 	}
@@ -89,12 +96,24 @@ ofMesh ShapeManager3D::to3DCube(const Shape & shape, ofMesh mesh) {
 
 ofMesh ShapeManager3D::to3DSphere(const Shape & shape, ofMesh mesh) {
 	float radius = ofDist(shape.start.x, shape.start.y, shape.end.x, shape.end.y);
-
 	if (radius < 1.0f) radius = 1.0f;
 
-	ofPoint center = shape.start; 
+	ofPoint center = shape.start;
+
 	ofSpherePrimitive sphere(radius, 16);
-	mesh = sphere.getMesh();
+	mesh = sphere.getMesh(); // ✅ Les primitives OF ont déjà des UVs
+
+	// ✅ VÉRIFICATION: Si pas de UVs, les générer
+	if (mesh.getNumTexCoords() == 0) {
+		ofLogWarning("ShapeManager3D") << "Sphere has no UVs, generating...";
+		for (size_t i = 0; i < mesh.getNumVertices(); i++) {
+			// UV sphérique simple basé sur la position
+			glm::vec3 v = glm::normalize(mesh.getVertex(i) - glm::vec3(center.x, center.y, 0));
+			float u = 0.5f + atan2(v.z, v.x) / (2.0f * PI);
+			float vCoord = 0.5f - asin(v.y) / PI;
+			mesh.addTexCoord(glm::vec2(u, vCoord));
+		}
+	}
 
 	for (auto & v : mesh.getVertices()) {
 		v += center;
@@ -118,7 +137,18 @@ ofMesh ShapeManager3D::to3DCone(const Shape & shape, ofMesh mesh) {
 	};
 
 	ofConePrimitive cone(radius, height, 16, 4);
-	mesh = cone.getMesh();
+	mesh = cone.getMesh(); // ✅ Devrait avoir des UVs
+
+	// ✅ VÉRIFICATION
+	if (mesh.getNumTexCoords() == 0) {
+		ofLogWarning("ShapeManager3D") << "Cone has no UVs, generating...";
+		for (size_t i = 0; i < mesh.getNumVertices(); i++) {
+			glm::vec3 v = mesh.getVertex(i);
+			float u = 0.5f + v.x / (radius * 2.0f);
+			float vCoord = v.y / height;
+			mesh.addTexCoord(glm::vec2(u, vCoord));
+		}
+	}
 
 	for (auto & v : mesh.getVertices()) {
 		v += center;

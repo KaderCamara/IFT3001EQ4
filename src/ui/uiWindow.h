@@ -104,6 +104,10 @@ public:
 
 	void disablePlacePointsMode() { drawingPanel.setPlacePointsMode(false); }
 
+	// Ajout de l'accesseur pour View3DPanel
+	View3DPanel & getView3DPanel() { return view3DPanel; }
+	const View3DPanel & getView3DPanel() const { return view3DPanel; }
+
 private:
 	// ========== PANELS ==========
 	DrawingPanel drawingPanel;

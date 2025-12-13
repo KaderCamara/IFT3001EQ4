@@ -13,4 +13,6 @@ struct Shape {
 	ofColor color = ofColor::white;
 	float scale = 1.0f;
 
+    ofTexture proceduralTexture;
+	bool useProceduralTexture = false;
 };

@@ -1,9 +1,12 @@
 #include "texture3DPanel.h"
+#include "rendering/ProceduralTexture.h"
+#include "rendering/Renderer.h" // <-- Ajoutez cette ligne pour inclure la définition complète de Renderer
 
 void Texture3DPanel::setup() {
 	texturePanel.setup("Textures & Tone mapping");
 	texturePanel.setBorderColor(ofColor(0, 0));
 	texturePanel.setBackgroundColor(ofColor(0, 0, 0, 0));
+
 	// Collapsible dropdown
 	texturePanel.enableHeader();
 	texturePanel.minimize();
@@ -26,7 +29,7 @@ void Texture3DPanel::setup() {
 	toggleCubemapRefraction.setup("Cubemap refraction", true);
 
 	lblProcedural.setup("-- Procedural --", "");
-	toggleProceduralTexture.setup("Procedural material", true);
+	toggleProceduralTexture.setup("Procedural material", false);
 	toggleTextureNoise.setup("Noise layers", false);
 
 	texturePanel.add(&lblCoordinates);
@@ -70,5 +73,40 @@ void Texture3DPanel::draw() {
 	texturePanel.setPosition(enforcedX, enforcedY);
 	texturePanel.setWidthElements(enforcedWidth);
 
-	if (visible) texturePanel.draw();
+	if (visible) {
+		texturePanel.draw();
+
+		// Pour debug : afficher la texture générée à côté du panel
+		bool isProceduralActive = toggleProceduralTexture;
+		if (isProceduralActive && proceduralTexture.isAllocated()) {
+			proceduralTexture.draw(enforcedX + enforcedWidth + 10, enforcedY, 128, 128);
+		}
+	}
+}
+
+void Texture3DPanel::update() {
+	bool isProceduralActive = toggleProceduralTexture;
+
+	if (isProceduralActive) {
+		// Générer si pas encore active
+		if (!proceduralTextureActivePrev) {
+			proceduralTexture = generateSimpleProceduralTexture(128, 128);
+			ofLogNotice("Texture3DPanel") << "Procedural texture generated (128x128)";
+		}
+
+		if (renderer) {
+			renderer->setProceduralTexture3D(proceduralTexture);
+		} else {
+			ofLogWarning("Texture3DPanel") << "Renderer not connected - cannot send texture!";
+		}
+	} else {
+		// Si toggle décoché, désactiver l'utilisation
+		if (renderer) {
+			ofTexture emptyTex;
+			renderer->setProceduralTexture3D(emptyTex);
+			ofLogNotice("Texture3DPanel") << "Procedural texture disabled";
+		}
+	}
+
+	proceduralTextureActivePrev = isProceduralActive;
 }

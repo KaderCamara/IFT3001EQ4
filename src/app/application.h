@@ -113,6 +113,7 @@ private:
 	void handle3DMousePressed(int x, int y, int button);
 	void handle3DMouseDragged(int x, int y, int button);
 	void handle3DMouseReleased();
+	void connectTexturePanelToRenderer();
 
 	ofEasyCam threeDViewportCamera;
 	bool isOrbiting3D = false;

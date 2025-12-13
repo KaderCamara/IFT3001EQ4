@@ -41,10 +41,6 @@ void Application::update() {
 		sceneController.deleteSelectedShapes();
 	}
 
-	if (uiWindow.is3DTabActive()) {
-		uiWindow.getView3DPanel().getTexturePanel().update();
-	}
-
 	// ========== GESTION DES MODES ==========
 
 	if (uiWindow.isSelectShapeRequested()) {
@@ -52,6 +48,11 @@ void Application::update() {
 	} else {
 		sceneController.disableSelectingMode();
 	}
+
+	if (uiWindow.is3DTabActive()) {
+		uiWindow.getView3DPanel().getTexturePanel().update();
+	}
+
 
 	// ========== GESTION DES VUES ==========
 	bool isQuadView = uiWindow.isQuadViewRequested();
@@ -105,7 +106,7 @@ void Application::update() {
 		if (!importedShapes.empty()) {
 			sceneController.addShapesToScene(importedShapes);
 			sceneController.setView3DMode();
-			lightingDataNeedsUpdate = true;  
+			lightingDataNeedsUpdate = true;
 			ofLogNotice("Application") << "Successfully imported "
 									   << importedShapes.size() << " 3D shape(s)";
 		}
@@ -132,27 +133,24 @@ void Application::update() {
 		ofLogNotice("Application") << "Image cleared";
 	}
 	if (uiWindow.isGrayscaleRequested()) {
-		ofImage& img = imageController.getImage();
+		ofImage & img = imageController.getImage();
 		imageFilters.applyGrayscale(img);
 		uiWindow.statusMessage = "Grayscale filter applied";
 	}
 
 	if (uiWindow.isSepiaRequested()) {
-		ofImage& img = imageController.getImage();
+		ofImage & img = imageController.getImage();
 		imageFilters.applySepia(img);
 		uiWindow.statusMessage = "Sepia filter applied";
 	}
 
 	if (uiWindow.isInvertRequested()) {
-		ofImage& img = imageController.getImage();
+		ofImage & img = imageController.getImage();
 		imageFilters.applyInvert(img);
 		uiWindow.statusMessage = "Invert filter applied";
-		
 	}
 
-
 	//////// check lights
-
 
 	const LightingPanel & lightingPanel = uiWindow.getLightingPanel();
 
@@ -285,14 +283,13 @@ void Application::draw() {
 			ofDrawRectangle(imageArea);
 			ofSetColor(150);
 			std::string msg = "No image loaded. Use Import or drag & drop an image.";
-			float textWidth = msg.length() * 8; 
+			float textWidth = msg.length() * 8;
 			ofDrawBitmapString(msg,
 				imageArea.x + (imageArea.width - textWidth) / 2,
 				imageArea.y + imageArea.height / 2);
 			ofPopStyle();
 		}
 	}
-
 
 	// Dessiner l'UI par-dessus
 	// Make sure 3D depth testing doesn't hide UI elements
@@ -323,13 +320,19 @@ RenderDataDraw2D Application::prepareRenderDataDraw2D() {
 		data.hasPreview = false;
 	}
 
-	 // Paramètres visuels
+	// Paramètres visuels
 	data.lineWidth = uiWindow.getLineWidth();
 	data.strokeColor = uiWindow.getStrokeColor();
 	data.fillColor = uiWindow.getFillColor();
 	data.backgroundColor = uiWindow.getBackgroundColor();
 
 	return data;
+}
+
+void Application::connectTexturePanelToRenderer() {
+	Texture3DPanel & texturePanel = uiWindow.getView3DPanel().getTexturePanel();
+	texturePanel.setRenderer(&renderer);
+	ofLogNotice("Application") << "Texture panel connected to renderer";
 }
 
 RenderDataCurves2D Application::prepareRenderDataCurves2D() {
@@ -387,13 +390,7 @@ RenderData3D Application::prepareRenderData3D() {
 	return data;
 }
 
-void Application::connectTexturePanelToRenderer() {
-	Texture3DPanel & texturePanel = uiWindow.getView3DPanel().getTexturePanel();
-	texturePanel.setRenderer(&renderer);
-	ofLogNotice("Application") << "Texture panel connected to renderer";
-}
-
-RenderDataQuad Application::prepareRenderDataQuad() {
+/* RenderDataQuad Application::prepareRenderDataQuad() {
 	RenderDataQuad data;
 
 	// Récupérer les formes

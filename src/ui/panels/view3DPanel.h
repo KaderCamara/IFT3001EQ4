@@ -44,6 +44,10 @@ public:
 	//ofColor getLightColor() const { return sceneAssetsPanel.getLightColor(); }
 	const LightingPanel & getLightingPanel() const {return lightingPanel;}
 
+    Texture3DPanel & getTexturePanel() { return texturePanel; }
+	const Texture3DPanel & getTexturePanel() const { return texturePanel; }
+
+
 	bool isImport3DModelRequested() const { return sceneAssetsPanel.isImportRequested(); }
 	bool isClear3DModelRequested() const { return sceneAssetsPanel.isClearRequested(); }
 

@@ -10,8 +10,10 @@ class ImageManager {
 		void update();
 		void clear();
 		void loadFromDrag(ofDragInfo dragInfo);
+		bool loadFromPath(const std::string & path);
 		bool isImageLoaded() const { return imageLoaded; }
 		const ofImage & getImage() const { return importedImage; }
+		ofImage & getImage() { return importedImage; }
 
 	private:
 		ofImage importedImage;

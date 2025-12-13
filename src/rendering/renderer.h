@@ -84,6 +84,12 @@ public:
 	// Allow injecting an external scene camera (e.g., from CameraManager)
 	void setExternalSceneCamera(ofEasyCam * cam);
 
+    void setProceduralTexture3D(const ofTexture & tex) {
+		sceneRenderer.setProceduralTexture3D(tex);
+		ofLogNotice("Renderer") << "Procedural texture received, forwarding to SceneRenderer";
+	}
+
+
 private:
 	// ========== RENDERERS SPÉCIALISÉS (VIEW) ==========
 	SceneRenderer sceneRenderer;

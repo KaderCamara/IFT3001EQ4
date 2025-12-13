@@ -53,12 +53,14 @@ public:
 		return ofColor(180, 200, 220);
 	}
 
-	// Expose active tab states
-	bool isImageTabActive() const { return imageTab.active; }
-
 	// IMAGE PANEL
 	bool isImportImageRequested() const { return imagePanel.isImportImageRequested(); }
 	bool isClearImageRequested() const { return imagePanel.isClearImageRequested(); }
+	bool isGrayscaleRequested() const { return imagePanel.isGrayscaleRequested(); }
+	bool isSepiaRequested() const { return imagePanel.isSepiaRequested(); }
+	bool isInvertRequested() const { return imagePanel.isInvertRequested(); }
+	bool isImageTabActive() const { return imageTab.active; }
+	ofRectangle getImageDrawingArea() const { return drawingArea; }
 
 	// VIEW3D PANEL
 	bool isImport3DModelRequested() const { return view3DPanel.isImport3DModelRequested(); }
@@ -100,6 +102,10 @@ public:
 	bool isStopAnimationRequested() const { return view2DPanel.isStopAnimationRequested(); }
 	void clearPlayAnimationRequest() { view2DPanel.clearRequests(); }
 	void clearStopAnimationRequest() { view2DPanel.clearRequests(); }
+
+	// Ajout de l'accesseur pour View3DPanel
+	View3DPanel & getView3DPanel() { return view3DPanel; }
+	const View3DPanel & getView3DPanel() const { return view3DPanel; }
 
 private:
 	ImagePanel imagePanel;

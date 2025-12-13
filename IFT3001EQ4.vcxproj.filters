@@ -715,6 +715,10 @@
     <ClInclude Include="src\rendering\curves\AnimatedObjectRenderer.h" />
     <ClInclude Include="src\ui\panels\view2DPanel.h" />
     <ClInclude Include="src\ui\panels\3dEdition\primitives3DPanel.h" />
+    <ClInclude Include="src\image\imageFilters.h" />
+    <ClInclude Include="src\rendering\ProceduralTexture.h">
+      <Filter>src\rendering</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="icon.rc" />

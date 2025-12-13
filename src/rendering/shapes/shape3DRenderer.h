@@ -30,6 +30,9 @@ public:
 	void setShowWireframe(bool show) { showWireframe = show; };
 	void setShowNormals(bool show) { showNormals = show; };
 
+    void setProceduralTexture(const ofTexture & tex);
+	void clearProceduralTexture();
+
 private:
 	/**
      * @brief Calcule la bounding box d'un mesh (utilitaire)
@@ -52,4 +55,7 @@ private:
 	void setMaterialUniforms(const Material & material) const;
 
 	ofRectangle getMeshBoundingBox(const ofMesh & mesh) const;
+
+    ofTexture proceduralTexture;
+	bool useProceduralTexture = false;
 };

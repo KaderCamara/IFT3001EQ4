@@ -13,7 +13,8 @@ void Application::setup() {
 	imageController.setup();
 	curvesController.setup();
 	transformController.setup();
-	lightingController.setup(); 
+	lightingController.setup();
+	connectTexturePanelToRenderer();
 
 	// ✅ PLUS BESOIN d'injecter les Controllers dans le Renderer
 	// Le Renderer est maintenant une VIEW pure
@@ -47,6 +48,11 @@ void Application::update() {
 	} else {
 		sceneController.disableSelectingMode();
 	}
+
+	if (uiWindow.is3DTabActive()) {
+		uiWindow.getView3DPanel().getTexturePanel().update();
+	}
+
 
 	// ========== GESTION DES VUES ==========
 
@@ -103,7 +109,7 @@ void Application::update() {
 		if (!importedShapes.empty()) {
 			sceneController.addShapesToScene(importedShapes);
 			sceneController.setView3DMode();
-			lightingDataNeedsUpdate = true;  
+			lightingDataNeedsUpdate = true;
 			ofLogNotice("Application") << "Successfully imported "
 									   << importedShapes.size() << " 3D shape(s)";
 		}
@@ -115,9 +121,39 @@ void Application::update() {
 		sceneController.setAllShapes(filteredShapes);
 	}
 
+	///////// images ///////////////
 
-	//////// check
+	if (uiWindow.isImportImageRequested()) {
+		if (imageController.importImage()) {
+			uiWindow.statusMessage = "Image imported successfully";
+		} else {
+			uiWindow.statusMessage = "Failed to import image";
+		}
+	}
+	if (uiWindow.isClearImageRequested()) {
+		imageController.clearImage();
+		uiWindow.statusMessage = "Image cleared";
+		ofLogNotice("Application") << "Image cleared";
+	}
+	if (uiWindow.isGrayscaleRequested()) {
+		ofImage & img = imageController.getImage();
+		imageFilters.applyGrayscale(img);
+		uiWindow.statusMessage = "Grayscale filter applied";
+	}
 
+	if (uiWindow.isSepiaRequested()) {
+		ofImage & img = imageController.getImage();
+		imageFilters.applySepia(img);
+		uiWindow.statusMessage = "Sepia filter applied";
+	}
+
+	if (uiWindow.isInvertRequested()) {
+		ofImage & img = imageController.getImage();
+		imageFilters.applyInvert(img);
+		uiWindow.statusMessage = "Invert filter applied";
+	}
+
+	//////// check lights
 
 	const LightingPanel & lightingPanel = uiWindow.getLightingPanel();
 
@@ -200,25 +236,29 @@ void Application::draw() {
 		uiWindow.getRotation(),
 		uiWindow.getScale());
 
-	// If the Image tab is active, render only the image area and UI.
 	if (uiWindow.isImageTabActive()) {
-		// Draw image-specific background
-		ofPushStyle();
-		ofSetColor(uiWindow.getBackgroundColor());
-		const ofRectangle drawing = uiWindow.getDrawingArea();
-		ofDrawRectangle(drawing.x, drawing.y, drawing.width, drawing.height);
-		ofPopStyle();
-
-		// Render the image if available
+		// ✅ RENDER IMAGE TAB
 		if (imageController.hasImage()) {
-			renderer.getImageRenderer().renderInBounds(imageController.getImage(), drawing, true);
+			ofRectangle imageArea = uiWindow.getImageDrawingArea();
+			const ofImage & img = imageController.getImage();
+			ofPushStyle();
+			ofSetColor(uiWindow.getBackgroundColor());
+			ofDrawRectangle(imageArea);
+			ofPopStyle();
+			imageRenderer.renderInBounds(img, imageArea, true);
+		} else {
+			ofRectangle imageArea = uiWindow.getImageDrawingArea();
+			ofPushStyle();
+			ofSetColor(uiWindow.getBackgroundColor());
+			ofDrawRectangle(imageArea);
+			ofSetColor(150);
+			std::string msg = "No image loaded. Use Import or drag & drop an image.";
+			float textWidth = msg.length() * 8;
+			ofDrawBitmapString(msg,
+				imageArea.x + (imageArea.width - textWidth) / 2,
+				imageArea.y + imageArea.height / 2);
+			ofPopStyle();
 		}
-
-		// Draw the UI overlay and return early — do not draw editor canvases
-		ofDisableDepthTest();
-		uiWindow.draw();
-		ofEnableDepthTest();
-		return;
 	}
 
 	// ========== PRÉPARER LES RENDERDATA ET POUSSER AU RENDERER ==========
@@ -252,7 +292,30 @@ void Application::draw() {
 			renderer.drawCurvesCanvas(data);
 		}
 	}
-
+	if (uiWindow.isImageTabActive()) {
+		// ✅ RENDER IMAGE TAB
+		if (imageController.hasImage()) {
+			ofRectangle imageArea = uiWindow.getImageDrawingArea();
+			const ofImage & img = imageController.getImage();
+			ofPushStyle();
+			ofSetColor(uiWindow.getBackgroundColor());
+			ofDrawRectangle(imageArea);
+			ofPopStyle();
+			imageRenderer.renderInBounds(img, imageArea, true);
+		} else {
+			ofRectangle imageArea = uiWindow.getImageDrawingArea();
+			ofPushStyle();
+			ofSetColor(uiWindow.getBackgroundColor());
+			ofDrawRectangle(imageArea);
+			ofSetColor(150);
+			std::string msg = "No image loaded. Use Import or drag & drop an image.";
+			float textWidth = msg.length() * 8;
+			ofDrawBitmapString(msg,
+				imageArea.x + (imageArea.width - textWidth) / 2,
+				imageArea.y + imageArea.height / 2);
+			ofPopStyle();
+		}
+	}
 
 	// Dessiner l'UI par-dessus
 	// Make sure 3D depth testing doesn't hide UI elements
@@ -284,13 +347,19 @@ RenderDataDraw2D Application::prepareRenderDataDraw2D() {
 		data.hasPreview = false;
 	}
 
-	 // Paramètres visuels
+	// Paramètres visuels
 	data.lineWidth = uiWindow.getLineWidth();
 	data.strokeColor = uiWindow.getStrokeColor();
 	data.fillColor = uiWindow.getFillColor();
 	data.backgroundColor = uiWindow.getBackgroundColor();
 
 	return data;
+}
+
+void Application::connectTexturePanelToRenderer() {
+	Texture3DPanel & texturePanel = uiWindow.getView3DPanel().getTexturePanel();
+	texturePanel.setRenderer(&renderer);
+	ofLogNotice("Application") << "Texture panel connected to renderer";
 }
 
 RenderDataCurves2D Application::prepareRenderDataCurves2D() {
@@ -348,22 +417,17 @@ RenderData3D Application::prepareRenderData3D() {
 	return data;
 }
 
+
 RenderDataQuad Application::prepareRenderDataQuad() {
 	RenderDataQuad data;
 
-	// Récupérer les formes
 	const SceneGraph & sceneGraph = sceneController.getSceneGraph();
 	data.shapes = sceneGraph.shapes;
 
-	// Récupérer le CameraManager
 	CameraManager & cameraManager = sceneController.getCameraManager();
+	cameraManager.lookAtScene(sceneGraph.shapes, true);
 
-	// Mettre à jour les caméras si nécessaire
-	if (cameraManager.needsUpdate()) {
-		cameraManager.lookAtScene(sceneGraph.shapes, true);
-	}
-
-	// Calculer les viewports pour les 4 vues
+	// Viewports
 	ofRectangle drawingArea = uiWindow.getDrawingArea();
 	int w = drawingArea.width;
 	int h = drawingArea.height;
@@ -372,23 +436,35 @@ RenderDataQuad Application::prepareRenderDataQuad() {
 	int offsetX = drawingArea.x;
 	int offsetY = drawingArea.y;
 
-	data.viewports[0].set(offsetX, offsetY, halfW, halfH); // Top
-	data.viewports[1].set(offsetX + halfW, offsetY, halfW, halfH); // Front
-	data.viewports[2].set(offsetX, offsetY + halfH, halfW, halfH); // Side
-	data.viewports[3].set(offsetX + halfW, offsetY + halfH, halfW, halfH); // Bottom
+	data.viewports[0].set(offsetX, offsetY, halfW, halfH);
+	data.viewports[1].set(offsetX + halfW, offsetY, halfW, halfH);
+	data.viewports[2].set(offsetX, offsetY + halfH, halfW, halfH);
+	data.viewports[3].set(offsetX + halfW, offsetY + halfH, halfW, halfH);
 
-	// Extraire les données des 4 caméras
+	// Extract camera data with DEBUG
+	int originalIndex = cameraManager.getCurrentCameraIndex();
+
 	for (int i = 0; i < 4; ++i) {
-		int originalIndex = cameraManager.getCurrentCameraIndex();
 		cameraManager.setPerspectiveView(i);
-		data.cameras[i] = extractCameraData(cameraManager.getCurrentCamera());
-		cameraManager.setPerspectiveView(originalIndex);
+		ofEasyCam & cam = cameraManager.getCurrentCamera();
+
+		// ✅ DEBUG: Print camera state
+		ofLogNotice("QuadView") << "=== CAMERA " << i << " ===";
+		ofLogNotice("QuadView") << "Position: " << cam.getPosition();
+		ofLogNotice("QuadView") << "Target: " << cam.getTarget().getPosition();
+		ofLogNotice("QuadView") << "Up: " << cam.getUpDir();
+		ofLogNotice("QuadView") << "IsOrtho: " << (cam.getOrtho() ? "YES" : "NO");
+
+		data.cameras[i] = extractCameraData(cam);
 	}
 
-	// Options d'affichage
+	cameraManager.setPerspectiveView(originalIndex);
+
 	data.showBoundingBox = uiWindow.isShowBoundingBoxEnabled();
 	data.showWireframe = uiWindow.isWireframeEnabled();
-	// Lighting data from panel
+	data.showGrid = uiWindow.isGridEnabled();
+	data.showAxes = uiWindow.isAxesEnabled();
+
 	if (lightingDataNeedsUpdate) {
 		const LightingPanel & lightingPanel = uiWindow.getLightingPanel();
 		cachedLightingData = lightingController.prepareLightingData(lightingPanel);

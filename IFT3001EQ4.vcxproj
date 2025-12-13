@@ -294,6 +294,7 @@
     <ClCompile Include="src\utils\Model3DImportManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\image\imageFilters.h" />
     <ClInclude Include="src\controllers\lightingController.h" />
     <ClInclude Include="src\objects\lightingManager.h" />
     <ClInclude Include="src\app\application.h" />
@@ -415,6 +416,7 @@
     <ClInclude Include="src\rendering\curves\controlPointsRenderer.h" />
     <ClInclude Include="src\rendering\curves\curvesRenderer.h" />
     <ClInclude Include="src\rendering\image\imageRenderer.h" />
+    <ClInclude Include="src\rendering\ProceduralTexture.h" />
     <ClInclude Include="src\rendering\renderData.h" />
     <ClInclude Include="src\rendering\renderer.h" />
     <ClInclude Include="src\objects\sceneGraph.h" />

@@ -127,7 +127,6 @@ struct LightingData {
 		GOURAUD,
 		PHONG,
 		BLINN_PHONG,
-		PBR,
 		FLAT,
 		CEL, 
 		GOOCH 

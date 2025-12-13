@@ -66,7 +66,9 @@ public:
 	 * @brief Récupère le manager (pour accès avancé)
 	 */
 	ImageManager & getImageManager() { return imageManager; }
+	ofImage & getImage() { return imageManager.getImage(); }
 	const ImageManager & getImageManager() const { return imageManager; }
+
 
 private:
 	// Manager (MODEL)

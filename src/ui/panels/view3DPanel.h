@@ -5,6 +5,7 @@
 #include "../panels/3dEdition/cameraPanel.h"
 #include "../panels/3dEdition/geometry3DPanel.h"
 #include "../panels/3dEdition/lightingPanel.h"
+#include "../panels/3dEdition/primitives3DPanel.h"
 #include "../panels/3dEdition/rayTracingPanel.h"
 #include "../panels/3dEdition/sceneAssetsPanel.h"
 #include "../panels/3dEdition/texture3DPanel.h"
@@ -50,6 +51,10 @@ public:
 	bool isImport3DModelRequested() const { return sceneAssetsPanel.isImportRequested(); }
 	bool isClear3DModelRequested() const { return sceneAssetsPanel.isClearRequested(); }
 
+	// Accesseurs du panel Primitives 3D
+	const Primitives3DPanel & getPrimitives3DPanel() const { return primitives3DPanel; }
+	Primitives3DPanel & getPrimitives3DPanel() { return primitives3DPanel; }
+
 	// Controle du panel
 	void show() { isActive = true; }
 	void hide() { isActive = false; }
@@ -67,6 +72,7 @@ private:
 		Camera,
 		Transformation,
 		Geometry,
+		Primitives,
 		Topology,
 		Texture,
 		RayTracing,
@@ -85,6 +91,7 @@ private:
 	ofxButton cameraButton;
 	ofxButton transformButton;
 	ofxButton geometryButton;
+	ofxButton primitivesButton;
 	ofxButton topologyButton;
 	ofxButton textureButton;
 	ofxButton rayTracingButton;
@@ -98,6 +105,7 @@ private:
 	SceneAssetsPanel sceneAssetsPanel;
 	Transformation3DPanel transformationPanel;
 	Geometry3DPanel geometryPanel;
+	Primitives3DPanel primitives3DPanel;
 	Texture3DPanel texturePanel;
 	TopologyPanel topologyPanel;
 	RayTracingPanel rayTracingPanel;
@@ -110,6 +118,7 @@ private:
 	void onCameraButton();
 	void onTransformButton();
 	void onGeometryButton();
+	void onPrimitivesButton();
 	void onTopologyButton();
 	void onTextureButton();
 	void onRayTracingButton();

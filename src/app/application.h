@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "../controllers/CurvesController.h"
+#include "../controllers/curvesController.h"
 #include "../controllers/ImageController.h"
 #include "../controllers/SceneController.h"
 #include "../controllers/TransformController.h"
@@ -54,6 +54,7 @@ public:
 	void mousePressed(int x, int y, int button);
 	void mouseReleased(int x, int y, int button);
 	void mouseDragged(int x, int y, int button);
+	void mouseMoved(int x, int y);
 	void keyPressed(int key);
 	void dragEvent(ofDragInfo dragInfo);
 	void exit();
@@ -125,9 +126,8 @@ private:
 	glm::vec2 last3DMouse = { 0, 0 };
 	float orbitSpeed = 0.25f;
 	float panSpeed = 0.7f;
-
-	 bool lightingDataNeedsUpdate = true;
-	 LightingData cachedLightingData;
-	 bool wasQuadView = false;
-	 bool was3DView = false;
+	bool lightingDataNeedsUpdate = true;
+	LightingData cachedLightingData;
+	bool wasQuadView = false;
+	bool was3DView = false;
 };

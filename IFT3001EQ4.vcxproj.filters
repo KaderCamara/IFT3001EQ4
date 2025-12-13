@@ -79,9 +79,6 @@
     <ClCompile Include="src\controllers\imageController.cpp">
       <Filter>src\controllers</Filter>
     </ClCompile>
-    <ClCompile Include="src\controllers\curvesController.cpp">
-      <Filter>src\controllers</Filter>
-    </ClCompile>
     <ClCompile Include="src\controllers\curvesController.h">
       <Filter>src\controllers</Filter>
     </ClCompile>
@@ -181,6 +178,10 @@
     <ClCompile Include="src\controllers\lightingController.cpp">
       <Filter>src\controllers</Filter>
     </ClCompile>
+    <ClCompile Include="src\objects\curveAnimator.cpp" />
+    <ClCompile Include="src\rendering\curves\AnimatedObjectRenderer.cpp" />
+    <ClCompile Include="src\ui\panels\view2DPanel.cpp" />
+    <ClCompile Include="src\ui\panels\3dEdition\primitives3DPanel.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -710,9 +711,10 @@
     <ClInclude Include="src\controllers\lightingController.h">
       <Filter>src\controllers</Filter>
     </ClInclude>
-    <ClInclude Include="src\image\imageFilters.h">
-      <Filter>src\image</Filter>
-    </ClInclude>
+    <ClInclude Include="src\objects\curveAnimator.h" />
+    <ClInclude Include="src\rendering\curves\AnimatedObjectRenderer.h" />
+    <ClInclude Include="src\ui\panels\view2DPanel.h" />
+    <ClInclude Include="src\ui\panels\3dEdition\primitives3DPanel.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="icon.rc" />

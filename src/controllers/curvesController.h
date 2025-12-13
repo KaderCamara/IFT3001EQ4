@@ -4,6 +4,7 @@
 
 #include "../objects/controlPointsManager.h"
 #include "../objects/curveManager.h"
+#include "../objects/CurveAnimator.h"
 #include "ofMain.h"
 
 /**
@@ -83,10 +84,21 @@ public:
 	CurveManager & getCurveManager() { return curveManager; }
 	const CurveManager & getCurveManager() const { return curveManager; }
 
+	const CurveAnimator & getAnimator() const { return animator; }
+	bool isAnimationPlaying() const { return animator.isPlaying(); }
+
+	// ========== ANIMATIONS ==========
+	void startAnimation();
+	void stopAnimation();
+	void toggleAnimation();
+	void updateAnimation(float deltaTime);
+
+
 private:
 	// Managers (MODEL)
 	ControlPointsManager controlPointsManager;
 	CurveManager curveManager;
+	CurveAnimator animator;
 
 	// ========== VALIDATION ==========
 
@@ -100,3 +112,120 @@ private:
 	 */
 	bool hasEnoughPointsForCurve() const;
 };
+
+// Inline implementations moved from curvesController.cpp to ensure linkage
+
+inline void CurvesController::setup() {
+	ofLogNotice("CurvesController") << "Setup complete";
+}
+
+inline bool CurvesController::addControlPoint(int x, int y, const ofRectangle & drawingArea) {
+	// Valider que le point est dans la zone de dessin
+	if (!isPointInDrawingArea(x, y, drawingArea)) {
+		ofLogWarning("CurvesController") << "Control point outside drawing area: (" << x << ", " << y << ")";
+		return false;
+	}
+
+	// Ajouter le point via le manager
+	controlPointsManager.addControlPoint(x, y);
+
+	ofLogVerbose("CurvesController") << "Control point added at (" << x << ", " << y << ")";
+	return true;
+}
+
+inline void CurvesController::undoLastControlPoint() {
+	int countBefore = getControlPointsCount();
+
+	controlPointsManager.undoLastPoint();
+
+	int countAfter = getControlPointsCount();
+
+	if (countAfter < countBefore) {
+		ofLogNotice("CurvesController") << "Last control point undone (remaining: " << countAfter << ")";
+	} else {
+		ofLogWarning("CurvesController") << "No control point to undo";
+	}
+}
+
+inline void CurvesController::clearControlPoints() {
+	int count = getControlPointsCount();
+
+	controlPointsManager.clearPoints();
+
+	ofLogNotice("CurvesController") << count << " control point(s) cleared";
+}
+
+inline bool CurvesController::generateBezierCurve() {
+	// Valider qu'il y a assez de points
+	if (!hasEnoughPointsForCurve()) {
+		ofLogWarning("CurvesController") << "Need at least 2 control points to generate curve (have "
+				 << getControlPointsCount() << ")";
+		return false;
+	}
+
+	// Effacer les courbes précédentes
+	clearCurves();
+
+	// Générer la nouvelle courbe
+	curveManager.addBezierCurve(controlPointsManager.getControlPoints());
+
+	// Setup animator avec la dernière courbe générée
+	if (!curveManager.getCurves().empty()) {
+		animator.setup(curveManager.getCurves().back(), 3.0f);
+	}
+
+	ofLogNotice("CurvesController") << "Bezier curve generated with "
+				<< getControlPointsCount() << " control points";
+
+
+	return true;
+}
+
+inline void CurvesController::clearCurves() {
+	int count = getCurvesCount();
+
+	curveManager.clear();
+
+	if (count > 0) {
+		ofLogNotice("CurvesController") << count << " curve(s) cleared";
+	}
+}
+
+inline bool CurvesController::isPointInDrawingArea(int x, int y, const ofRectangle & drawingArea) const {
+	return drawingArea.inside(x, y);
+}
+
+inline bool CurvesController::hasEnoughPointsForCurve() const {
+	// Besoin d'au moins 2 points pour une courbe
+	return getControlPointsCount() >= 2;
+}
+
+inline void CurvesController::startAnimation() {
+	if (!curveManager.getCurves().empty()) {
+		animator.setup(curveManager.getCurves().back(), 3.0f);
+		animator.play();
+		ofLogNotice("CurvesController") << "Animation started";
+	} else {
+		ofLogWarning("CurvesController") << "Cannot start animation: no curves available";
+	}
+}
+
+inline void CurvesController::stopAnimation() {
+	animator.pause();
+	animator.reset();
+	ofLogNotice("CurvesController") << "Animation stopped";
+}
+
+inline void CurvesController::toggleAnimation() {
+	if (animator.isPlaying()) {
+		animator.pause();
+		ofLogNotice("CurvesController") << "Animation paused";
+	} else {
+		animator.play();
+		ofLogNotice("CurvesController") << "Animation resumed";
+	}
+}
+
+inline void CurvesController::updateAnimation(float deltaTime) {
+	animator.update(deltaTime);
+}

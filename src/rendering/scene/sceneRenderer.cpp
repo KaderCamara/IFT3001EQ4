@@ -28,15 +28,19 @@ void SceneRenderer::draw2D(const RenderDataDraw2D & data) {
 						  i)
 			!= data.selectedIndices.end();
 
+		// Vrifier si la forme est survole
+		bool isHovered = (static_cast<int>(i) == data.hoveredShapeIndex);
+
 		// Dessiner la forme
-		shape2DRenderer.drawShape2D(shape, isSelected, data.lineWidth);
+		shape2DRenderer.drawShape2D(shape, isSelected, isHovered, data.lineWidth);
 	}
 
 	// Curves rendering is handled by the dedicated curves rendering path
 
 	// Dessiner l'aperu de la forme en cours de cration
 	if (data.hasPreview) {
-		shape2DRenderer.drawShape2D(data.currentPreview, false, data.lineWidth);
+		// If we have explicit visual parameters in RenderDataDraw2D, use them for preview so the UI controls affect it
+		shape2DRenderer.drawPreviewShape2D(data.currentPreview, data.strokeColor, data.fillColor, data.lineWidth, data.hoveredShapeIndex == -1 ? false : false);
 	}
 }
 
@@ -93,7 +97,7 @@ static ofEasyCam & getActiveCam(ofEasyCam & internalCam, ofEasyCam * externalCam
 	// Couleur par dfaut pour les formes 3D
 	ofSetColor(255);
 
-	// Calculer la bounding box de la scène pour adapter l'échelle si nécessaire
+	// Calculer la bounding box de la sc�ne pour adapter l'�chelle si n�cessaire
 	bool hasVertices = false;
 	glm::vec3 sceneMin(FLT_MAX), sceneMax(-FLT_MAX);
 	for (const auto & shape : data.shapes) {
@@ -121,10 +125,10 @@ static ofEasyCam & getActiveCam(ofEasyCam & internalCam, ofEasyCam * externalCam
 
 	ofVec3f viewPos = cam.getPosition();
 
-	// Dessiner toutes les formes 3D (avec recentrage et mise à l'échelle globale)
+	// Dessiner toutes les formes 3D (avec recentrage et mise � l'�chelle globale)
 	if (hasVertices && scaleFactor != 1.0f) {
 		ofPushMatrix();
-		// Recentre la scène autour de l'origine puis applique l'échelle
+		// Recentre la sc�ne autour de l'origine puis applique l'�chelle
 		ofTranslate(-sceneCenter.x, -sceneCenter.y, -sceneCenter.z);
 		ofScale(scaleFactor, scaleFactor, scaleFactor);
 
@@ -134,7 +138,7 @@ static ofEasyCam & getActiveCam(ofEasyCam & internalCam, ofEasyCam * externalCam
 
 		ofPopMatrix();
 	} else {
-		// Aucun ajustement nécessaire
+		// Aucun ajustement n�cessaire
 		for (const auto & shape : data.shapes) {
 			shape3DRenderer.drawShape3D(shape, data.lighting, viewPos);
 		}
@@ -169,8 +173,8 @@ void SceneRenderer::draw3D(const RenderData3D & data) {
 	// Begin camera with explicit viewport
 	cam.begin(viewport);
 
-	// --- ANCIEN BLOC D'ÉCLAIRAGE (RESTAURÉ) ---
-	// Note : Ce bloc utilise l'éclairage interne d'OpenFrameworks.
+	// --- ANCIEN BLOC D'�CLAIRAGE (RESTAUR�) ---
+	// Note : Ce bloc utilise l'�clairage interne d'OpenFrameworks.
 	if (data.enableLighting) {
 		ofLight light;
 		light.setDirectional();
@@ -198,7 +202,7 @@ void SceneRenderer::draw3D(const RenderData3D & data) {
 	// Couleur par dfaut pour les formes 3D
 	ofSetColor(255);
 
-	// Calculer la bounding box de la scène pour adapter l'échelle si nécessaire
+	// Calculer la bounding box de la sc�ne pour adapter l'�chelle si n�cessaire
 	bool hasVertices = false;
 	glm::vec3 sceneMin(FLT_MAX), sceneMax(-FLT_MAX);
 	for (const auto & shape : data.shapes) {
@@ -224,28 +228,28 @@ void SceneRenderer::draw3D(const RenderData3D & data) {
 		}
 	}
 
-	// Dessiner toutes les formes 3D (avec recentrage et mise à l'échelle globale)
+	// Dessiner toutes les formes 3D (avec recentrage et mise � l'�chelle globale)
 	if (hasVertices && scaleFactor != 1.0f) {
 		ofPushMatrix();
-		// Recentre la scène autour de l'origine puis applique l'échelle
+		// Recentre la sc�ne autour de l'origine puis applique l'�chelle
 		ofTranslate(-sceneCenter.x, -sceneCenter.y, -sceneCenter.z);
 		ofScale(scaleFactor, scaleFactor, scaleFactor);
 
 		for (const auto & shape : data.shapes) {
-			// Appel à l'ancienne signature
+			// Appel � l'ancienne signature
 			shape3DRenderer.drawShape3D(shape);
 		}
 
 		ofPopMatrix();
 	} else {
-		// Aucun ajustement nécessaire
+		// Aucun ajustement n�cessaire
 		for (const auto & shape : data.shapes) {
-			// Appel à l'ancienne signature
+			// Appel � l'ancienne signature
 			shape3DRenderer.drawShape3D(shape);
 		}
 	}
 
-	// --- ANCIEN BLOC D'ÉCLAIRAGE (RESTAURÉ) ---
+	// --- ANCIEN BLOC D'�CLAIRAGE (RESTAUR�) ---
 	if (data.enableLighting) {
 		ofDisableLighting();
 	}
@@ -292,7 +296,7 @@ void SceneRenderer::draw3D(const RenderData3D & data) {
 	// Couleur par dfaut pour les formes 3D
 	ofSetColor(255);
 
-	// Calculer la bounding box de la scène pour adapter l'échelle si nécessaire
+	// Calculer la bounding box de la sc�ne pour adapter l'�chelle si n�cessaire
 	bool hasVertices = false;
 	glm::vec3 sceneMin(FLT_MAX), sceneMax(-FLT_MAX);
 	for (const auto & shape : data.shapes) {
@@ -320,23 +324,23 @@ void SceneRenderer::draw3D(const RenderData3D & data) {
 	//ofVec3f viewPos = ofVec3f(0.0f, 0.0f, 0.0f);
 	ofVec3f viewPos =cam.getPosition();
 
-	// Dessiner toutes les formes 3D (avec recentrage et mise à l'échelle globale)
+	// Dessiner toutes les formes 3D (avec recentrage et mise � l'�chelle globale)
 	if (hasVertices && scaleFactor != 1.0f) {
 		ofPushMatrix();
-		// Recentre la scène autour de l'origine puis applique l'échelle
+		// Recentre la sc�ne autour de l'origine puis applique l'�chelle
 		ofTranslate(-sceneCenter.x, -sceneCenter.y, -sceneCenter.z);
 		ofScale(scaleFactor, scaleFactor, scaleFactor);
 
 		for (const auto & shape : data.shapes) {
-			// Appel à l'ancienne signature
+			// Appel � l'ancienne signature
 			shape3DRenderer.drawShape3D(shape, data.lighting, viewPos);
 		}
 
 		ofPopMatrix();
 	} else {
-		// Aucun ajustement nécessaire
+		// Aucun ajustement n�cessaire
 		for (const auto & shape : data.shapes) {
-			// Appel à l'ancienne signature
+			// Appel � l'ancienne signature
 			shape3DRenderer.drawShape3D(shape, data.lighting, viewPos);
 		}
 	}

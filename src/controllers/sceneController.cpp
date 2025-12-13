@@ -175,6 +175,22 @@ void SceneController::handleKeyPressed(int key) {
 	}
 }
 
+void SceneController::handleMouseMoved(int x, int y) {
+	// Détection du hover sur les formes 2D
+	// Permettre le hover même pendant le dessin, sauf en mode sélection
+	if (view2D && !selecting) {
+		hoveredShapeIndex = selectionService.findShapeAt(sceneGraph.shapes, x, y);
+	} else {
+		hoveredShapeIndex = -1;
+	}
+}
+
+// ========== GESTION DES PARAMÈTRES DE DESSIN ==========
+
+void SceneController::setDrawingParameters(float lineWidth, ofColor strokeColor, ofColor fillColor) {
+	shapeManager.setDrawingParameters(lineWidth, strokeColor, fillColor);
+}
+
 // ========== GESTION DES TRANSFORMATIONS - UTILISE TransformService ✅ ==========
 
 void SceneController::applyTransformationToSelected(float tx, float ty, float rot, float scale) {

@@ -23,6 +23,7 @@ void View3DPanel::setup() {
 	navigationPanel.add(cameraButton.setup("Camera"));
 	navigationPanel.add(transformButton.setup("Transform"));
 	navigationPanel.add(geometryButton.setup("Geometry & Bounds"));
+	navigationPanel.add(primitivesButton.setup("Primitives 3D"));
 	navigationPanel.add(topologyButton.setup("Topology & Curves"));
 	navigationPanel.add(textureButton.setup("Materials & Textures"));
 	navigationPanel.add(rayTracingButton.setup("Ray Tracing"));
@@ -32,6 +33,7 @@ void View3DPanel::setup() {
 	cameraPanel.setup();
 	transformationPanel.setup();
 	geometryPanel.setup();
+	primitives3DPanel.setup();
 	topologyPanel.setup();
 	texturePanel.setup();
 	rayTracingPanel.setup();
@@ -43,6 +45,7 @@ void View3DPanel::setup() {
 	cameraButton.addListener(this, &View3DPanel::onCameraButton);
 	transformButton.addListener(this, &View3DPanel::onTransformButton);
 	geometryButton.addListener(this, &View3DPanel::onGeometryButton);
+	primitivesButton.addListener(this, &View3DPanel::onPrimitivesButton);
 	topologyButton.addListener(this, &View3DPanel::onTopologyButton);
 	textureButton.addListener(this, &View3DPanel::onTextureButton);
 	rayTracingButton.addListener(this, &View3DPanel::onRayTracingButton);
@@ -88,6 +91,11 @@ void View3DPanel::draw(float sideMenuWidth, float menuBarHeight) {
 		geometryPanel.setPosition(rightX, rightY);
 		geometryPanel.setWidth(sideMenuWidth);
 		geometryPanel.draw();
+		break;
+	case Section::Primitives:
+		primitives3DPanel.setPosition(rightX, rightY);
+		primitives3DPanel.setWidth(sideMenuWidth);
+		primitives3DPanel.draw();
 		break;
 	case Section::Topology:
 		topologyPanel.setPosition(rightX, rightY);
@@ -140,6 +148,7 @@ void View3DPanel::onSceneAssetsButton() { onSectionButtonPressed(Section::SceneA
 void View3DPanel::onCameraButton() { onSectionButtonPressed(Section::Camera); }
 void View3DPanel::onTransformButton() { onSectionButtonPressed(Section::Transformation); }
 void View3DPanel::onGeometryButton() { onSectionButtonPressed(Section::Geometry); }
+void View3DPanel::onPrimitivesButton() { onSectionButtonPressed(Section::Primitives); }
 void View3DPanel::onTopologyButton() { onSectionButtonPressed(Section::Topology); }
 void View3DPanel::onTextureButton() { onSectionButtonPressed(Section::Texture); }
 void View3DPanel::onRayTracingButton() { onSectionButtonPressed(Section::RayTracing); }

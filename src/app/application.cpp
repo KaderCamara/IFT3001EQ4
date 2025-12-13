@@ -55,25 +55,15 @@ void Application::update() {
 
 
 	// ========== GESTION DES VUES ==========
-	bool isQuadView = uiWindow.isQuadViewRequested();
-	bool is3DView = uiWindow.is3DviewRequested();
-	bool is2DView = uiWindow.is2DviewRequested();
-	if (isQuadView && !wasQuadView) {
+
+	if (uiWindow.isQuadViewRequested()) {
 		sceneController.setViewQuadMode();
 		lightingDataNeedsUpdate = true;
-		wasQuadView = true;
-		was3DView = false;
-		ofLogNotice("Application") << "View changed to QUAD - lighting update scheduled";
-	} else if (is3DView && !was3DView) {
+	} else if (uiWindow.is3DviewRequested()) {
 		sceneController.setView3DMode();
 		lightingDataNeedsUpdate = true;
-		was3DView = true;
-		wasQuadView = false;
-		ofLogNotice("Application") << "View changed to 3D - lighting update scheduled";
-	} else if (is2DView) {
+	} else if (uiWindow.is2DviewRequested()) {
 		sceneController.setView2DMode();
-		wasQuadView = false;
-		was3DView = false;
 	}
 
 	// ========== GESTION DES COURBES ==========
@@ -97,6 +87,19 @@ void Application::update() {
 		curvesController.clearCurves();
 		uiWindow.clearClearCurvesRequest();
 	}
+
+	if (uiWindow.isPlayAnimationRequested()) {
+		curvesController.startAnimation();
+		uiWindow.clearPlayAnimationRequest();
+	}
+
+	if (uiWindow.isStopAnimationRequested()) {
+		curvesController.stopAnimation();
+		uiWindow.clearStopAnimationRequest();
+	}
+
+	// Update animation chaque frame
+	curvesController.updateAnimation(ofGetLastFrameTime());
 
 	// ========== IMPORT 3D ==========
 
@@ -204,8 +207,6 @@ void Application::update() {
 		lastGoochEnabled = GoochEnabled;
 	}
 
-	//////////////////
-
 	// Clear des requêtes UI
 	uiWindow.clearRequests();
 }
@@ -234,6 +235,27 @@ void Application::draw() {
 		uiWindow.getTranslateY(),
 		uiWindow.getRotation(),
 		uiWindow.getScale());
+
+	// If the Image tab is active, render only the image area and UI.
+	if (uiWindow.isImageTabActive()) {
+		// Draw image-specific background
+		ofPushStyle();
+		ofSetColor(uiWindow.getBackgroundColor());
+		const ofRectangle drawing = uiWindow.getDrawingArea();
+		ofDrawRectangle(drawing.x, drawing.y, drawing.width, drawing.height);
+		ofPopStyle();
+
+		// Render the image if available
+		if (imageController.hasImage()) {
+			renderer.getImageRenderer().renderInBounds(imageController.getImage(), drawing, true);
+		}
+
+		// Draw the UI overlay and return early — do not draw editor canvases
+		ofDisableDepthTest();
+		uiWindow.draw();
+		ofEnableDepthTest();
+		return;
+	}
 
 	// ========== PRÉPARER LES RENDERDATA ET POUSSER AU RENDERER ==========
 	// ✅ L'Application (CONTROLLER) prépare les données
@@ -311,6 +333,7 @@ RenderDataDraw2D Application::prepareRenderDataDraw2D() {
 	// Formes de la scène
 	data.shapes = sceneGraph.shapes;
 	data.selectedIndices = sceneGraph.selectedIndices;
+	data.hoveredShapeIndex = sceneController.getHoveredShapeIndex();
 
 	// Forme en cours de création (preview)
 	if (sceneController.getCurrentShape() != "none" && (sceneController.isDrawing() || sceneController.hasUnsavedShape())) {
@@ -338,13 +361,14 @@ void Application::connectTexturePanelToRenderer() {
 RenderDataCurves2D Application::prepareRenderDataCurves2D() {
 	RenderDataCurves2D data;
 
-	// Courbes de Bézier
 	const ControlPointsManager & cpm = curvesController.getControlPointsManager();
 	const CurveManager & cm = curvesController.getCurveManager();
 	data.controlPoints = cpm.getControlPoints();
 	data.curves = cm.getCurves();
 
-	// Paramètres visuels dédiés aux courbes (on conserve les paramètres de trait actuels)
+	// AJOUTER:
+	data.animator = &curvesController.getAnimator();
+
 	data.lineWidth = uiWindow.getLineWidth();
 	data.strokeColor = uiWindow.getStrokeColor();
 	data.backgroundColor = uiWindow.getBackgroundColor();
@@ -372,7 +396,6 @@ RenderData3D Application::prepareRenderData3D() {
 	data.showGrid = uiWindow.isGridEnabled();
 	data.showAxes = uiWindow.isAxesEnabled();
 	data.showNormals = uiWindow.isNormalsEnabled();
-
 	if (lightingDataNeedsUpdate) {
 		const LightingPanel & lightingPanel = uiWindow.getLightingPanel();
 		cachedLightingData = lightingController.prepareLightingData(lightingPanel);
@@ -430,9 +453,6 @@ RenderData3D Application::prepareRenderData3D() {
 	// Options d'affichage
 	data.showBoundingBox = uiWindow.isShowBoundingBoxEnabled();
 	data.showWireframe = uiWindow.isWireframeEnabled();
-	data.showGrid = uiWindow.isGridEnabled(); // ✅ ADDED
-	data.showAxes = uiWindow.isAxesEnabled(); // ✅ ADDED
-
 	// Lighting data from panel
 	if (lightingDataNeedsUpdate) {
 		const LightingPanel & lightingPanel = uiWindow.getLightingPanel();
@@ -576,6 +596,12 @@ void Application::mousePressed(int x, int y, int button) {
 
 	if (uiWindow.isDrawModeActive() && uiWindow.getDrawDrawingArea().inside(x, y)) {
 		sceneController.setCurrentShape(uiWindow.getCurrentShape());
+		// Appliquer les paramètres de dessin en temps réel
+		sceneController.setDrawingParameters(
+			uiWindow.getLineWidth(),
+			uiWindow.getStrokeColor(),
+			uiWindow.getFillColor()
+		);
 		sceneController.handleMousePressed(x, y, button, uiWindow.getDrawDrawingArea());
 	} else if (uiWindow.isCurvesModeActive() && uiWindow.getCurvesDrawingArea().inside(x, y)) {
 		if (uiWindow.isPlacePointsMode()) {
@@ -612,6 +638,12 @@ void Application::mouseReleased(int x, int y, int button) {
 void Application::mouseDragged(int x, int y, int button) {
 	if (uiWindow.isDrawModeActive() && uiWindow.getDrawDrawingArea().inside(x, y)) {
 		if (sceneController.isDrawing()) {
+			// Appliquer les paramètres de dessin en temps réel pendant le drag
+			sceneController.setDrawingParameters(
+				uiWindow.getLineWidth(),
+				uiWindow.getStrokeColor(),
+				uiWindow.getFillColor()
+			);
 			sceneController.handleMouseDragged(x, y, button, uiWindow.getDrawDrawingArea());
 		}
 	} else if (uiWindow.is3DTabActive() && uiWindow.getDrawingArea().inside(x, y)) {
@@ -621,6 +653,13 @@ void Application::mouseDragged(int x, int y, int button) {
 		} else {
 			handle3DMouseDragged(x, y, button);
 		}
+	}
+}
+
+void Application::mouseMoved(int x, int y) {
+	// Gérer le hover sur les formes 2D
+	if (uiWindow.isDrawModeActive() && uiWindow.getDrawDrawingArea().inside(x, y)) {
+		sceneController.handleMouseMoved(x, y);
 	}
 }
 

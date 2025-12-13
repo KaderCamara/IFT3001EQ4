@@ -8,6 +8,9 @@
 #include "ofMain.h"
 #include <vector>
 
+// Forward declaration to avoid including curve animator header here
+class CurveAnimator;
+
 /**
 * @struct RenderDataDraw2D
  * @brief Données nécessaires pour le rendu de la zone de dessin principale (MODEL pur)
@@ -16,6 +19,7 @@ struct RenderDataDraw2D {
 	// Formes de la scène
 	std::vector<Shape> shapes;
 	std::vector<int> selectedIndices;
+	int hoveredShapeIndex = -1; // Index de la forme survolée (-1 si aucune)
 
 	// Forme en cours de création (preview)
 	Shape currentPreview;
@@ -36,6 +40,10 @@ struct RenderDataCurves2D {
 	// Courbes de Bézier
 	std::vector<glm::vec2> controlPoints;
 	std::vector<BezierCurve> curves;
+
+	// Animateur de courbe (optionnel)
+
+	const CurveAnimator * animator = nullptr;
 
 	// Paramètres visuels
 	float lineWidth = 2.0f;
